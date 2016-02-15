@@ -1,4 +1,4 @@
-package andytran.draw_me_a_picture;
+package andytran.dmap_tablet;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
