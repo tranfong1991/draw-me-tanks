@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">draw-me-a-picture</string>
+    <string name="app_name">DMAP_tablet</string>
+    <string name="title_activity_server_socket_test">ServerSocketTestActivity</string>
 </resources>
