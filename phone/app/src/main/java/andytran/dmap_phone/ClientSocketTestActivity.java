@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.net.Socket;
 
 public class ClientSocketTestActivity extends AppCompatActivity {
@@ -32,8 +33,9 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... params) {
+                Socket socket = null;
                 try{
-                    Socket socket = new Socket("10.0.2.15", 8080);
+                    socket = new Socket("10.0.2.15", 8080);
                     if(socket.isConnected()){
                         final TextView successText = (TextView)findViewById(R.id.txt_success);
                         ClientSocketTestActivity.this.runOnUiThread(new Runnable() {
@@ -45,6 +47,13 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                     }
                 }catch (Exception e){
                     e.printStackTrace();
+                } finally {
+                    try {
+                        if (socket != null)
+                            socket.close();
+                    } catch(IOException e){
+                        e.printStackTrace();
+                    }
                 }
                 return null;
             }
