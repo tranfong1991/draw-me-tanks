@@ -55,12 +55,10 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             }
         });
 
-        server = new WebServer();
-
         try {
-            server.start();
+            server = new WebServer();
         } catch (IOException e){
-            Toast.makeText(this, "The server could not start.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Web server could not start.", Toast.LENGTH_LONG).show();
         }
         Toast.makeText(this, "Web server initialized.", Toast.LENGTH_LONG).show();
     }

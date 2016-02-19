@@ -47,7 +47,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        successText.setText("Response is: "+ response.substring(0,5));
+                        successText.setText("Response is: "+ response);
                     }
                 }, new Response.ErrorListener() {
             @Override
