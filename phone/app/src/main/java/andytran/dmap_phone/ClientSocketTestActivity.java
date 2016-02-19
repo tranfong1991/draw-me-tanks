@@ -1,6 +1,5 @@
 package andytran.dmap_phone;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,10 +8,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.net.Socket;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 public class ClientSocketTestActivity extends AppCompatActivity {
+
+    private TextView successText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,34 +35,28 @@ public class ClientSocketTestActivity extends AppCompatActivity {
             }
         });
 
-        new AsyncTask<Void, Void, Void>(){
+        successText = (TextView)findViewById(R.id.txt_success);
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://10.202.143.82:8080/";
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        successText.setText("Response is: "+ response.substring(0,5));
+                    }
+                }, new Response.ErrorListener() {
             @Override
-            protected Void doInBackground(Void... params) {
-                Socket socket = null;
-                try{
-                    socket = new Socket("10.0.2.15", 8080);
-                    if(socket.isConnected()){
-                        final TextView successText = (TextView)findViewById(R.id.txt_success);
-                        ClientSocketTestActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                successText.setText("Success");
-                            }
-                        });
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if (socket != null)
-                            socket.close();
-                    } catch(IOException e){
-                        e.printStackTrace();
-                    }
-                }
-                return null;
+            public void onErrorResponse(VolleyError error) {
+                successText.setText("That didn't work!");
             }
-        }.execute();
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
 }

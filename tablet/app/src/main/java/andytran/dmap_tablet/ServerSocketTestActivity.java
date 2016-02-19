@@ -6,8 +6,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -23,6 +25,8 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
     private TextView statusText;
+
+    private WebServer server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,48 +55,41 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             }
         });
 
-        new ServerSocketAsync().execute();
+        server = new WebServer();
+
+        try {
+            server.start();
+        } catch (IOException e){
+            Toast.makeText(this, "The server could not start.", Toast.LENGTH_LONG).show();
+        }
+        Toast.makeText(this, "Web server initialized.", Toast.LENGTH_LONG).show();
     }
+
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        if(server != null) {
+//            server.stop();
+//            Toast.makeText(this, "Web server stopped.", Toast.LENGTH_LONG).show();
+//        }
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        try {
+//            server.start();
+//        } catch (IOException e) {
+//            Toast.makeText(this, "Unable to restart server.", Toast.LENGTH_LONG).show();
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(serverSocket != null){
-            try {
-                serverSocket.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private class ServerSocketAsync extends AsyncTask<Void, Void, Void>{
-        static final int SocketServerPORT = 8080;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                serverSocket = new ServerSocket(SocketServerPORT);
-                ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        portText.setText("Waiting for connection in " + serverSocket.getLocalPort());
-                    }
-                });
-
-                while(true){
-                    serverSocket.accept();
-                    ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            statusText.setText("Success");
-                        }
-                    });
-                }
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            return null;
+        if(server != null){
+            server.stop();
+            Toast.makeText(this, "Web server destroyed.", Toast.LENGTH_LONG).show();
         }
     }
 
