@@ -1,17 +1,13 @@
 package andytran.dmap_tablet;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,7 +22,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView ipText;
     private TextView statusText;
 
-    private WebServer server;
+    private Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +52,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
         });
 
         try {
-            server = new WebServer();
+            server = new Server();
         } catch (IOException e){
             Toast.makeText(this, "Web server could not start.", Toast.LENGTH_LONG).show();
         }

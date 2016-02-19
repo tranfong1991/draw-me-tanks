@@ -15,11 +15,11 @@ import fi.iki.elonen.NanoHTTPD;
  * 3. For each new route, define a function that returns a Response object.
  * 4. In case the route returns a JSON object, simply add quotes around keys
  */
-public class WebServer extends NanoHTTPD {
+public class Server extends NanoHTTPD {
     public static int PORT = 8080;
     private static String TOKEN = "ABC123";
 
-    public WebServer()throws IOException{
+    public Server()throws IOException{
         super(PORT);
         start();
     }
