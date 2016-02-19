@@ -1,7 +1,5 @@
 package andytran.dmap_tablet;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -28,12 +26,18 @@ public class WebServer extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
+        Map<String, String> params = session.getParms();
+
+        //check if token is not present or doesn't match
+        if(params.get("token") == null || !params.get("token").equals(TOKEN))
+            return newFixedLengthResponse("{\"status\":\"unauthorized\"}");
+
         String uri = session.getUri();
 
         //PUT ROUTES HERE
         switch(uri){
-            case "/validate":
-                return validateToken(session.getParms().get("token"));
+            case "/generate":
+                return generateToken();
             case "/plain":
                 return getMagicNumber();
             case "/json":
@@ -43,13 +47,8 @@ public class WebServer extends NanoHTTPD {
         }
     }
 
-    private Response validateToken(String token){
-        String json;
-        if(token.equals(TOKEN))
-            json = "{\"status\":\"success\"}";
-        else json = "{\"status\":\"fail\"}";
-
-        return newFixedLengthResponse(json);
+    private Response generateToken(){
+        return null;
     }
 
     private Response getMagicNumber(){
