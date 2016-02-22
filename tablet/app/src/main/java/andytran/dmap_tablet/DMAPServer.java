@@ -1,5 +1,9 @@
 package andytran.dmap_tablet;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -15,12 +19,15 @@ import fi.iki.elonen.NanoHTTPD;
  * 3. For each new route, define a function that returns a Response object.
  * 4. In case the route returns a JSON object, simply add quotes around keys
  */
-public class Server extends NanoHTTPD {
+public class DMAPServer extends NanoHTTPD {
     public static int PORT = 8080;
     private static String TOKEN = "ABC123";
 
-    public Server()throws IOException{
+    private Context context;
+
+    public DMAPServer(Context context)throws IOException{
         super(PORT);
+        this.context = context;
         start();
     }
 

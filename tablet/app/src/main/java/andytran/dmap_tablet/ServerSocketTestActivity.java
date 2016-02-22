@@ -1,8 +1,13 @@
 package andytran.dmap_tablet;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,12 +22,9 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 public class ServerSocketTestActivity extends AppCompatActivity {
-    private ServerSocket serverSocket;
     private TextView portText;
     private TextView ipText;
     private TextView statusText;
-
-    private Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +53,29 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             }
         });
 
-        try {
-            server = new Server();
-        } catch (IOException e){
-            Toast.makeText(this, "Web server could not start.", Toast.LENGTH_LONG).show();
-        }
-        Toast.makeText(this, "Web server initialized.", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, DMAPIntentService.class);
+        startService(intent);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                statusText.setText("I receive it.");
+            }
+        }, new IntentFilter("testActivity"));
+
+//        try {
+//            DMAPServer server = new DMAPServer(this);
+//        }catch(IOException e){
+//            e.printStackTrace();
+//        }
     }
 
 //    @Override
 //    public void onPause() {
 //        super.onPause();
-//        if(server != null) {
-//            server.stop();
-//            Toast.makeText(this, "Web server stopped.", Toast.LENGTH_LONG).show();
+//        if(DMAPServer != null) {
+//            DMAPServer.stop();
+//            Toast.makeText(this, "Web DMAPServer stopped.", Toast.LENGTH_LONG).show();
 //        }
 //    }
 //
@@ -72,20 +83,11 @@ public class ServerSocketTestActivity extends AppCompatActivity {
 //    public void onResume() {
 //        super.onResume();
 //        try {
-//            server.start();
+//            DMAPServer.start();
 //        } catch (IOException e) {
-//            Toast.makeText(this, "Unable to restart server.", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "Unable to restart DMAPServer.", Toast.LENGTH_LONG).show();
 //        }
 //    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(server != null){
-            server.stop();
-            Toast.makeText(this, "Web server destroyed.", Toast.LENGTH_LONG).show();
-        }
-    }
 
     private String getIpAddress() {
         String ip = "";
