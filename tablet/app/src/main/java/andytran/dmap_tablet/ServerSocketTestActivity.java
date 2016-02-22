@@ -55,39 +55,17 @@ public class ServerSocketTestActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
+        register();
+    }
 
+    private void register(){
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                statusText.setText("I receive it.");
+
             }
-        }, new IntentFilter("testActivity"));
-
-//        try {
-//            DMAPServer server = new DMAPServer(this);
-//        }catch(IOException e){
-//            e.printStackTrace();
-//        }
+        }, new IntentFilter(""));
     }
-
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        if(DMAPServer != null) {
-//            DMAPServer.stop();
-//            Toast.makeText(this, "Web DMAPServer stopped.", Toast.LENGTH_LONG).show();
-//        }
-//    }
-//
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        try {
-//            DMAPServer.start();
-//        } catch (IOException e) {
-//            Toast.makeText(this, "Unable to restart DMAPServer.", Toast.LENGTH_LONG).show();
-//        }
-//    }
 
     private String getIpAddress() {
         String ip = "";
