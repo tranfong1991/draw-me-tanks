@@ -47,21 +47,40 @@ public class DMAPServer extends NanoHTTPD {
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
         String uri = session.getUri();
+        String method = session.getMethod().name();
 
-        //PUT ROUTES HERE
-        switch(uri){
-            case "/generate":
-                return generateToken();
-            case "/play":
-                return playGraphic(params);
-            case "/stop":
-                return stopGraphic();
-            default:
-                return newFixedLengthResponse("Nothing");
+        if(method.equals("GET")) {
+            switch(uri){
+                case "/generate":
+                    return generateToken();
+                case "/play":
+                    return playGraphic(params);
+                case "/stop":
+                    return stopGraphic();
+            }
+        } else if(method.equals("POST")){
+            switch(uri){
+                case "/graphic":
+                    return postGraphic(params);
+            }
+        } else if(method.equals("DELETE")){
+            switch(uri){
+                case "/graphic":
+                    return deleteGraphic(params);
+            }
         }
+        return newFixedLengthResponse("Nothing");
     }
 
     private Response generateToken(){
+        return null;
+    }
+
+    private Response postGraphic(Map<String, String> params){
+        return null;
+    }
+
+    private Response deleteGraphic(Map<String, String> params){
         return null;
     }
 
@@ -75,7 +94,7 @@ public class DMAPServer extends NanoHTTPD {
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
-    
+
     private Response stopGraphic(){
         Intent intent = new Intent(PACKAGE_NAME);
         intent.putExtra(EXTRA_ACTION, "stop");
