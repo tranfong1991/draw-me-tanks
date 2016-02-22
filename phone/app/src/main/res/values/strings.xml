@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">DMAP_phone</string>
     <string name="title_activity_client_socket_test">ClientSocketTestActivity</string>
+    <string name="title_activity_load_screen">LoadScreen</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="ip_field">Enter IP Address here</string>
+    <string name="port_field">Enter Port field here</string>
+    <string name="test_ip">127.0.0.1</string>
+    <string name="test_port">8080</string>
+
+    <string name="loading_notice">Connecting to</string>
+    <string name="tablet_name">EMILY</string>
+    <string name="submit">SUBMIT</string>
+    <string name="title_activity_main_screen">MainScreen</string>
+    <string name="menu_placeholder">This is where the menu will go when everything finishes loading  :)</string>
 </resources>
