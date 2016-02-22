@@ -28,13 +28,13 @@ public class DMAPServer extends NanoHTTPD {
 
     public static final String PREF_NAME = "DMAP_PREF";
     public static final String PREF_TOKEN = "DMAP_TOKEN";
+    public static final String PACKAGE_NAME = "andytran.dmap_tablet";
+    public static final String EXTRA_GRAPHIC_ID = "EXTRA_GRAPHIC_ID";
+    public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
     public static final int HTTP_OK = 200;
     public static final int HTTP_UNAUTHORIZED = 401;
     public static final int HTTP_NOT_FOUND = 404;
-    public static final String PACKAGE_NAME = "andytran.dmap_tablet";
-    public static final String EXTRA_GRAPHIC_ID = "EXTRA_GRAPHIC_ID";
-    public static final String EXTRA_ACTION = "EXTRA_ACTION";
 
     private String token;
     private Context context;
@@ -63,28 +63,34 @@ public class DMAPServer extends NanoHTTPD {
         if(params.get("token") == null || !params.get("token").equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
-        if(method.equals("GET")) {
-            switch(uri){
-                case "/play":
-                    return playGraphic(params);
-                case "/stop":
-                    return stopGraphic();
-                case "/deactivate":
-                    return deactivateToken();
+        switch(method){
+            case "GET":{
+                switch(uri){
+                    case "/play":
+                        return playGraphic(params);
+                    case "/stop":
+                        return stopGraphic();
+                }
+                break;
             }
-        } else if(method.equals("POST")){
-            switch(uri){
-                case "/graphic":
-                    return postGraphic(params);
+            case "POST":{
+                switch(uri){
+                    case "/graphic":
+                        return postGraphic(params);
+                }
+                break;
             }
-        } else if(method.equals("DELETE")){
-            switch(uri){
-                case "/graphic":
-                    return deleteGraphic(params);
-                case "/deactivate":
-                    return deactivateToken();
+            case "DELETE":{
+                switch(uri){
+                    case "/graphic":
+                        return deleteGraphic(params);
+                    case "/deactivate":
+                        return deactivateToken();
+                }
+                break;
             }
         }
+
         return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
     }
 
@@ -112,6 +118,20 @@ public class DMAPServer extends NanoHTTPD {
         return newFixedLengthResponse("{\"token\" : \"" + buffer.toString() + "\"}");
     }
 
+    private Response deactivateToken(){
+        if(token == null)
+            return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
+
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(PREF_TOKEN, null);
+        editor.commit();
+
+        this.token = null;
+
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    }
+
     private Response postGraphic(Map<String, String> params){
         return null;
     }
@@ -135,20 +155,6 @@ public class DMAPServer extends NanoHTTPD {
         Intent intent = new Intent(PACKAGE_NAME);
         intent.putExtra(EXTRA_ACTION, "stop");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
-    }
-
-    private Response deactivateToken(){
-        if(token == null)
-            return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
-
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_TOKEN, null);
-        editor.commit();
-
-        this.token = null;
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }

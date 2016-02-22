@@ -81,11 +81,8 @@ public class ServerSocketTestActivity extends AppCompatActivity {
                         ip += "SiteLocalAddress: "
                                 + inetAddress.getHostAddress() + "\n";
                     }
-
                 }
-
             }
-
         } catch (SocketException e) {
             e.printStackTrace();
             ip += "Something Wrong! " + e.toString() + "\n";
