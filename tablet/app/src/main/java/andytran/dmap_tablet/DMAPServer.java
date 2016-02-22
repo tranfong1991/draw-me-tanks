@@ -20,13 +20,20 @@ import fi.iki.elonen.NanoHTTPD;
  * 4. In case the route returns a JSON object, simply add quotes around keys
  */
 public class DMAPServer extends NanoHTTPD {
-    public static int PORT = 8080;
+    public static final int PORT = 8080;
+    public static final int HTTP_OK = 200;
+    public static final int HTTP_UNAUTHORIZED = 401;
+    public static final String PACKAGE_NAME = "andytran.dmap_tablet";
+    public static final String EXTRA_GRAPHIC_ID = "EXTRA_GRAPHIC_ID";
+    public static final String EXTRA_ACTION = "EXTRA_ACTION";
+
     private static String TOKEN = "ABC123";
 
     private Context context;
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
+
         this.context = context;
         start();
     }
@@ -37,7 +44,7 @@ public class DMAPServer extends NanoHTTPD {
 
         //check if token is not present or doesn't match
         if(params.get("token") == null || !params.get("token").equals(TOKEN))
-            return newFixedLengthResponse("{\"status\":\"unauthorized\"}");
+            return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
         String uri = session.getUri();
 
@@ -45,10 +52,10 @@ public class DMAPServer extends NanoHTTPD {
         switch(uri){
             case "/generate":
                 return generateToken();
-            case "/plain":
-                return getMagicNumber();
-            case "/json":
-                return getJSONNumber();
+            case "/play":
+                return playGraphic(params);
+            case "/stop":
+                return stopGraphic();
             default:
                 return newFixedLengthResponse("Nothing");
         }
@@ -58,11 +65,22 @@ public class DMAPServer extends NanoHTTPD {
         return null;
     }
 
-    private Response getMagicNumber(){
-        return newFixedLengthResponse("777");
-    }
+    private Response playGraphic(Map<String, String> params){
+        String graphicId = params.get("id");
 
-    private Response getJSONNumber(){
-        return newFixedLengthResponse("{\"number\": 777}");
+        Intent intent = new Intent(PACKAGE_NAME);
+        intent.putExtra(EXTRA_GRAPHIC_ID, graphicId);
+        intent.putExtra(EXTRA_ACTION, "play");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    }
+    
+    private Response stopGraphic(){
+        Intent intent = new Intent(PACKAGE_NAME);
+        intent.putExtra(EXTRA_ACTION, "stop");
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 }

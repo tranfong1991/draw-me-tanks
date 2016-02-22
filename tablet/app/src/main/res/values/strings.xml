@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">DMAP_tablet</string>
     <string name="title_activity_server_socket_test">ServerSocketTestActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

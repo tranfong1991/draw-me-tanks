@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
     private TextView statusText;
+    private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +52,16 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ipText.setText(getIpAddress());
+                portText.setText(String.valueOf(DMAPServer.PORT));
             }
         });
 
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
-        register();
-    }
 
-    private void register(){
-        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-            }
-        }, new IntentFilter(""));
+        LocalBroadcastManager.
+                getInstance(this).
+                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
     }
 
     private String getIpAddress() {
@@ -95,5 +92,17 @@ public class ServerSocketTestActivity extends AppCompatActivity {
         }
 
         return ip;
+    }
+
+    private class DMAPBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extra = intent.getExtras();
+
+            if (extra.getString(DMAPServer.EXTRA_ACTION).equals("play")) {
+                Intent i = new Intent(ServerSocketTestActivity.this, TestActivity.class);
+                startActivity(i);
+            }
+        }
     }
 }
