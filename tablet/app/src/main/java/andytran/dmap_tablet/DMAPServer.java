@@ -3,28 +3,33 @@ package andytran.dmap_tablet;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import fi.iki.elonen.NanoHTTPD;
 
 /**
  * Created by Andy Tran on 2/18/2016.
- * Basic webserver for tablet
- *
- * TO ADD A ROUTE:
- * 1. Add a case in the switch statement inside serve()
- * 2. In each case, add the name of the route with forward slash (/) in front
- * 3. For each new route, define a function that returns a Response object.
- * 4. In case the route returns a JSON object, simply add quotes around keys
+ * Basic web server for tablet
  */
 public class DMAPServer extends NanoHTTPD {
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final int TOKEN_LENGTH = 10;
+    private static final int TOKEN_LENGTH = 20;
 
     public static final String PREF_NAME = "DMAP_PREF";
     public static final String PREF_TOKEN = "DMAP_TOKEN";
@@ -36,62 +41,76 @@ public class DMAPServer extends NanoHTTPD {
     public static final int HTTP_UNAUTHORIZED = 401;
     public static final int HTTP_NOT_FOUND = 404;
 
-    private String token;
+    private String token = "123";
     private Context context;
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
 
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-        this.token = pref.getString(PREF_TOKEN, null);
-        this.context = context;
+//        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+//        this.token = pref.getString(PREF_TOKEN, null);
+//        this.context = context;
 
         start();
     }
 
     @Override
     public Response serve(IHTTPSession session) {
-        Map<String, String> params = session.getParms();
         String uri = session.getUri();
-        String method = session.getMethod().name();
+        Method method = session.getMethod();
+        Map<String, String> params = session.getParms();
+
+        Set<String> keys = params.keySet();
+        for(String key : keys)
+            Log.i("DMAPServer", uri + ", " + method.toString() + ", " + key + ", " + params.get(key));
 
         //when the phone first connects to the tablet
-        if(method.equals("GET") && uri.equals("/generate"))
+        if(method == Method.GET && uri.equals("/generate"))
             return generateToken();
 
         //check if token is not present or doesn't match
         if(params.get("token") == null || !params.get("token").equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
-        switch(method){
-            case "GET":{
-                switch(uri){
-                    case "/play":
-                        return playGraphic(params);
-                    case "/stop":
-                        return stopGraphic();
-                }
-                break;
-            }
-            case "POST":{
-                switch(uri){
-                    case "/graphic":
-                        return postGraphic(params);
-                }
-                break;
-            }
-            case "DELETE":{
-                switch(uri){
-                    case "/graphic":
-                        return deleteGraphic(params);
-                    case "/deactivate":
-                        return deactivateToken();
-                }
-                break;
-            }
-        }
+        if(method == Method.GET)
+            return runGet(uri, params);
+        else if(method == Method.POST)
+            return runPost(uri, params, session);
+        else if(method == Method.DELETE)
+            return runDelete(uri, params);
 
         return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
+    }
+
+    private Response runGet(String uri, Map<String, String> params){
+        switch(uri){
+            case "/play":
+                return playGraphic(params);
+            case "/stop":
+                return stopGraphic();
+            default:
+                return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
+        }
+    }
+
+    private Response runPost(String uri, Map<String, String> params, IHTTPSession session){
+        switch(uri){
+            case "/graphic":
+                return postGraphic(params, session);
+            default:
+                return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
+        }
+    }
+
+    private Response runDelete(String uri, Map<String, String> params){
+        switch(uri){
+            case "/graphic":
+                return deleteGraphic(params);
+            case "/deactivate":
+                return deactivateToken();
+            default:
+                return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
+        }
     }
 
     private Response generateToken(){
@@ -111,7 +130,7 @@ public class DMAPServer extends NanoHTTPD {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_TOKEN, buffer.toString());
-        editor.commit();
+        editor.apply();
 
         this.token = buffer.toString();
 
@@ -119,21 +138,72 @@ public class DMAPServer extends NanoHTTPD {
     }
 
     private Response deactivateToken(){
-        if(token == null)
-            return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
-
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(PREF_TOKEN, null);
-        editor.commit();
+        editor.apply();
 
         this.token = null;
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
-    private Response postGraphic(Map<String, String> params){
-        return null;
+    //this generates an ID for the new graphic and sends the ID back
+    private Response postGraphic(Map<String, String> params, IHTTPSession session){
+        try {
+            Map<String, String> files = new HashMap<>();
+            session.parseBody(files);
+
+            Set<String> paramKeys = params.keySet();
+            for(String key:paramKeys){
+                Log.i("DMAPServer key", key);
+                Log.i("DMAPServer value", params.get(key));
+            }
+
+            Set<String> keys = files.keySet();
+            for(String key: keys){
+                String name = key;
+                String location = files.get(key);
+
+                Log.i("DMAPServer location", location);
+                Log.i("DMAPServer name", name);
+
+                File src = new File(location);
+                File direct = new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap");
+
+                if (!direct.exists()) {
+                    File wallpaperDirectory = new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/");
+                    wallpaperDirectory.mkdirs();
+                }
+
+                File dst = new File(new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/"), "hello.jpeg");
+                if (dst.exists()) {
+                    dst.delete();
+                }
+                try {
+                    InputStream in = new FileInputStream(src);
+                    OutputStream out = new FileOutputStream(dst);
+                    byte[] buf = new byte[65536];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    in.close();
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Intent intent = new Intent(PACKAGE_NAME);
+                intent.putExtra(EXTRA_ACTION, "show");
+                intent.putExtra(EXTRA_GRAPHIC_ID, location);
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            }
+        } catch (IOException | ResponseException e) {
+            e.printStackTrace();
+        }
+
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
     private Response deleteGraphic(Map<String, String> params){

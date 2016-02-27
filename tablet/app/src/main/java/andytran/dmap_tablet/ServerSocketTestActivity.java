@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
@@ -12,9 +13,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -26,6 +31,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
     private TextView statusText;
+    private ImageView testImage;
     private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
 
     @Override
@@ -47,6 +53,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
         portText = (TextView)findViewById(R.id.txt_port);
         ipText = (TextView)findViewById(R.id.txt_ip);
         statusText = (TextView)findViewById(R.id.txt_status);
+        testImage = (ImageView)findViewById(R.id.test_image);
 
         ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -78,7 +85,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "SiteLocalAddress: "
+                        ip += "Site Local Address: "
                                 + inetAddress.getHostAddress() + "\n";
                     }
                 }
@@ -99,6 +106,13 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             if (extra.getString(DMAPServer.EXTRA_ACTION).equals("play")) {
                 Intent i = new Intent(ServerSocketTestActivity.this, TestActivity.class);
                 startActivity(i);
+            } else {
+                String path = extra.getString(DMAPServer.EXTRA_GRAPHIC_ID);
+
+                Log.i("ServerActivity", path);
+
+                File file = new File(new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/"), "hello.jpeg");
+                Picasso.with(ServerSocketTestActivity.this).load(file).into(testImage);
             }
         }
     }
