@@ -31,7 +31,6 @@ import java.util.Enumeration;
 public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
-    private TextView statusText;
     private ImageView testImage;
     private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
 
@@ -53,7 +52,6 @@ public class ServerSocketTestActivity extends AppCompatActivity {
 
         portText = (TextView)findViewById(R.id.txt_port);
         ipText = (TextView)findViewById(R.id.txt_ip);
-        statusText = (TextView)findViewById(R.id.txt_status);
         testImage = (ImageView)findViewById(R.id.test_image);
 
         ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
@@ -108,9 +106,9 @@ public class ServerSocketTestActivity extends AppCompatActivity {
                 Intent i = new Intent(ServerSocketTestActivity.this, TestActivity.class);
                 startActivity(i);
             } else {
-                String path = extra.getString(DMAPServer.EXTRA_GRAPHIC_ID);
+                String fileName = extra.getString(DMAPServer.EXTRA_GRAPHIC_NAME);
 
-                File file = new File(getFilesDir(), "test");
+                File file = new File(getFilesDir(), fileName);
                 Ion.with(ServerSocketTestActivity.this).load(file).intoImageView(testImage);
             }
         }

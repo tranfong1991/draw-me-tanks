@@ -1,6 +1,7 @@
 package andytran.dmap_tablet;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -34,7 +35,7 @@ public class DMAPServer extends NanoHTTPD {
     public static final String PREF_NAME = "DMAP_PREF";
     public static final String PREF_TOKEN = "DMAP_TOKEN";
     public static final String PACKAGE_NAME = "andytran.dmap_tablet";
-    public static final String EXTRA_GRAPHIC_ID = "EXTRA_GRAPHIC_ID";
+    public static final String EXTRA_GRAPHIC_NAME = "EXTRA_GRAPHIC_NAME";
     public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
     public static final int HTTP_OK = 200;
@@ -49,7 +50,7 @@ public class DMAPServer extends NanoHTTPD {
 
 //        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
 //        this.token = pref.getString(PREF_TOKEN, null);
-//        this.context = context;
+        this.context = context;
 
         start();
     }
@@ -59,10 +60,6 @@ public class DMAPServer extends NanoHTTPD {
         String uri = session.getUri();
         Method method = session.getMethod();
         Map<String, String> params = session.getParms();
-
-        Set<String> keys = params.keySet();
-        for(String key : keys)
-            Log.i("DMAPServer", uri + ", " + method.toString() + ", " + key + ", " + params.get(key));
 
         //when the phone first connects to the tablet
         if(method == Method.GET && uri.equals("/generate"))
@@ -154,22 +151,14 @@ public class DMAPServer extends NanoHTTPD {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
 
-            Set<String> paramKeys = params.keySet();
-            for(String key:paramKeys){
-                Log.i("DMAPServer key", key);
-                Log.i("DMAPServer value", params.get(key));
-            }
-
+            String fileName = params.get("name");
             Set<String> keys = files.keySet();
             for(String key: keys){
-                String name = key;
-                String location = files.get(key);
-
-                saveToAppDir(location, "hello.jpeg");
+                saveFile(files.get(key), fileName);
 
                 Intent intent = new Intent(PACKAGE_NAME);
                 intent.putExtra(EXTRA_ACTION, "show");
-                intent.putExtra(EXTRA_GRAPHIC_ID, location);
+                intent.putExtra(EXTRA_GRAPHIC_NAME, fileName);
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         } catch (IOException | ResponseException e) {
@@ -187,7 +176,7 @@ public class DMAPServer extends NanoHTTPD {
         String graphicId = params.get("id");
 
         Intent intent = new Intent(PACKAGE_NAME);
-        intent.putExtra(EXTRA_GRAPHIC_ID, graphicId);
+        intent.putExtra(EXTRA_GRAPHIC_NAME, graphicId);
         intent.putExtra(EXTRA_ACTION, "play");
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -202,23 +191,23 @@ public class DMAPServer extends NanoHTTPD {
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
-    private void saveToAppDir(String source, String destination){
-        File src = new File(context.getCacheDir(), source);
+    private void saveFile(String cacheLocation, String fileName){
+        File src = new File(cacheLocation);
 
-        try {
-            InputStream in = new FileInputStream(src);
-            OutputStream out = context.openFileOutput(destination, Context.MODE_PRIVATE);
+        FileInputStream in;
+        FileOutputStream out;
+        try{
+            in = new FileInputStream(src);
+            out = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+
             byte[] buf = new byte[65536];
             int len;
-
             while ((len = in.read(buf)) > 0) {
                 out.write(buf, 0, len);
             }
-
             in.close();
             out.close();
-        } catch (IOException e) {
-            Log.i("DMAPServer", e.toString());
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }

@@ -65,6 +65,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     private ImageView chosenImage;
     private Button chooseButton;
     private Button uploadButton;
+    private EditText nameText;
 
     private String filePath;
 
@@ -76,6 +77,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         chosenImage = (ImageView) findViewById(R.id.img_chosen_pic);
+        nameText = (EditText) findViewById(R.id.txt_name);
         chooseButton = (Button) findViewById(R.id.btn_choose);
         chooseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,7 +94,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<NameValuePair> list = new ArrayList<>();
-                list.add(new BasicNameValuePair("name", "random_pic"));
+                list.add(new BasicNameValuePair("name", nameText.getText().toString()));
                 list.add(new BasicNameValuePair("image", filePath));
 
                 new UploadGraphicAsyncTask("http://10.202.142.208:8080/graphic?token=123", list).execute();
