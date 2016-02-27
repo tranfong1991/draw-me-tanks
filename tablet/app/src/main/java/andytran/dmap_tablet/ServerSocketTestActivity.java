@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -109,10 +110,8 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             } else {
                 String path = extra.getString(DMAPServer.EXTRA_GRAPHIC_ID);
 
-                Log.i("ServerActivity", path);
-
-                File file = new File(new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/"), "hello.jpeg");
-                Picasso.with(ServerSocketTestActivity.this).load(file).into(testImage);
+                File file = new File(getFilesDir(), "test");
+                Ion.with(ServerSocketTestActivity.this).load(file).intoImageView(testImage);
             }
         }
     }

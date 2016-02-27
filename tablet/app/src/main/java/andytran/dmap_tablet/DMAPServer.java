@@ -165,34 +165,7 @@ public class DMAPServer extends NanoHTTPD {
                 String name = key;
                 String location = files.get(key);
 
-                Log.i("DMAPServer location", location);
-                Log.i("DMAPServer name", name);
-
-                File src = new File(location);
-                File direct = new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap");
-
-                if (!direct.exists()) {
-                    File wallpaperDirectory = new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/");
-                    wallpaperDirectory.mkdirs();
-                }
-
-                File dst = new File(new File(Environment.getExternalStorageDirectory() + "/uploaded_dmap/"), "hello.jpeg");
-                if (dst.exists()) {
-                    dst.delete();
-                }
-                try {
-                    InputStream in = new FileInputStream(src);
-                    OutputStream out = new FileOutputStream(dst);
-                    byte[] buf = new byte[65536];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                    in.close();
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                saveToAppDir(location, "hello.jpeg");
 
                 Intent intent = new Intent(PACKAGE_NAME);
                 intent.putExtra(EXTRA_ACTION, "show");
@@ -227,5 +200,26 @@ public class DMAPServer extends NanoHTTPD {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    }
+
+    private void saveToAppDir(String source, String destination){
+        File src = new File(context.getCacheDir(), source);
+
+        try {
+            InputStream in = new FileInputStream(src);
+            OutputStream out = context.openFileOutput(destination, Context.MODE_PRIVATE);
+            byte[] buf = new byte[65536];
+            int len;
+
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            Log.i("DMAPServer", e.toString());
+            e.printStackTrace();
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -93,7 +95,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                 list.add(new BasicNameValuePair("name", "random_pic"));
                 list.add(new BasicNameValuePair("image", filePath));
 
-                new UploadGraphicAsyncTask("http://10.201.142.73:8080/graphic?token=123", list).execute();
+                new UploadGraphicAsyncTask("http://10.202.142.208:8080/graphic?token=123", list).execute();
             }
         });
     }
@@ -104,7 +106,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null){
             Uri selectedImage = data.getData();
             filePath = getRealPathFromURI(selectedImage);
-            Picasso.with(this).load(selectedImage).into(chosenImage);
+            Ion.with(this).load(filePath).intoImageView(chosenImage);
         }
     }
 
