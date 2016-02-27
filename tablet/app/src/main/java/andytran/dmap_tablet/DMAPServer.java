@@ -1,22 +1,14 @@
 package andytran.dmap_tablet;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -31,6 +23,7 @@ import fi.iki.elonen.NanoHTTPD;
 public class DMAPServer extends NanoHTTPD {
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final int TOKEN_LENGTH = 20;
+    private static final String TAG = "DMAPServer";
 
     public static final String PREF_NAME = "DMAP_PREF";
     public static final String PREF_TOKEN = "DMAP_TOKEN";
@@ -70,19 +63,20 @@ public class DMAPServer extends NanoHTTPD {
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
         if(method == Method.GET)
-            return runGet(uri, params);
+            return doGet(session);
         else if(method == Method.POST)
-            return runPost(uri, params, session);
+            return doPost(session);
         else if(method == Method.DELETE)
-            return runDelete(uri, params);
+            return doDelete(session);
 
         return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
     }
 
-    private Response runGet(String uri, Map<String, String> params){
+    private Response doGet(IHTTPSession session){
+        String uri = session.getUri();
         switch(uri){
             case "/play":
-                return playGraphic(params);
+                return playGraphic(session);
             case "/stop":
                 return stopGraphic();
             default:
@@ -90,19 +84,21 @@ public class DMAPServer extends NanoHTTPD {
         }
     }
 
-    private Response runPost(String uri, Map<String, String> params, IHTTPSession session){
+    private Response doPost(IHTTPSession session){
+        String uri = session.getUri();
         switch(uri){
             case "/graphic":
-                return postGraphic(params, session);
+                return postGraphic(session);
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
         }
     }
 
-    private Response runDelete(String uri, Map<String, String> params){
+    private Response doDelete(IHTTPSession session){
+        String uri = session.getUri();
         switch(uri){
             case "/graphic":
-                return deleteGraphic(params);
+                return deleteGraphic(session);
             case "/deactivate":
                 return deactivateToken();
             default:
@@ -146,12 +142,14 @@ public class DMAPServer extends NanoHTTPD {
     }
 
     //this generates an ID for the new graphic and sends the ID back
-    private Response postGraphic(Map<String, String> params, IHTTPSession session){
+    private Response postGraphic(IHTTPSession session){
         try {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
 
+            Map<String, String> params = session.getParms();
             String fileName = params.get("name");
+
             Set<String> keys = files.keySet();
             for(String key: keys){
                 saveFile(files.get(key), fileName);
@@ -168,11 +166,12 @@ public class DMAPServer extends NanoHTTPD {
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
-    private Response deleteGraphic(Map<String, String> params){
+    private Response deleteGraphic(IHTTPSession session){
         return null;
     }
 
-    private Response playGraphic(Map<String, String> params){
+    private Response playGraphic(IHTTPSession session){
+        Map<String, String> params = session.getParms();
         String graphicId = params.get("id");
 
         Intent intent = new Intent(PACKAGE_NAME);

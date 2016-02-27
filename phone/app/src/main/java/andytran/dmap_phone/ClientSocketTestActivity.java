@@ -2,61 +2,35 @@ package andytran.dmap_phone;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
 public class ClientSocketTestActivity extends AppCompatActivity {
 
@@ -95,7 +69,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ArrayList<NameValuePair> list = new ArrayList<>();
                 list.add(new BasicNameValuePair("name", nameText.getText().toString()));
-                list.add(new BasicNameValuePair("image", filePath));
+                list.add(new BasicNameValuePair("graphic", filePath));
 
                 new UploadGraphicAsyncTask("http://10.202.142.208:8080/graphic?token=123", list).execute();
             }
@@ -134,6 +108,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             HttpClient httpClient = new DefaultHttpClient();
+//            HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(url);
 
             try {
@@ -144,7 +119,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                     String name = nameValuePairs.get(i).getName();
                     String value = nameValuePairs.get(i).getValue();
 
-                    if(name.equalsIgnoreCase("image"))
+                    if(name.equalsIgnoreCase("graphic"))
                         builder.addPart(name, new FileBody(new File(value)));
                     else builder.addPart(name, new StringBody(value, ContentType.TEXT_PLAIN));
                 }
