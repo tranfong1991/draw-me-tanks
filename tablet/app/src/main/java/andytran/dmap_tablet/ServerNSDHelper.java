@@ -13,13 +13,11 @@ public class ServerNSDHelper {
     Context mContext;
 
     NsdManager mNsdManager;
-    NsdManager.ResolveListener mResolveListener;
-    NsdManager.DiscoveryListener mDiscoveryListener;
     NsdManager.RegistrationListener mRegistrationListener;
 
     public static final String SERVICE_TYPE = "_http._tcp.";
 
-    public static final String TAG = "NsdHelper";
+    public static final String TAG = "ServerNsdHelper";
     public String mServiceName = "DMAP";
 
     NsdServiceInfo mService;
