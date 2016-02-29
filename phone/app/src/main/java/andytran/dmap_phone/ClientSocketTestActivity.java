@@ -29,7 +29,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 public class ClientSocketTestActivity extends AppCompatActivity {
@@ -40,8 +39,8 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     private Button chooseButton;
     private Button uploadButton;
     private EditText nameText;
-
     private String filePath;
+    private ClientNSDHelper nsdHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +48,10 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_client_socket_test);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        nsdHelper = new ClientNSDHelper(this);
+        nsdHelper.initializeNsd();
+        nsdHelper.discoverServices();
 
         chosenImage = (ImageView) findViewById(R.id.img_chosen_pic);
         nameText = (EditText) findViewById(R.id.txt_name);

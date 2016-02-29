@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -27,7 +26,8 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
     private ImageView testImage;
-    private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
+    private BroadcastReceiver receiver;
+    private ServerNSDHelper nsdHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +57,14 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             }
         });
 
+        nsdHelper = new ServerNSDHelper(this);
+        nsdHelper.initializeNsd();
+        nsdHelper.registerService(DMAPServer.PORT);
+
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
 
+        receiver = new DMAPBroadcastReceiver();
         LocalBroadcastManager.
                 getInstance(this).
                 registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
@@ -90,6 +95,12 @@ public class ServerSocketTestActivity extends AppCompatActivity {
         }
 
         return ip;
+    }
+
+    @Override
+    protected void onDestroy() {
+        nsdHelper.tearDown();
+        super.onDestroy();
     }
 
     private class DMAPBroadcastReceiver extends BroadcastReceiver{
