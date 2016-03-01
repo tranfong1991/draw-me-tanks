@@ -3,6 +3,7 @@
     package="andytran.dmap_tablet" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,8 @@
             android:name=".ServerSocketTestActivity"
             android:label="@string/title_activity_server_socket_test">
         </activity>
+
+        <service android:name=".DMAPIntentService" />
     </application>
 
 </manifest>

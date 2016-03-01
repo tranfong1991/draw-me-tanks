@@ -1,28 +1,33 @@
 package andytran.dmap_tablet;
 
-import android.os.AsyncTask;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.Enumeration;
 
 public class ServerSocketTestActivity extends AppCompatActivity {
-    private ServerSocket serverSocket;
     private TextView portText;
     private TextView ipText;
-    private TextView statusText;
+    private ImageView testImage;
+    private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,58 +47,22 @@ public class ServerSocketTestActivity extends AppCompatActivity {
 
         portText = (TextView)findViewById(R.id.txt_port);
         ipText = (TextView)findViewById(R.id.txt_ip);
-        statusText = (TextView)findViewById(R.id.txt_status);
+        testImage = (ImageView)findViewById(R.id.test_image);
 
         ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ipText.setText(getIpAddress());
+                portText.setText(String.valueOf(DMAPServer.PORT));
             }
         });
 
-        new ServerSocketAsync().execute();
-    }
+        Intent intent = new Intent(this, DMAPIntentService.class);
+        startService(intent);
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(serverSocket != null){
-            try {
-                serverSocket.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private class ServerSocketAsync extends AsyncTask<Void, Void, Void>{
-        static final int SocketServerPORT = 8080;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                serverSocket = new ServerSocket(SocketServerPORT);
-                ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        portText.setText("Waiting for connection in " + serverSocket.getLocalPort());
-                    }
-                });
-
-                while(true){
-                    serverSocket.accept();
-                    ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            statusText.setText("Success");
-                        }
-                    });
-                }
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            return null;
-        }
+        LocalBroadcastManager.
+                getInstance(this).
+                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
     }
 
     private String getIpAddress() {
@@ -110,19 +79,33 @@ public class ServerSocketTestActivity extends AppCompatActivity {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "SiteLocalAddress: "
+                        ip += "Site Local Address: "
                                 + inetAddress.getHostAddress() + "\n";
                     }
-
                 }
-
             }
-
         } catch (SocketException e) {
             e.printStackTrace();
             ip += "Something Wrong! " + e.toString() + "\n";
         }
 
         return ip;
+    }
+
+    private class DMAPBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extra = intent.getExtras();
+
+            if (extra.getString(DMAPServer.EXTRA_ACTION).equals("play")) {
+                Intent i = new Intent(ServerSocketTestActivity.this, TestActivity.class);
+                startActivity(i);
+            } else {
+                String fileName = extra.getString(DMAPServer.EXTRA_GRAPHIC_NAME);
+
+                File file = new File(getFilesDir(), fileName);
+                Ion.with(ServerSocketTestActivity.this).load(file).intoImageView(testImage);
+            }
+        }
     }
 }
