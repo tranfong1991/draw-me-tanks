@@ -71,7 +71,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                 list.add(new BasicNameValuePair("name", nameText.getText().toString()));
                 list.add(new BasicNameValuePair("graphic", filePath));
 
-                new UploadGraphicAsyncTask("http://10.202.142.208:8080/graphic?token=123", list).execute();
+                new UploadGraphicAsyncTask("http://10.201.132.195:8080/graphic?token=123", list).execute();
             }
         });
     }
