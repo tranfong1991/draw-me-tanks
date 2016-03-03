@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoadScreen"
+            android:name=".LoadActivity"
             android:label="@string/title_activity_load_screen"
             android:theme="@style/AppTheme.NoActionBar" >
 
@@ -22,14 +22,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MainScreen"
-            android:label="@string/title_activity_main_screen"
-            android:parentActivityName="andytran.dmap_phone.LoadScreen" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="andytran.dmap_phone.MainScreen" />
-        </activity>
         <activity
             android:name=".ClientSocketTestActivity"
             android:label="@string/title_activity_client_socket_test">

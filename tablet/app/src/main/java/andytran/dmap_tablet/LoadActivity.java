@@ -1,16 +1,12 @@
-package andytran.dmap_phone;
+package andytran.dmap_tablet;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
 
-public class LoadScreen extends AppCompatActivity {
-    public String ipAddress = "10.0.2.15";
-    public int port = 8080;
+public class LoadActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,24 +33,5 @@ public class LoadScreen extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void submitData(View view){
-//
-//        Intent intent = new Intent(this, HamActivity.class);
-//        Button buttonText = (Button) findViewById(R.id.button);
-//        String message = buttonText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
-//        startActivity(intent);
-
-        Intent intent = new Intent(this, MainScreen.class);
-        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
-        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
-        ipAddress = ipAddressText.getText().toString();
-        port = Integer.parseInt(portNumberText.getText().toString());
-
-        startActivity(intent);
-
-
     }
 }
