@@ -87,6 +87,8 @@ public class DMAPServer extends NanoHTTPD {
     private Response doPost(IHTTPSession session){
         String uri = session.getUri();
         switch(uri){
+            case "/validate":
+                return validateToken(session);
             case "/graphic":
                 return postGraphic(session);
             default:
@@ -138,6 +140,10 @@ public class DMAPServer extends NanoHTTPD {
 
         this.token = null;
 
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    }
+
+    private Response validateToken(IHTTPSession session){
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
