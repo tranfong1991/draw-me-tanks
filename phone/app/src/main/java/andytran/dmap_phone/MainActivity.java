@@ -8,13 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.content.Intent;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
     Button addImage;
@@ -27,14 +21,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Log.v("LstAdapter", "Inside LstAdapter");
-        CustomAdapter adapter = new CustomAdapter(this,items, imgid);
+        GraphicAdapter adapter = new GraphicAdapter(this,items, imgid);
         list = (ListView)findViewById(R.id.listView);
         list.setAdapter(adapter);
 
 //        ListView listView = (ListView) findViewById(R.id.listView); this is the code that works
 //        ArrayList<String> itemList = new ArrayList<String>();
 //        itemList.addAll(Arrays.asList(items));
-//        lsAdapter = new ArrayAdapter<String>(this,R.layout.item, R.id.textView1, items);  this is the code that works
+//        lsAdapter = new ArrayAdapter<String>(this,R.layout.graphic_item, R.id.textView1, items);  this is the code that works
 //        listView.setAdapter(lsAdapter);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 //    private void populateListView(){
 //        String[] myItems = {"blue","red"};
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item, myItems);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.graphic_item, myItems);
 //        ListView list = (ListView) findViewById(R.id.image)
 //    }
 

@@ -8,13 +8,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-public class LoadActivity extends AppCompatActivity {
+public class ChooseEMILYActivity extends AppCompatActivity {
     public String ipAddress = "10.0.2.15";
     public int port = 8080;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_load);
+        setContentView(R.layout.activity_choose_EMILY);
     }
 
     @Override
@@ -26,7 +27,7 @@ public class LoadActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
+        // Handle action bar graphic_item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();

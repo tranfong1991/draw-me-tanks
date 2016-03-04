@@ -108,7 +108,6 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             HttpClient httpClient = new DefaultHttpClient();
-//            HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(url);
 
             try {

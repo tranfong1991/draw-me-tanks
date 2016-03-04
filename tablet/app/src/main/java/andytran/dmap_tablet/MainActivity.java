@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -23,7 +22,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class ServerSocketTestActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private TextView portText;
     private TextView ipText;
     private ImageView testImage;
@@ -32,7 +31,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_server_socket_test);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,7 +48,7 @@ public class ServerSocketTestActivity extends AppCompatActivity {
         ipText = (TextView)findViewById(R.id.txt_ip);
         testImage = (ImageView)findViewById(R.id.test_image);
 
-        ServerSocketTestActivity.this.runOnUiThread(new Runnable() {
+        MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 ipText.setText(getIpAddress());
@@ -98,13 +97,12 @@ public class ServerSocketTestActivity extends AppCompatActivity {
             Bundle extra = intent.getExtras();
 
             if (extra.getString(DMAPServer.EXTRA_ACTION).equals("play")) {
-                Intent i = new Intent(ServerSocketTestActivity.this, TestActivity.class);
-                startActivity(i);
+
             } else {
                 String fileName = extra.getString(DMAPServer.EXTRA_GRAPHIC_NAME);
 
                 File file = new File(getFilesDir(), fileName);
-                Ion.with(ServerSocketTestActivity.this).load(file).intoImageView(testImage);
+                Ion.with(MainActivity.this).load(file).intoImageView(testImage);
             }
         }
     }
