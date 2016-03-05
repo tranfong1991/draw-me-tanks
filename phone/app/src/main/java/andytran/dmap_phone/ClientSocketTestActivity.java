@@ -45,7 +45,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client_socket_test);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,7 +74,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                 list.add(new BasicNameValuePair("name", nameText.getText().toString()));
                 list.add(new BasicNameValuePair("graphic", filePath));
 
-                new UploadGraphicAsyncTask("http://10.202.142.208:8080/graphic?token=123", list).execute();
+                new UploadGraphicAsyncTask("http://10.201.132.195:8080/graphic?token=123", list).execute();
             }
         });
     }
@@ -111,7 +111,6 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             HttpClient httpClient = new DefaultHttpClient();
-//            HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost httpPost = new HttpPost(url);
 
             try {

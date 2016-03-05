@@ -9,21 +9,18 @@ import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
 
 public class ServerNSDHelper {
-
-    Context mContext;
-
-    NsdManager mNsdManager;
-    NsdManager.RegistrationListener mRegistrationListener;
-
     public static final String SERVICE_TYPE = "_http._tcp.";
-
     public static final String TAG = "ServerNsdHelper";
     public String mServiceName = "DMAP";
 
-    NsdServiceInfo mService;
+    private Context mContext;
+    private NsdManager mNsdManager;
+    private NsdServiceInfo mService;
+    private NsdManager.RegistrationListener mRegistrationListener;
 
     public ServerNSDHelper(Context context) {
         mContext = context;
+        mService = null;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -45,6 +42,7 @@ public class ServerNSDHelper {
 
             @Override
             public void onServiceUnregistered(NsdServiceInfo arg0) {
+                mServiceName = null;
             }
 
             @Override
@@ -64,7 +62,7 @@ public class ServerNSDHelper {
                 serviceInfo, NsdManager.PROTOCOL_DNS_SD, mRegistrationListener);
     }
 
-    public void tearDown() {
+    public void unregisterService() {
         mNsdManager.unregisterService(mRegistrationListener);
     }
 }

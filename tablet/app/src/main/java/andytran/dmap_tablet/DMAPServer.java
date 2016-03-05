@@ -1,8 +1,11 @@
 package andytran.dmap_tablet;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.File;
@@ -21,8 +24,15 @@ import fi.iki.elonen.NanoHTTPD;
  * Basic web server for tablet
  */
 public class DMAPServer extends NanoHTTPD {
-    private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public enum Action{
+        GO_TO_LOAD,
+        STOP_NSD,
+        PLAY_GRAPHIC,
+        STOP_GRAPHIC
+    }
+
     private static final int TOKEN_LENGTH = 20;
+    private static final int FILE_NAME_LENGTH = 10;
     private static final String TAG = "DMAPServer";
 
     public static final String PREF_NAME = "DMAP_PREF";
@@ -32,18 +42,26 @@ public class DMAPServer extends NanoHTTPD {
     public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
     public static final int HTTP_OK = 200;
+    public static final int HTTP_CREATED = 201;
     public static final int HTTP_UNAUTHORIZED = 401;
     public static final int HTTP_NOT_FOUND = 404;
 
-    private String token = "123";
+    private String token;
     private Context context;
+    private GraphicDbHelper dbHelper;
+    private Map<Long, String> mapping;  //for faster entry access
+    private boolean sessionEstablished = false;
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
 
-//        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-//        this.token = pref.getString(PREF_TOKEN, null);
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        this.token = pref.getString(PREF_TOKEN, null);
+
         this.context = context;
+        this.dbHelper = new GraphicDbHelper(context);
+        this.mapping = new HashMap<>();
+        populateMappingFromDb();
 
         start();
     }
@@ -87,7 +105,9 @@ public class DMAPServer extends NanoHTTPD {
     private Response doPost(IHTTPSession session){
         String uri = session.getUri();
         switch(uri){
-            case "/graphic":
+            case "/ping":
+                return pingServer();
+            case "/graphic":    //http://localhost:8080/graphic?token=XXXXX
                 return postGraphic(session);
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
@@ -106,28 +126,26 @@ public class DMAPServer extends NanoHTTPD {
         }
     }
 
-    private Response generateToken(){
+    //there might be more than one phone trying to obtain the access token, thus use synchronized
+    private synchronized Response generateToken(){
         //device already has a token
         if(token != null)
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
-        StringBuffer buffer = new StringBuffer();
-        Random rand = new Random();
+        this.token = Utils.generateRandomString(TOKEN_LENGTH);
 
-        //randomly generate a token
-        for(int i = 0; i<TOKEN_LENGTH; i++){
-            char c = ALPHABET.charAt(rand.nextInt(ALPHABET.length()));
-            buffer.append(c);
-        }
-
+        //save token to shared preferences
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_TOKEN, buffer.toString());
+        editor.putString(PREF_TOKEN, this.token);
         editor.apply();
 
-        this.token = buffer.toString();
+        //tells the NSDBroadcastActivity to stop nsd and switch to Main Activity once a token is generated
+        Intent intent = new Intent(PACKAGE_NAME);
+        intent.putExtra(EXTRA_ACTION, Action.STOP_NSD);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
-        return newFixedLengthResponse("{\"token\" : \"" + buffer.toString() + "\"}");
+        return newFixedLengthResponse("{\"token\" : \"" + this.token + "\"}");
     }
 
     private Response deactivateToken(){
@@ -138,6 +156,14 @@ public class DMAPServer extends NanoHTTPD {
 
         this.token = null;
 
+        Intent intent = new Intent(PACKAGE_NAME);
+        intent.putExtra(EXTRA_ACTION, Action.GO_TO_LOAD);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    }
+
+    private Response pingServer(){
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
@@ -147,36 +173,47 @@ public class DMAPServer extends NanoHTTPD {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
 
-            Map<String, String> params = session.getParms();
-            String fileName = params.get("name");
-
             Set<String> keys = files.keySet();
             for(String key: keys){
-                saveFile(files.get(key), fileName);
+                String fileName = Utils.generateRandomString(FILE_NAME_LENGTH);
+                long id = addEntryToDb(fileName);
 
-                Intent intent = new Intent(PACKAGE_NAME);
-                intent.putExtra(EXTRA_ACTION, "show");
-                intent.putExtra(EXTRA_GRAPHIC_NAME, fileName);
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                mapping.put(id, fileName);
+                saveFile(files.get(key), fileName);
             }
         } catch (IOException | ResponseException e) {
             e.printStackTrace();
         }
 
-        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+        return newFixedLengthResponse("{\"status\" : " + HTTP_CREATED + "}");
     }
 
     private Response deleteGraphic(IHTTPSession session){
-        return null;
+        Map<String, String> params = session.getParms();
+        String graphicId = params.get("id");
+
+        if(graphicId == null)
+            return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
+
+        if(!deleteFileWithId(Long.getLong(graphicId)))
+            return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
+
+        mapping.remove(Long.getLong(graphicId));
+        deleteEntryFromDb(Long.getLong(graphicId));
+        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
     private Response playGraphic(IHTTPSession session){
         Map<String, String> params = session.getParms();
         String graphicId = params.get("id");
 
+        String fileName = mapping.get(Long.getLong(graphicId));
+        if(fileName == null)
+            return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
+
         Intent intent = new Intent(PACKAGE_NAME);
-        intent.putExtra(EXTRA_GRAPHIC_NAME, graphicId);
-        intent.putExtra(EXTRA_ACTION, "play");
+        intent.putExtra(EXTRA_GRAPHIC_NAME, fileName);
+        intent.putExtra(EXTRA_ACTION, Action.PLAY_GRAPHIC);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
@@ -184,7 +221,7 @@ public class DMAPServer extends NanoHTTPD {
 
     private Response stopGraphic(){
         Intent intent = new Intent(PACKAGE_NAME);
-        intent.putExtra(EXTRA_ACTION, "stop");
+        intent.putExtra(EXTRA_ACTION, Action.STOP_GRAPHIC);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
@@ -209,5 +246,52 @@ public class DMAPServer extends NanoHTTPD {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean deleteFileWithId(long id){
+        String fileName = mapping.get(id);
+
+        if(fileName == null)
+            return false;
+
+        context.deleteFile(fileName);
+        return true;
+    }
+
+    private void populateMappingFromDb(){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                GraphicContract.GraphicEntry._ID,
+                GraphicContract.GraphicEntry.COLUMN_GRAPHIC_NAME
+        };
+        Cursor cursor = db.query(GraphicContract.GraphicEntry.TABLE_NAME, projection, null, null, null, null, null);
+
+        //check if table is empty
+        if(!cursor.moveToFirst())
+            return;
+
+        do{
+            long id = cursor.getLong(cursor.getColumnIndex(GraphicContract.GraphicEntry._ID));
+            String fileName = cursor.getString(cursor.getColumnIndex(GraphicContract.GraphicEntry.COLUMN_GRAPHIC_NAME));
+
+            mapping.put(id, fileName);
+        }while(cursor.moveToNext());
+    }
+
+    //return row id or -1 if error
+    private long addEntryToDb(String fileName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(GraphicContract.GraphicEntry.COLUMN_GRAPHIC_NAME, fileName);
+
+        return db.insert(GraphicContract.GraphicEntry.TABLE_NAME, null, values);
+    }
+
+    private void deleteEntryFromDb(long id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(GraphicContract.GraphicEntry.TABLE_NAME,
+                GraphicContract.GraphicEntry._ID + " = " + id,
+                null);
     }
 }
