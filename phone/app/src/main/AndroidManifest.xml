@@ -15,16 +15,15 @@
             android:name=".ChooseEMILYActivity"
             android:label="@string/title_activity_load_screen"
             android:theme="@style/AppTheme.NoActionBar" >
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".ClientSocketTestActivity"
             android:label="@string/title_activity_client_socket_test">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>

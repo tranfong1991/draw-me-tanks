@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class NSDBroadcastActivity extends AppCompatActivity {
     private ServerNSDHelper nsdHelper;
@@ -17,6 +19,14 @@ public class NSDBroadcastActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nsd_broadcast);
+
+        final TextView ip = (TextView)findViewById(R.id.textView2);
+        NSDBroadcastActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ip.setText(Utils.getIpAddress());
+            }
+        });
 
         //start DMAP server
         Intent intent = new Intent(this, DMAPIntentService.class);
@@ -57,6 +67,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
             switch(action){
                 case STOP_NSD:{
                     nsdHelper.unregisterService();
+                    Toast.makeText(NSDBroadcastActivity.this, "NSD Stopped", Toast.LENGTH_SHORT).show();
 
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);

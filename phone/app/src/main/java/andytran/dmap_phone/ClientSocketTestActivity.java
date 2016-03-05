@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 
@@ -20,14 +21,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -39,15 +43,14 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     private Button chooseButton;
     private Button uploadButton;
     private EditText nameText;
+    private EditText ipText;
     private String filePath;
     private ClientNSDHelper nsdHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_client_socket_test);
 
         nsdHelper = new ClientNSDHelper(this);
         nsdHelper.initializeNsd();
@@ -55,6 +58,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
 
         chosenImage = (ImageView) findViewById(R.id.img_chosen_pic);
         nameText = (EditText) findViewById(R.id.txt_name);
+        ipText = (EditText) findViewById(R.id.txt_ip);
         chooseButton = (Button) findViewById(R.id.btn_choose);
         chooseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +78,9 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                 list.add(new BasicNameValuePair("name", nameText.getText().toString()));
                 list.add(new BasicNameValuePair("graphic", filePath));
 
-                new UploadGraphicAsyncTask("http://10.201.132.195:8080/graphic?token=123", list).execute();
+                String ip = ipText.getText().toString();
+
+                new UploadGraphicAsyncTask("http://" + ip + ":8080/graphic?token=NPXM7UR2197QN375DW1T", list).execute();
             }
         });
     }
@@ -99,7 +105,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         return path;
     }
 
-    private class UploadGraphicAsyncTask extends AsyncTask<Void, Void, Void>{
+    private class UploadGraphicAsyncTask extends AsyncTask<Void, Void, String>{
         private String url;
         private List<NameValuePair> nameValuePairs;
 
@@ -109,7 +115,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
 
@@ -127,13 +133,18 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                 }
 
                 httpPost.setEntity(builder.build());
-                httpClient.execute(httpPost);
-
+                HttpResponse r = httpClient.execute(httpPost);
+                ResponseHandler<String> handler = new BasicResponseHandler();
+                return handler.handleResponse(r);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        protected void onPostExecute(String result) {
+            Toast.makeText(ClientSocketTestActivity.this, result, Toast.LENGTH_LONG).show();
         }
     }
 }

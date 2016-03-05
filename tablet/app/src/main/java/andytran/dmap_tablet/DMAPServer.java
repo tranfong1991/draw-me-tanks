@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -167,23 +168,39 @@ public class DMAPServer extends NanoHTTPD {
 
     //this generates an ID for the new graphic and sends the ID back
     private Response postGraphic(IHTTPSession session){
+        StringBuffer buffer;
         try {
             Map<String, String> files = new HashMap<>();
             session.parseBody(files);
 
+            ArrayList<Long> ids = new ArrayList<>();
             Set<String> keys = files.keySet();
             for(String key: keys){
                 String fileName = Utils.generateRandomString(FILE_NAME_LENGTH);
                 long id = addEntryToDb(fileName);
 
+                ids.add(id);
                 mapping.put(id, fileName);
                 saveFile(files.get(key), fileName);
             }
+
+            //append graphic ids to the json
+            buffer = new StringBuffer();
+            buffer.append("{\"status\" : ");
+            buffer.append(HTTP_CREATED);
+            buffer.append(", \"ids:\"[");
+            for(int i = 0; i<ids.size(); i++){
+                buffer.append(ids.get(i));
+                if(i != ids.size() - 1)
+                    buffer.append(",");
+            }
+            buffer.append("]}");
         } catch (IOException | ResponseException e) {
             e.printStackTrace();
+            return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
         }
 
-        return newFixedLengthResponse("{\"status\" : " + HTTP_CREATED + "}");
+        return newFixedLengthResponse(buffer.toString());
     }
 
     private Response deleteGraphic(IHTTPSession session){
@@ -193,11 +210,12 @@ public class DMAPServer extends NanoHTTPD {
         if(graphicId == null)
             return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
 
-        if(!deleteFileWithId(Long.getLong(graphicId)))
+        if(!deleteFileWithId(Long.parseLong(graphicId)))
             return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
 
-        mapping.remove(Long.getLong(graphicId));
-        deleteEntryFromDb(Long.getLong(graphicId));
+        mapping.remove(Long.parseLong(graphicId));
+        deleteEntryFromDb(Long.parseLong(graphicId));
+
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
@@ -205,7 +223,7 @@ public class DMAPServer extends NanoHTTPD {
         Map<String, String> params = session.getParms();
         String graphicId = params.get("id");
 
-        String fileName = mapping.get(Long.getLong(graphicId));
+        String fileName = mapping.get(Long.parseLong(graphicId));
         if(fileName == null)
             return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
 
