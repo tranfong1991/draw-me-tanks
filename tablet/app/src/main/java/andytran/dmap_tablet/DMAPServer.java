@@ -49,7 +49,6 @@ public class DMAPServer extends NanoHTTPD {
     private Context context;
     private GraphicDbHelper dbHelper;
     private Map<Long, String> mapping;  //for faster entry access
-    private boolean sessionEstablished = false;
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
