@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -267,8 +266,10 @@ public class DMAPServer extends NanoHTTPD {
         Cursor cursor = db.query(GraphicContract.GraphicEntry.TABLE_NAME, projection, null, null, null, null, null);
 
         //check if table is empty
-        if(!cursor.moveToFirst())
+        if(!cursor.moveToFirst()) {
+            cursor.close();
             return;
+        }
 
         do{
             long id = cursor.getLong(cursor.getColumnIndex(GraphicContract.GraphicEntry._ID));
@@ -276,6 +277,8 @@ public class DMAPServer extends NanoHTTPD {
 
             mapping.put(id, fileName);
         }while(cursor.moveToNext());
+
+        cursor.close();
     }
 
     //return row id or -1 if error

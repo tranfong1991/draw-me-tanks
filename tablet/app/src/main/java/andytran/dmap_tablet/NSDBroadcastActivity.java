@@ -16,7 +16,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_load);
+        setContentView(R.layout.activity_nsd_broadcast);
 
         //start DMAP server
         Intent intent = new Intent(this, DMAPIntentService.class);

@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".NSDBroadcastActivity"
-            android:label="@string/title_activity_load_screen"
+            android:label="@string/title_activity_nsd"
 
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_server_socket_test">
+            android:label="@string/title_activity_main">
         </activity>
 
         <service android:name=".DMAPIntentService" />
