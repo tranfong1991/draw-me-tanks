@@ -4,9 +4,8 @@
     <string name="title_activity_load_screen">LoadScreen</string>
     <string name="action_settings">Actions</string>
 
-    <string name="loading_notice">Connecting to phone</string>
+    <string name="loading_notice">Waiting for connection</string>
     <string name="salutations">Hi, my name is</string>
     <string name="tablet_name">EMILY</string>
-    <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_main">MainActivity</string>
 </resources>

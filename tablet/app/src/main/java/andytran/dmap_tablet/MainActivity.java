@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,11 +23,13 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView portText;
-    private TextView ipText;
-    private ImageView testImage;
+    private ImageView graphicView;
+    private Map<Integer, String> mapping;
+    private GraphicDbHelper dbHelper = new GraphicDbHelper(this);
     private BroadcastReceiver receiver = new DMAPBroadcastReceiver();
 
     @Override
@@ -35,60 +39,33 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        portText = (TextView)findViewById(R.id.txt_port);
-        ipText = (TextView)findViewById(R.id.txt_ip);
-        testImage = (ImageView)findViewById(R.id.test_image);
-
-        MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ipText.setText(getIpAddress());
-                portText.setText(String.valueOf(DMAPServer.PORT));
-            }
-        });
-
-        Intent intent = new Intent(this, DMAPIntentService.class);
-        startService(intent);
+        graphicView = (ImageView)findViewById(R.id.graphic_view);
+        mapping = new HashMap<>();
+        populateMappingFromDb();
 
         LocalBroadcastManager.
                 getInstance(this).
                 registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
     }
 
-    private String getIpAddress() {
-        String ip = "";
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = enumNetworkInterfaces
-                        .nextElement();
-                Enumeration<InetAddress> enumInetAddress = networkInterface
-                        .getInetAddresses();
-                while (enumInetAddress.hasMoreElements()) {
-                    InetAddress inetAddress = enumInetAddress.nextElement();
+    private void populateMappingFromDb(){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                GraphicContract.GraphicEntry._ID,
+                GraphicContract.GraphicEntry.COLUMN_GRAPHIC_PATH
+        };
+        Cursor cursor = db.query(GraphicContract.GraphicEntry.TABLE_NAME, projection, null, null, null, null, null);
 
-                    if (inetAddress.isSiteLocalAddress()) {
-                        ip += "Site Local Address: "
-                                + inetAddress.getHostAddress() + "\n";
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
-        }
+        //check if table is empty
+        if(!cursor.moveToFirst())
+            return;
 
-        return ip;
+        do{
+            int id = cursor.getInt(cursor.getColumnIndex(GraphicContract.GraphicEntry._ID));
+            String path = cursor.getString(cursor.getColumnIndex(GraphicContract.GraphicEntry.COLUMN_GRAPHIC_PATH));
+
+            mapping.put(id, path);
+        }while(cursor.moveToNext());
     }
 
     private class DMAPBroadcastReceiver extends BroadcastReceiver{
@@ -102,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 String fileName = extra.getString(DMAPServer.EXTRA_GRAPHIC_NAME);
 
                 File file = new File(getFilesDir(), fileName);
-                Ion.with(MainActivity.this).load(file).intoImageView(testImage);
+                Ion.with(MainActivity.this).load(file).intoImageView(graphicView);
             }
         }
     }

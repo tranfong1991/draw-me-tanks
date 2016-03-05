@@ -37,6 +37,7 @@ public class DMAPServer extends NanoHTTPD {
 
     private String token = "123";
     private Context context;
+    private boolean sessionEstablished = false;
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
@@ -87,8 +88,8 @@ public class DMAPServer extends NanoHTTPD {
     private Response doPost(IHTTPSession session){
         String uri = session.getUri();
         switch(uri){
-            case "/validate":
-                return validateToken(session);
+            case "/establish":
+                return establishSession();
             case "/graphic":
                 return postGraphic(session);
             default:
@@ -143,8 +144,16 @@ public class DMAPServer extends NanoHTTPD {
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }
 
-    private Response validateToken(IHTTPSession session){
-        return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+    private Response establishSession(){
+        if(!sessionEstablished) {
+            Intent intent = new Intent(PACKAGE_NAME);
+            intent.putExtra(EXTRA_ACTION, "main");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+            return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
+        }
+
+        return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
     }
 
     //this generates an ID for the new graphic and sends the ID back

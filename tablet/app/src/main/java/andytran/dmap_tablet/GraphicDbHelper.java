@@ -18,7 +18,7 @@ public class GraphicDbHelper extends SQLiteOpenHelper{
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + GraphicContract.GraphicEntry.TABLE_NAME + " (" +
                     GraphicContract.GraphicEntry._ID + " INTEGER PRIMARY KEY," +
-                    GraphicContract.GraphicEntry.COLUMN_GRAPHIC_NAME + TEXT_TYPE  + ")";
+                    GraphicContract.GraphicEntry.COLUMN_GRAPHIC_PATH + TEXT_TYPE  + ")";
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + GraphicContract.GraphicEntry.TABLE_NAME;
 

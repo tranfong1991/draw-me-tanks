@@ -10,6 +10,6 @@ public class GraphicContract {
 
     public static abstract class GraphicEntry implements BaseColumns{
         public static final String TABLE_NAME = "graphics";
-        public static final String COLUMN_GRAPHIC_NAME = "name";
+        public static final String COLUMN_GRAPHIC_PATH = "path";
     }
 }
