@@ -4,6 +4,7 @@ import android.provider.BaseColumns;
 
 /**
  * Created by Andy Tran on 3/4/2016.
+ * Table containing 2 columns: _ID, graphic file name
  */
 public class GraphicContract {
     public GraphicContract(){}

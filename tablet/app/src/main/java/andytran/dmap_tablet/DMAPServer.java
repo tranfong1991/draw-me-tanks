@@ -49,7 +49,7 @@ public class DMAPServer extends NanoHTTPD {
     private String token;
     private Context context;
     private GraphicDbHelper dbHelper;
-    private Map<Long, String> mapping;  //for faster entry access
+    private Map<Long, String> mapping;  //for faster entry access instead of querying database every time
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
