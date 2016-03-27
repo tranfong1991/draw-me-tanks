@@ -11,10 +11,11 @@
     <string name="test_ip">127.0.0.1</string>
     <string name="test_port">8080</string>
 
-
+    <!-- Strings related to Connection Screens -->
     <string name="pref_connection_alert">Connecting to </string>
     <string name="tablet_name">EMILY</string>
-    <string name="submit">SUBMIT</string>
+    <string name="pref_submit">SUBMIT</string>
+    <string name="pref_return_to_menu">RETURN TO MENU</string>
     <string name="title_activity_main_screen">MainScreen</string>
     <string name="menu_placeholder">This is where the menu will go when everything finishes loading  :)</string>
     <string name="title_activity_main">MainActivity</string>
