@@ -8,7 +8,7 @@
         android:weightSum="1"
         android:layout_height="match_parent">
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/trash_can"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@drawable/images"
