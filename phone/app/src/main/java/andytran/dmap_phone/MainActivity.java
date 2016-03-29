@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.daimajia.swipe.SwipeLayout;
+
 public class MainActivity extends AppCompatActivity {
     Button addImage;
     private ArrayAdapter<String> lsAdapter;
@@ -20,9 +22,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        list = (ListView)findViewById(R.id.listView);
         //Log.v("LstAdapter", "Inside LstAdapter");
         GraphicAdapter adapter = new GraphicAdapter(this,items, imgid);
-        list = (ListView)findViewById(R.id.listView);
         list.setAdapter(adapter);
 
 //        ListView listView = (ListView) findViewById(R.id.listView); this is the code that works
@@ -31,19 +33,16 @@ public class MainActivity extends AppCompatActivity {
 //        lsAdapter = new ArrayAdapter<String>(this,R.layout.graphic_item, R.id.textView1, items);  this is the code that works
 //        listView.setAdapter(lsAdapter);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         //populateListView();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
     }
 
 //    private void populateListView(){
