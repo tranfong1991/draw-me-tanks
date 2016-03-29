@@ -31,9 +31,6 @@ class GraphicAdapter extends ArraySwipeAdapter<String> {
         this.context = context;
         this.arr = arr;
         this.imgid = imgid;
-
-
-
     }
 
     @Override
@@ -41,15 +38,11 @@ class GraphicAdapter extends ArraySwipeAdapter<String> {
         LayoutInflater inflater=context.getLayoutInflater();
 
         swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
-        swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
-
 //set show mode.
         swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
-
 //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
-        swipeLayout.addDrag(SwipeLayout.DragEdge.Left, swipeLayout.findViewById(R.id.bottom_wrapper));
-
+        swipeLayout.addDrag(SwipeLayout.DragEdge.Right, swipeLayout.findViewById(R.id.bottom_wrapper));
         swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
             public void onClose(SwipeLayout layout) {
