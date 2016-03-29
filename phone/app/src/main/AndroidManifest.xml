@@ -13,7 +13,9 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".ChooseEMILYActivity"
-            android:label="@string/title_activity_load_screen" >
+            android:label="@string/title_activity_load_screen"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,7 +23,18 @@
         </activity>
         <activity
             android:name=".ClientSocketTestActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_client_socket_test" >
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_main_screen"
+            android:parentActivityName="andytran.dmap_phone.ChooseEMILYActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="andytran.dmap_phone.ChooseEMILYActivity" />
         </activity>
     </application>
 

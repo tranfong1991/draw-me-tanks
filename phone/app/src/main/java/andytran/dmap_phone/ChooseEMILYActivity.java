@@ -1,6 +1,8 @@
 package andytran.dmap_phone;
 
 import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,9 @@ public class ChooseEMILYActivity extends AppCompatActivity {
     public String ipAddress = "10.0.2.15";
     public int port = 8080;
 
+    static final String EXTRA_PORT = "port";
+    static final String EXTRA_IP_ADDR = "ip addr";
+
     Handler updateBarHandler;
     ProgressDialog progressDialog;
 
@@ -34,6 +39,8 @@ public class ChooseEMILYActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //CHECK ACCESS TOKEN
+        //Read up on shared_preferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_emily);
 
@@ -56,12 +63,25 @@ public class ChooseEMILYActivity extends AppCompatActivity {
                         String name = String.valueOf(parent.getItemAtPosition(position));
 //                        showMessage("Connecting to " + name, "When the connection is complete, the change will switch.");
 
-                        frameLayout.setVisibility(View.VISIBLE);
-                        frameLayout.setClickable(true);
+
                         connectTextView.setText("Connecting to " + name);
 
-                        linearLayout.setVisibility(View.GONE);
-                        linearLayout.setClickable(false);
+                        addOverlay();
+
+
+                        //Pseudocode for getting the response
+                        //RUN A NEW THREAD
+                        //THREAD SHOULDO DO IT'S THING
+                        //IF RESPONSE IS BAD
+                            // SET AN ALERT
+                            //showMessage("Could not connect to " + name, "Please try another tablet, or wait 5 minutes and attempt again");
+                            //removeOverlay()
+                        //IF RESPONSE IS GOOD
+
+                            // PROCEEDTOMAIN()
+
+
+                        proceedToMain("Placeholder", "placeholder");
                     }
                 }
         );
@@ -76,13 +96,23 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         return true;
     }
 
-//    public void showMessage(String title,String message){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setCancelable(true);
-//        builder.setTitle(title);
-//        builder.setMessage((message));
-//        builder.show();
-//    }
+    public void showMessage(String title, String message){
+        removeOverlay();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage((message));
+        builder.show();
+    }
+
+    public void removeOverlay() {
+        linearLayout.setVisibility(View.VISIBLE);
+        linearLayout.setClickable(true);
+
+        frameLayout.setVisibility(View.GONE);
+        frameLayout.setClickable(false);
+    }
 
     public void removeOverlay(View view) {
         linearLayout.setVisibility(View.VISIBLE);
@@ -92,7 +122,13 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         frameLayout.setClickable(false);
     }
 
+    public void addOverlay() {
+        frameLayout.setVisibility(View.VISIBLE);
+        frameLayout.setClickable(true);
 
+        linearLayout.setVisibility(View.GONE);
+        linearLayout.setClickable(false);
+    }
 
 
 
@@ -111,22 +147,30 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    public void submitData(View view){
-////
-////        Intent intent = new Intent(this, HamActivity.class);
-////        Button buttonText = (Button) findViewById(R.id.button);
-////        String message = buttonText.getText().toString();
-////        intent.putExtra(EXTRA_MESSAGE, message);
-////        startActivity(intent);
-//
-////        Intent intent = new Intent(this, MainActivity.class);
-////        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
-////        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
-////        ipAddress = ipAddressText.getText().toString();
-////        port = Integer.parseInt(portNumberText.getText().toString());
-////
-////        startActivity(intent);
-//
-//
-//    }
+    public void proceedToMain(String ipAddress, String port){
+
+        Intent intent = new Intent(this, MainActivity.class);
+//        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
+//        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
+
+        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
+        intent.putExtra(EXTRA_PORT, port);
+
+        startActivity(intent);
+
+
+    }
+    public void proceedToMain(View view, String ipAddress, String port){
+
+        Intent intent = new Intent(this, MainActivity.class);
+//        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
+//        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
+
+        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
+        intent.putExtra(EXTRA_PORT, port);
+
+        startActivity(intent);
+
+
+    }
 }
