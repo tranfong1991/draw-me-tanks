@@ -5,27 +5,28 @@ package andytran.dmap_phone;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
 
 
 public class ClientNSDHelper {
-
-    Context mContext;
-
-    NsdManager mNsdManager;
-    NsdManager.ResolveListener mResolveListener;
-    NsdManager.DiscoveryListener mDiscoveryListener;
-
     public static final String SERVICE_TYPE = "_http._tcp.";
-
     public static final String TAG = "ClientNSDHelper";
-    public String mServiceName = "DMAP";
 
-    NsdServiceInfo mService;
+    private Context mContext;
+    private NsdManager mNsdManager;
+    private NsdManager.ResolveListener mResolveListener;
+    private NsdManager.DiscoveryListener mDiscoveryListener;
+    private String mServiceName = "DMAP";
+    private NsdServiceInfo mService;
 
-    public ClientNSDHelper(Context context) {
+    public ClientNSDHelper(Context context){
         mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
@@ -45,14 +46,16 @@ public class ClientNSDHelper {
 
             @Override
             public void onServiceFound(NsdServiceInfo service) {
-                Log.d(TAG, "Service discovery success" + service);
+                Log.d(TAG, "Service discovery success: " + service);
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                } else if (service.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "Same machine: " + mServiceName);
+                }  else if (service.getServiceName().contains(mServiceName)){
                     mNsdManager.resolveService(service, mResolveListener);
-                } else if (service.getServiceName().contains(mServiceName)){
-                    mNsdManager.resolveService(service, mResolveListener);
+
+                    Intent intent = new Intent("DMAP");
+                    intent.putExtra("EXTRA_ACTION", "Add");
+                    intent.putExtra("EXTRA_NAME", service.getServiceName());
+                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                 }
             }
 
@@ -95,10 +98,11 @@ public class ClientNSDHelper {
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
 
-                if (serviceInfo.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "Same IP.");
-                    return;
-                }
+//                if (serviceInfo.getServiceName().equals(mServiceName)) {
+//                    Log.d(TAG, "Same IP.");
+//                    return;
+//                }
+
                 mService = serviceInfo;
             }
         };

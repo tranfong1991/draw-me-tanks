@@ -4,11 +4,10 @@ package andytran.dmap_tablet;
  * Created by Andy Tran on 2/29/2016.
  */
 
-import android.content.Intent;
 import android.net.nsd.NsdManager;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
-import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.TextView;
 
 public class ServerNSDHelper {
@@ -35,6 +34,8 @@ public class ServerNSDHelper {
 
             @Override
             public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
+                Log.d(TAG, "Service Registered");
+
                 mServiceName = NsdServiceInfo.getServiceName();
 
                 NSDBroadcastActivity activity = (NSDBroadcastActivity)mContext;

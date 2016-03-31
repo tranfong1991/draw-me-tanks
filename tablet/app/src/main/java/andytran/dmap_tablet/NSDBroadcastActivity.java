@@ -19,14 +19,6 @@ public class NSDBroadcastActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nsd_broadcast);
 
-//        final TextView ip = (TextView)findViewById(R.id.textView2);
-//        NSDBroadcastActivity.this.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                ip.setText(Utils.getIpAddress());
-//            }
-//        });
-
         //start DMAP server
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
