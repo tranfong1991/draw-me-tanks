@@ -41,12 +41,6 @@ public class ChooseEMILYActivity extends AppCompatActivity {
     }
 
     public void submitData(View view){
-//
-//        Intent intent = new Intent(this, HamActivity.class);
-//        Button buttonText = (Button) findViewById(R.id.button);
-//        String message = buttonText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
-//        startActivity(intent);
 
         Intent intent = new Intent(this, MainActivity.class);
         EditText ipAddressText = (EditText)findViewById(R.id.ip_field);

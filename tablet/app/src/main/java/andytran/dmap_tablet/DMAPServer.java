@@ -79,12 +79,16 @@ public class DMAPServer extends NanoHTTPD {
         if(params.get("token") == null || !params.get("token").equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
-        if(method == Method.GET)
-            return doGet(session);
-        else if(method == Method.POST)
-            return doPost(session);
-        else if(method == Method.DELETE)
-            return doDelete(session);
+        switch(method){
+            case GET:
+                return doGet(session);
+            case POST:
+                return doPost(session);
+            case PUT:
+                return doPut(session);
+            case DELETE:
+                return doDelete(session);
+        }
 
         return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
     }
@@ -96,6 +100,8 @@ public class DMAPServer extends NanoHTTPD {
                 return playGraphic(session);
             case "/stop":
                 return stopGraphic();
+            case "/ping":
+                return pingServer();
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
         }
@@ -104,13 +110,15 @@ public class DMAPServer extends NanoHTTPD {
     private Response doPost(IHTTPSession session){
         String uri = session.getUri();
         switch(uri){
-            case "/ping":
-                return pingServer();
-            case "/graphic":    //http://localhost:8080/graphic?token=XXXXX
+            case "/graphic":
                 return postGraphic(session);
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
         }
+    }
+
+    private Response doPut(IHTTPSession session){
+        return null;
     }
 
     private Response doDelete(IHTTPSession session){

@@ -9,7 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NSDBroadcastActivity extends AppCompatActivity {
     private ServerNSDHelper nsdHelper;
@@ -20,13 +19,13 @@ public class NSDBroadcastActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nsd_broadcast);
 
-        final TextView ip = (TextView)findViewById(R.id.textView2);
-        NSDBroadcastActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ip.setText(Utils.getIpAddress());
-            }
-        });
+//        final TextView ip = (TextView)findViewById(R.id.textView2);
+//        NSDBroadcastActivity.this.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                ip.setText(Utils.getIpAddress());
+//            }
+//        });
 
         //start DMAP server
         Intent intent = new Intent(this, DMAPIntentService.class);
@@ -55,6 +54,13 @@ public class NSDBroadcastActivity extends AppCompatActivity {
                 registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
     }
 
+    @Override
+    protected void onDestroy() {
+        if(nsdHelper != null)
+            nsdHelper.unregisterService();
+        super.onDestroy();
+    }
+
     private class LoadActivityBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -66,8 +72,8 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
             switch(action){
                 case STOP_NSD:{
-                    nsdHelper.unregisterService();
-                    Toast.makeText(NSDBroadcastActivity.this, "NSD Stopped", Toast.LENGTH_SHORT).show();
+                    if(nsdHelper != null)
+                        nsdHelper.unregisterService();
 
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);

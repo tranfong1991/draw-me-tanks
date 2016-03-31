@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">DMAP_phone</string>
     <string name="title_activity_client_socket_test">ClientSocketTestActivity</string>
-    <string name="title_activity_load_screen">LoadScreen</string>
+    <string name="title_activity_choose">Choose EMILY</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
