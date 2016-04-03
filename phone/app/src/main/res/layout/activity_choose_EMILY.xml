@@ -11,13 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Discover"
-            android:id="@+id/discover_button"
-            android:layout_gravity="center_vertical" />
-
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -49,16 +42,15 @@
                 android:layout_height="wrap_content"
                 android:text="@string/pref_connection_alert"
                 android:gravity="center|center_vertical|center_horizontal"
-                android:id="@+id/connection_status_msg"
                 android:layout_gravity="center"
                 android:textSize="@dimen/abc_text_size_display_1_material" />
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
-                android:text = "@string/pref_return_to_menu"
-                android:onClick="removeOverlay"
-                android:textSize="@dimen/abc_text_size_button_material" />
+                android:gravity="center|center_vertical|center_horizontal"
+                android:id="@+id/service_name"
+                android:layout_gravity="center"
+                android:textSize="@dimen/abc_text_size_display_1_material" />
         </LinearLayout>
     </FrameLayout>
 </RelativeLayout>

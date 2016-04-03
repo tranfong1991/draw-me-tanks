@@ -3,7 +3,6 @@ package andytran.dmap_tablet;
 /**
  * Created by Andy Tran on 2/29/2016.
  */
-
 import android.net.nsd.NsdManager;
 import android.content.Context;
 import android.net.nsd.NsdServiceInfo;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 public class ServerNSDHelper {
     public static final String SERVICE_TYPE = "_http._tcp.";
     public static final String TAG = "ServerNsdHelper";
+    public static final String SERVICE_NAME = "DMAP";
 
     private String mServiceName;
     private Context mContext;
@@ -21,7 +21,6 @@ public class ServerNSDHelper {
 
     public ServerNSDHelper(Context context) {
         mContext = context;
-        mServiceName = "DMAP";
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -67,7 +66,7 @@ public class ServerNSDHelper {
     public void registerService(int port) {
         NsdServiceInfo serviceInfo  = new NsdServiceInfo();
         serviceInfo.setPort(port);
-        serviceInfo.setServiceName(mServiceName);
+        serviceInfo.setServiceName(SERVICE_NAME);
         serviceInfo.setServiceType(SERVICE_TYPE);
 
         mNsdManager.registerService(

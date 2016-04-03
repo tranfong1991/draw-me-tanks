@@ -6,11 +6,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +25,16 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 //To write:
@@ -33,34 +45,52 @@ import java.util.ArrayList;
 
 
 public class ChooseEMILYActivity extends AppCompatActivity {
-    static final String EXTRA_PORT = "port";
-    static final String EXTRA_IP_ADDR = "ip addr";
+    public static final String EXTRA_PORT = "port";
+    public static final String EXTRA_IP_ADDR = "ip";
+    public static final String PREF_NAME = "DMAP_PREF";
+    public static final String PREF_TOKEN = "DMAP_TOKEN";
+    public static final String PREF_IP = "DMAP_IP";
+    public static final String PREF_PORT = "DMAP_PORT";
 
-    Handler updateBarHandler;
-    ProgressDialog progressDialog;
+    private Handler updateBarHandler;
+    private ProgressDialog progressDialog;
 
-    FrameLayout frameLayout;
-    LinearLayout linearLayout;
+    private FrameLayout frameLayout;
+    private LinearLayout linearLayout;
     private ClientNSDHelper nsdHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //CHECK ACCESS TOKEN
-        //Read up on shared_preferences
+        //get access token
+        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
+        String token = pref.getString(PREF_TOKEN, null);
+        String ip = pref.getString(PREF_IP, null);
+        String port = pref.getString(PREF_PORT, null);
+
+        if(token != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(EXTRA_IP_ADDR, ip);
+            intent.putExtra(EXTRA_PORT, port);
+            startActivity(intent);
+            finish();
+
+            return;
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_emily);
 
         frameLayout = (FrameLayout) findViewById(R.id.progressBarHolder);
         frameLayout.setClickable(false);
-
         linearLayout = (LinearLayout) findViewById(R.id.emilyHolder);
-        final TextView connectTextView = (TextView)findViewById(R.id.connection_status_msg);
 
+        final TextView serviceName = (TextView)findViewById(R.id.service_name);
         final ArrayList<String> tabletNames = new ArrayList<>();
         final ArrayAdapter<String> titleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tabletNames);
 
         nsdHelper = new ClientNSDHelper(this);
         nsdHelper.initializeNsd();
+        nsdHelper.discoverServices();
 
         LocalBroadcastManager.
                 getInstance(this).
@@ -75,46 +105,59 @@ public class ChooseEMILYActivity extends AppCompatActivity {
                     }
                 }, new IntentFilter("DMAP"));
 
-        Button discoverButton = (Button)findViewById(R.id.discover_button);
-        discoverButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nsdHelper.discoverServices();
-            }
-        });
-
         ListView tabletListView = (ListView) findViewById(R.id.chooseEmilyListView);
         tabletListView.setAdapter(titleAdapter);
-
         tabletListView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String name = String.valueOf(parent.getItemAtPosition(position));
-//                        showMessage("Connecting to " + name, "When the connection is complete, the change will switch.");
+            new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String name = String.valueOf(parent.getItemAtPosition(position));
+                    serviceName.setText(name);
 
-//                        connectTextView.setText("Connecting to " + name);
+                    final NsdServiceInfo info = nsdHelper.getServiceInfoAt(position);
 
-                        NsdServiceInfo info = nsdHelper.getChosenServiceInfo();
-                        connectTextView.setText(info.getHost().toString() + ", " + info.getPort());
+                    // Instantiate the RequestQueue.
+                    RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
+                    StringBuffer buffer = new StringBuffer();
+                    buffer.append("http:/")
+                            .append(info.getHost())
+                            .append(":")
+                            .append(info.getPort())
+                            .append("/generate");
 
-//                        addOverlay();
+                    // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, buffer.toString(),
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject json = new JSONObject(response);
 
-                        //Pseudocode for getting the response
-                        //RUN A NEW THREAD
-                        //THREAD SHOULDO DO IT'S THING
-                        //IF RESPONSE IS BAD
-                            // SET AN ALERT
-                            //showMessage("Could not connect to " + name, "Please try another tablet, or wait 5 minutes and attempt again");
-                            //removeOverlay()
-                        //IF RESPONSE IS GOOD
+                                    SharedPreferences pref = ChooseEMILYActivity.this.getSharedPreferences(PREF_NAME, 0);
+                                    SharedPreferences.Editor editor = pref.edit();
+                                    editor.putString(PREF_TOKEN, json.getString("token"));
+                                    editor.putString(PREF_IP, info.getHost().toString());
+                                    editor.putInt(PREF_PORT, info.getPort());
+                                    editor.apply();
 
-                            // PROCEEDTOMAIN()
-
-
-//                        proceedToMain("Placeholder", "placeholder");
-                    }
+                                    removeOverlay();
+                                    nsdHelper.stopDiscovery();
+                                    proceedToMain(info.getHost().toString(), info.getPort());
+                                } catch (JSONException e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                removeOverlay();
+                            }
+                        });
+                    // Add the request to the RequestQueue.
+                    queue.add(stringRequest);
+                    addOverlay();
                 }
+            }
         );
     }
 
@@ -125,25 +168,7 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         return true;
     }
 
-    public void showMessage(String title, String message){
-        removeOverlay();
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage((message));
-        builder.show();
-    }
-
     public void removeOverlay() {
-        linearLayout.setVisibility(View.VISIBLE);
-        linearLayout.setClickable(true);
-
-        frameLayout.setVisibility(View.GONE);
-        frameLayout.setClickable(false);
-    }
-
-    public void removeOverlay(View view) {
         linearLayout.setVisibility(View.VISIBLE);
         linearLayout.setClickable(true);
 
@@ -161,9 +186,6 @@ public class ChooseEMILYActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar graphic_item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -174,26 +196,11 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void proceedToMain(String ipAddress, String port){
-
+    public void proceedToMain(String ipAddress, int port){
         Intent intent = new Intent(this, MainActivity.class);
-//        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
-//        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
-
         intent.putExtra(EXTRA_IP_ADDR, ipAddress);
         intent.putExtra(EXTRA_PORT, port);
-
         startActivity(intent);
-    }
-
-    public void proceedToMain(View view, String ipAddress, String port){
-        Intent intent = new Intent(this, MainActivity.class);
-//        EditText ipAddressText = (EditText)findViewById(R.id.ip_field);
-//        EditText portNumberText  = (EditText)findViewById(R.id.port_field);
-
-        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
-        intent.putExtra(EXTRA_PORT, port);
-
-        startActivity(intent);
+        finish();
     }
 }

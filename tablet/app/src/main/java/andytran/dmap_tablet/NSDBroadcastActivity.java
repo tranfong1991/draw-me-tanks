@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,7 +30,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
         //start nsd if no token found
         if(token == null) {
-            nsdHelper = new ServerNSDHelper(this);
+            nsdHelper = new ServerNSDHelper(NSDBroadcastActivity.this);
             nsdHelper.initializeNsd();
             nsdHelper.registerService(DMAPServer.PORT);
         } else {
@@ -44,6 +45,20 @@ public class NSDBroadcastActivity extends AppCompatActivity {
         LocalBroadcastManager.
                 getInstance(this).
                 registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(nsdHelper != null)
+            nsdHelper.unregisterService();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(nsdHelper != null)
+            nsdHelper.registerService(DMAPServer.PORT);
     }
 
     @Override
@@ -64,8 +79,10 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
             switch(action){
                 case STOP_NSD:{
-                    if(nsdHelper != null)
+                    if(nsdHelper != null) {
                         nsdHelper.unregisterService();
+                        nsdHelper = null;
+                    }
 
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);

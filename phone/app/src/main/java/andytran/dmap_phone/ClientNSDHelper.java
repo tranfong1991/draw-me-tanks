@@ -17,17 +17,18 @@ import java.util.ArrayList;
 
 public class ClientNSDHelper {
     public static final String SERVICE_TYPE = "_http._tcp.";
+    public static final String SERVICE_NAME = "DMAP";
     public static final String TAG = "ClientNSDHelper";
 
     private Context mContext;
     private NsdManager mNsdManager;
     private NsdManager.ResolveListener mResolveListener;
     private NsdManager.DiscoveryListener mDiscoveryListener;
-    private String mServiceName = "DMAP";
-    private NsdServiceInfo mService;
+    private ArrayList<NsdServiceInfo> mServices;
 
     public ClientNSDHelper(Context context){
         mContext = context;
+        mServices = new ArrayList<>();
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -49,11 +50,10 @@ public class ClientNSDHelper {
                 Log.d(TAG, "Service discovery success: " + service);
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                }  else if (service.getServiceName().contains(mServiceName)){
+                }  else if (service.getServiceName().contains(SERVICE_NAME)){
                     mNsdManager.resolveService(service, mResolveListener);
 
                     Intent intent = new Intent("DMAP");
-                    intent.putExtra("EXTRA_ACTION", "Add");
                     intent.putExtra("EXTRA_NAME", service.getServiceName());
                     LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
                 }
@@ -61,10 +61,7 @@ public class ClientNSDHelper {
 
             @Override
             public void onServiceLost(NsdServiceInfo service) {
-                Log.e(TAG, "service lost" + service);
-                if (mService == service) {
-                    mService = null;
-                }
+                Log.e(TAG, "Service lost " + service);
             }
 
             @Override
@@ -74,13 +71,13 @@ public class ClientNSDHelper {
 
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "Discovery failed: Error code: " + errorCode);
                 mNsdManager.stopServiceDiscovery(this);
             }
 
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "Discovery failed: Error code: " + errorCode);
                 mNsdManager.stopServiceDiscovery(this);
             }
         };
@@ -91,19 +88,13 @@ public class ClientNSDHelper {
 
             @Override
             public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.e(TAG, "Resolve failed" + errorCode);
+                Log.e(TAG, "Resolve failed " + errorCode);
             }
 
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-
-//                if (serviceInfo.getServiceName().equals(mServiceName)) {
-//                    Log.d(TAG, "Same IP.");
-//                    return;
-//                }
-
-                mService = serviceInfo;
+                mServices.add(serviceInfo);
             }
         };
     }
@@ -117,8 +108,8 @@ public class ClientNSDHelper {
         mNsdManager.stopServiceDiscovery(mDiscoveryListener);
     }
 
-    public NsdServiceInfo getChosenServiceInfo() {
-        return mService;
+    public NsdServiceInfo getServiceInfoAt(int index) {
+        return mServices.get(index);
     }
 }
 
