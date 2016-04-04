@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     ListView list;
     String[] items = {"Stay Calm", "Do not stand up", "Follow Me", "Keep your life jacket on"};
     Integer[] imgid = {R.drawable.images,R.drawable.sitdown,R.drawable.images,R.drawable.images};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
 //        lsAdapter = new ArrayAdapter<String>(this,R.layout.graphic_item, R.id.textView1, items);  this is the code that works
 //        listView.setAdapter(lsAdapter);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         //populateListView();
 

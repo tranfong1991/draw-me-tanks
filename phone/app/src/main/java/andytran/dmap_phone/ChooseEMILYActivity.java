@@ -1,7 +1,5 @@
 package andytran.dmap_phone;
 
-import android.app.ProgressDialog;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,12 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -37,56 +33,51 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-//To write:
-//Screen rotation persistence
-    //http://developer.android.com/guide/topics/resources/runtime-changes.html#HandlingTheChange
-//Thread for calling the package request
-//Creating an intent for the main menu page
-
-
-public class ChooseEMILYActivity extends AppCompatActivity {
+public class ChooseEMILYActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public static final String EXTRA_PORT = "port";
     public static final String EXTRA_IP_ADDR = "ip";
-    public static final String PREF_NAME = "DMAP_PREF";
-    public static final String PREF_TOKEN = "DMAP_TOKEN";
-    public static final String PREF_IP = "DMAP_IP";
-    public static final String PREF_PORT = "DMAP_PORT";
 
-    private Handler updateBarHandler;
-    private ProgressDialog progressDialog;
+    private String prefName;
+    private String prefToken;
+    private String prefIp;
+    private String prefPort;
 
     private FrameLayout frameLayout;
     private LinearLayout linearLayout;
+    private TextView serviceName;
     private ClientNSDHelper nsdHelper;
+    private ArrayList<Host> hosts;
+    private HostAdapter hostAdapter;
+    private BroadcastReceiver receiver = new ClientNSDBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //get access token
-        SharedPreferences pref = getSharedPreferences(PREF_NAME, 0);
-        String token = pref.getString(PREF_TOKEN, null);
-        String ip = pref.getString(PREF_IP, null);
-        String port = pref.getString(PREF_PORT, null);
-
-        if(token != null){
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra(EXTRA_IP_ADDR, ip);
-            intent.putExtra(EXTRA_PORT, port);
-            startActivity(intent);
-            finish();
-
-            return;
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_emily);
 
+        prefName = getResources().getString(R.string.pref_name);
+        prefToken = getResources().getString(R.string.pref_token);
+        prefIp = getResources().getString(R.string.pref_ip);
+        prefPort = getResources().getString(R.string.pref_port);
+
+        //check if access token is already there
+        SharedPreferences pref = getSharedPreferences(prefName, 0);
+        String token = pref.getString(prefToken, null);
+        String ip = pref.getString(prefIp, null);
+        int port = pref.getInt(prefPort, 0);
+
+        if(token != null){
+            proceedToMain(ip, port);
+            return;
+        }
+
+        serviceName = (TextView)findViewById(R.id.service_name);
         frameLayout = (FrameLayout) findViewById(R.id.progressBarHolder);
         frameLayout.setClickable(false);
         linearLayout = (LinearLayout) findViewById(R.id.emilyHolder);
 
-        final TextView serviceName = (TextView)findViewById(R.id.service_name);
-        final ArrayList<String> tabletNames = new ArrayList<>();
-        final ArrayAdapter<String> titleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, tabletNames);
+        hosts = new ArrayList<>();
+        hostAdapter = new HostAdapter(this, hosts);
 
         nsdHelper = new ClientNSDHelper(this);
         nsdHelper.initializeNsd();
@@ -94,71 +85,61 @@ public class ChooseEMILYActivity extends AppCompatActivity {
 
         LocalBroadcastManager.
                 getInstance(this).
-                registerReceiver(new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        Bundle extra = intent.getExtras();
-                        String name = extra.getString("EXTRA_NAME");
-
-                        tabletNames.add(name);
-                        titleAdapter.notifyDataSetChanged();
-                    }
-                }, new IntentFilter("DMAP"));
+                registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
 
         ListView tabletListView = (ListView) findViewById(R.id.chooseEmilyListView);
-        tabletListView.setAdapter(titleAdapter);
-        tabletListView.setOnItemClickListener(
-            new AdapterView.OnItemClickListener() {
+        tabletListView.setAdapter(hostAdapter);
+        tabletListView.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        final String name = String.valueOf(parent.getItemAtPosition(position));
+        serviceName.setText(name);
+
+        final Host host = hosts.get(position);
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("http:/")
+                .append(host.getIp())
+                .append(":")
+                .append(host.getPort())
+                .append("/generate");
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, buffer.toString(),
+            new Response.Listener<String>() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String name = String.valueOf(parent.getItemAtPosition(position));
-                    serviceName.setText(name);
+                public void onResponse(String response) {
+                    try {
+                        JSONObject json = new JSONObject(response);
 
-                    final NsdServiceInfo info = nsdHelper.getServiceInfoAt(position);
+                        SharedPreferences pref = getSharedPreferences(prefName, 0);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString(prefToken, json.getString("token"));
+                        editor.putString(prefIp, host.getIp());
+                        editor.putInt(prefPort, host.getPort());
+                        editor.apply();
 
-                    // Instantiate the RequestQueue.
-                    RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append("http:/")
-                            .append(info.getHost())
-                            .append(":")
-                            .append(info.getPort())
-                            .append("/generate");
-
-                    // Request a string response from the provided URL.
-                    StringRequest stringRequest = new StringRequest(Request.Method.GET, buffer.toString(),
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                try {
-                                    JSONObject json = new JSONObject(response);
-
-                                    SharedPreferences pref = ChooseEMILYActivity.this.getSharedPreferences(PREF_NAME, 0);
-                                    SharedPreferences.Editor editor = pref.edit();
-                                    editor.putString(PREF_TOKEN, json.getString("token"));
-                                    editor.putString(PREF_IP, info.getHost().toString());
-                                    editor.putInt(PREF_PORT, info.getPort());
-                                    editor.apply();
-
-                                    removeOverlay();
-                                    nsdHelper.stopDiscovery();
-                                    proceedToMain(info.getHost().toString(), info.getPort());
-                                } catch (JSONException e){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                removeOverlay();
-                            }
-                        });
-                    // Add the request to the RequestQueue.
-                    queue.add(stringRequest);
-                    addOverlay();
+                        removeOverlay();
+                        nsdHelper.stopDiscovery();
+                        proceedToMain(host.getIp(), host.getPort());
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
                 }
-            }
-        );
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    removeOverlay();
+                    Toast.makeText(ChooseEMILYActivity.this, "Cannot connect to " + name, Toast.LENGTH_SHORT).show();
+                }
+            });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+        addOverlay();
     }
 
     @Override
@@ -184,6 +165,14 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         linearLayout.setClickable(false);
     }
 
+    public void proceedToMain(String ipAddress, int port){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
+        intent.putExtra(EXTRA_PORT, port);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -196,11 +185,30 @@ public class ChooseEMILYActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void proceedToMain(String ipAddress, int port){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
-        intent.putExtra(EXTRA_PORT, port);
-        startActivity(intent);
-        finish();
+    private class ClientNSDBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extra = intent.getExtras();
+            ClientNSDHelper.Action action = (ClientNSDHelper.Action) extra.get(ClientNSDHelper.EXTRA_ACTION);
+            String serviceName = extra.getString(ClientNSDHelper.EXTRA_SERVICE_NAME);
+
+            switch(action){
+                case ADD_SERVICE:{
+                    Log.d("EMILY", "Add service called");
+                    String ip = extra.getString(ClientNSDHelper.EXTRA_SERVICE_IP);
+                    int port = extra.getInt(ClientNSDHelper.EXTRA_SERVICE_PORT);
+
+                    hosts.add(new Host(serviceName, ip, port));
+                    hostAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case REMOVE_SERVICE:{
+                    Log.d("EMILY", "Remove service called");
+                    hosts.remove(new Host(serviceName));
+                    hostAdapter.notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
     }
 }

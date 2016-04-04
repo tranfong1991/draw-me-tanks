@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         graphicView = (ImageView)findViewById(R.id.graphic_view);
         LocalBroadcastManager.
                 getInstance(this).
-                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
+                registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
     }
 
     private class MainActivityBroadcastReceiver extends BroadcastReceiver{

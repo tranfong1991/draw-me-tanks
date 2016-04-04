@@ -16,24 +16,29 @@ import java.util.ArrayList;
 
 
 public class ClientNSDHelper {
+    public enum Action{
+        ADD_SERVICE,
+        REMOVE_SERVICE
+    }
+
     public static final String SERVICE_TYPE = "_http._tcp.";
     public static final String SERVICE_NAME = "DMAP";
+    public static final String EXTRA_SERVICE_NAME = "EXTRA_SERVICE_NAME";
+    public static final String EXTRA_SERVICE_IP = "EXTRA_SERVICE_IP";
+    public static final String EXTRA_SERVICE_PORT = "EXTRA_SERVICE_PORT";
+    public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final String TAG = "ClientNSDHelper";
 
     private Context mContext;
     private NsdManager mNsdManager;
-    private NsdManager.ResolveListener mResolveListener;
     private NsdManager.DiscoveryListener mDiscoveryListener;
-    private ArrayList<NsdServiceInfo> mServices;
 
     public ClientNSDHelper(Context context){
         mContext = context;
-        mServices = new ArrayList<>();
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
     public void initializeNsd() {
-        initializeResolveListener();
         initializeDiscoveryListener();
     }
 
@@ -51,17 +56,18 @@ public class ClientNSDHelper {
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
                 }  else if (service.getServiceName().contains(SERVICE_NAME)){
-                    mNsdManager.resolveService(service, mResolveListener);
-
-                    Intent intent = new Intent("DMAP");
-                    intent.putExtra("EXTRA_NAME", service.getServiceName());
-                    LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                    mNsdManager.resolveService(service, new MyResolveListener());
                 }
             }
 
             @Override
-            public void onServiceLost(NsdServiceInfo service) {
-                Log.e(TAG, "Service lost " + service);
+            public void onServiceLost(NsdServiceInfo serviceInfo) {
+                Log.e(TAG, "Service lost " + serviceInfo);
+
+                Intent intent = new Intent(mContext.getResources().getString(R.string.package_name));
+                intent.putExtra(EXTRA_ACTION, Action.REMOVE_SERVICE);
+                intent.putExtra(EXTRA_SERVICE_NAME, serviceInfo.getServiceName());
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
             }
 
             @Override
@@ -83,22 +89,6 @@ public class ClientNSDHelper {
         };
     }
 
-    public void initializeResolveListener() {
-        mResolveListener = new NsdManager.ResolveListener() {
-
-            @Override
-            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.e(TAG, "Resolve failed " + errorCode);
-            }
-
-            @Override
-            public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-                mServices.add(serviceInfo);
-            }
-        };
-    }
-
     public void discoverServices() {
         mNsdManager.discoverServices(
                 SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
@@ -108,8 +98,23 @@ public class ClientNSDHelper {
         mNsdManager.stopServiceDiscovery(mDiscoveryListener);
     }
 
-    public NsdServiceInfo getServiceInfoAt(int index) {
-        return mServices.get(index);
+    private class MyResolveListener implements NsdManager.ResolveListener{
+        @Override
+        public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.e(TAG, "Resolve failed " + errorCode);
+        }
+
+        @Override
+        public void onServiceResolved(NsdServiceInfo serviceInfo) {
+            Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+
+            Intent intent = new Intent(mContext.getResources().getString(R.string.package_name));
+            intent.putExtra(EXTRA_ACTION, Action.ADD_SERVICE);
+            intent.putExtra(EXTRA_SERVICE_NAME, serviceInfo.getServiceName());
+            intent.putExtra(EXTRA_SERVICE_IP, serviceInfo.getHost().toString());
+            intent.putExtra(EXTRA_SERVICE_PORT, serviceInfo.getPort());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        }
     }
 }
 

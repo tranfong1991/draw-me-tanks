@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class NSDBroadcastActivity extends AppCompatActivity {
     private ServerNSDHelper nsdHelper;
-    private BroadcastReceiver receiver = new LoadActivityBroadcastReceiver();
+    private BroadcastReceiver receiver = new ServerNSDBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +25,8 @@ public class NSDBroadcastActivity extends AppCompatActivity {
         startService(intent);
 
         //get access token
-        SharedPreferences pref = getSharedPreferences(DMAPServer.PREF_NAME, 0);
-        String token = pref.getString(DMAPServer.PREF_TOKEN, null);
+        SharedPreferences pref = getSharedPreferences(getResources().getString(R.string.pref_name), 0);
+        String token = pref.getString(getResources().getString(R.string.pref_token), null);
 
         //start nsd if no token found
         if(token == null) {
@@ -44,7 +44,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
         LocalBroadcastManager.
                 getInstance(this).
-                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
+                registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private class LoadActivityBroadcastReceiver extends BroadcastReceiver{
+    private class ServerNSDBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle extra = intent.getExtras();
@@ -78,12 +78,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
                 return;
 
             switch(action){
-                case STOP_NSD:{
-                    if(nsdHelper != null) {
-                        nsdHelper.unregisterService();
-                        nsdHelper = null;
-                    }
-
+                case GO_TO_MAIN:{
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);
                     startActivity(i);

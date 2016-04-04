@@ -21,13 +21,8 @@
         </activity>
 
         <activity
-            android:name=".ClientSocketTestActivity"
-            android:label="@string/title_activity_client_socket_test" >
-        </activity>
-
-        <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main_screen"
+            android:label="@string/title_activity_main"
             android:parentActivityName="andytran.dmap_phone.ChooseEMILYActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

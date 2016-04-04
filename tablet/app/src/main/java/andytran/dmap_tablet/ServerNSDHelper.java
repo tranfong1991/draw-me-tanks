@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 public class ServerNSDHelper {
     public static final String SERVICE_TYPE = "_http._tcp.";
+    public static final String SERVICE_NAME = "EMILY";
     public static final String TAG = "ServerNsdHelper";
-    public static final String SERVICE_NAME = "DMAP";
 
     private String mServiceName;
     private Context mContext;
@@ -53,6 +53,7 @@ public class ServerNSDHelper {
 
             @Override
             public void onServiceUnregistered(NsdServiceInfo arg0) {
+                Log.d(TAG, "Service Unregistered");
                 mServiceName = null;
             }
 
