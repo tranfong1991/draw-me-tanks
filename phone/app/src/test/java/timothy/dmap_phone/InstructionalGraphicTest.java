@@ -35,8 +35,18 @@ public class InstructionalGraphicTest {
     @Before
     public void initializeEverything() {
         initializeArrays();
+        initializeEmptyJSONAndInstructionalGraphic();
+        fillJSONAndInstructionalGraphic();
+    }
+
+    public void initializeEmptyJSONAndInstructionalGraphic() {
         initializeInstructionalGraphic();
         initializeJSON();
+    }
+
+    public void fillJSONAndInstructionalGraphic() {
+        fillInstructionalGraphic();
+        fillJSON();
     }
 
     public void initializeArrays() {
@@ -45,16 +55,19 @@ public class InstructionalGraphicTest {
 
         int i = 0;
         for(; i < 4; ++i) {
-            ig_image_ids.add(String.valueOf(i));
+            ig_image_refs.add(String.valueOf(i));
         }
         for(; i < 8; ++i) {
-            ig_image_refs.add(String.valueOf(i));
+            ig_image_ids.add(String.valueOf(i));
         }
     }
 
     public void initializeInstructionalGraphic() {
         ig = new InstructionalGraphic(ig_name);
         ig.setInterval(ig_interval);
+    }
+
+    public void fillInstructionalGraphic() {
         for(int i = 0; i < ig_image_ids.size(); ++i) {
             ig.addImage(Integer.valueOf(ig_image_ids.get(i)), ig_image_refs.get(i));
         }
@@ -71,9 +84,17 @@ public class InstructionalGraphicTest {
     public void initializeJSON() {
         ig_json = new JSONObject();
         try {
-        JSONObject images = makeImagesJSON();
             ig_json.put("name", ig_name);
             ig_json.put("interval", ig_interval);
+            ig_json.put("images", new JSONObject());
+        } catch(JSONException je) {
+            // TODO: handle this!
+        }
+    }
+
+    public void fillJSON() {
+        try {
+            JSONObject images = makeImagesJSON();
             ig_json.put("images", images);
         } catch(JSONException je) {
             // TODO: handle this!
@@ -97,6 +118,16 @@ public class InstructionalGraphicTest {
         String json_string = json.toString();
         String ig_json_string = ig_json.toString();
         assertTrue(json_string.equals(ig_json_string));
+    }
+
+    @Test
+    public void testJSONWithEmptyArrays() throws Exception {
+        initializeEmptyJSONAndInstructionalGraphic();
+
+        testGetJSONObject();
+        testParseJSON();
+
+        fillJSONAndInstructionalGraphic();
     }
 
     @Test
