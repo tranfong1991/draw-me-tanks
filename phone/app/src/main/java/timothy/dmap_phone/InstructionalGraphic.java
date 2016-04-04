@@ -1,8 +1,14 @@
 package timothy.dmap_phone;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /** InstructionalGraphic Class
  *  @author Timothy Foster, Karrie Cheng
@@ -36,6 +42,16 @@ public class InstructionalGraphic {
  *  Returns the name of the graphic.
  */
     public String getName() {  return name; }
+
+    /**
+     * Sets a new name for the graphic. Requires a non-null name.
+     * @param new_name The name to replace the old.
+     */
+    public void setName(String new_name) {
+        if(new_name.length() <= 0)
+            throw new IllegalArgumentException(NULL_NAME_MESSAGE);
+        name = new_name;
+    }
 
 /**
  *  Gets the timing interval for the graphic.  For single-image graphics, the interval is set to maximum value since there is no need for periodicity.
@@ -130,7 +146,84 @@ public class InstructionalGraphic {
         removeImageAt(ids.indexOf(id));
     }
 
-/*  Private Members
+/*  JSON Methods
+ *  ==============================================================================================*/
+
+    /**
+     * @return the JSON version of the InstructionalGraphic
+     */
+    public JSONObject getJSONObject() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("name", name);
+            obj.put("interval", interval);
+            obj.put("images", makeImageArray());
+        } catch(JSONException je) {
+            // TODO: handle this!
+
+        }
+        return obj;
+    }
+
+    private JSONObject makeImageArray() throws JSONException {
+        JSONObject array = new JSONObject();
+        for(int i = 0; i < ids.size(); ++i) {
+            Integer id = ids.get(i);
+            array.put(String.valueOf(id), imageRefs.get(id));
+        }
+        return array;
+    }
+
+    /**
+     *
+     * @param json to parse into a string
+     * @return the InstructionalGraphic extracted from the JSON
+     * @throws JSONException
+     */
+    public static InstructionalGraphic parseJSON(JSONObject json) throws JSONException {
+        InstructionalGraphic ig = new InstructionalGraphic(json.getString("name"));
+        ig.setInterval(Integer.parseInt(json.getString("interval")));
+        fillIGfromJSON(ig, json);
+        return ig;
+    }
+
+    /**
+     * Inserts the list items (IDs and references to images) into the InstructionalGraphic
+     * from the JSON object.
+     * @param ig The InstructionalGraphic
+     * @param json The JSON object
+     * @throws JSONException
+     */
+    private static void fillIGfromJSON(InstructionalGraphic ig, JSONObject json) throws JSONException {
+        JSONObject json_ids = json.getJSONObject("images");
+
+        for(Iterator<String> i = json_ids.keys(); i.hasNext() ;) {
+            String str_id = i.next();
+            Integer int_id = Integer.parseInt(str_id);
+            String ref = json_ids.getString(str_id);
+            ig.ids.add(int_id);
+            ig.imageRefs.put(int_id, ref);
+        }
+
+        return;
+    }
+
+    /*  Comparison methods
+ *  ==============================================================================================*/
+
+    public boolean equals(InstructionalGraphic ig) {
+        if(ig.name != name || ig.interval != interval || ig.ids.size() != ids.size()) {
+            return false;
+        }
+        for(int i = 0; i < ids.size(); ++i) {
+            if(ig.ids.get(i) != ids.get(i) || ig.imageRefs.get(i) != imageRefs.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*  Private Members
  *  ==============================================================================================*/
     private String name;
     private Integer interval;

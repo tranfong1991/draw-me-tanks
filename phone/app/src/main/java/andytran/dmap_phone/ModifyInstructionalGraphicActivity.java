@@ -45,14 +45,14 @@ public class ModifyInstructionalGraphicActivity extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int imageWidth = (int) (displayMetrics.widthPixels/NUMBER_INITIAL_ITEMS);
 
-        ImageView imageItem;
-        for(int i = 0; i < mResources.length; ++i) {
+        /*ImageView imageItem;
+        for(int i = 0; i < mockGraphicDatabase.length; ++i) {
             imageItem = new ImageView(this);
-            imageItem.setImageResource(mResources[i]);
+            imageItem.setImageResource(mockGraphicDatabase[i]);
             imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
 
             mCarouselContainer.addView(imageItem);
-        }
+        }*/
     }
 
     /*
