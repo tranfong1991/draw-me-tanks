@@ -34,8 +34,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ChooseEMILYActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
-    public static final String EXTRA_PORT = "port";
-    public static final String EXTRA_IP_ADDR = "ip";
+    public static final String EXTRA_PORT = "EXTRA_PORT";
+    public static final String EXTRA_IP = "EXTRA_IP";
 
     private String prefName;
     private String prefToken;
@@ -167,7 +167,7 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
 
     public void proceedToMain(String ipAddress, int port){
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(EXTRA_IP_ADDR, ipAddress);
+        intent.putExtra(EXTRA_IP, ipAddress);
         intent.putExtra(EXTRA_PORT, port);
         startActivity(intent);
         finish();
@@ -192,9 +192,11 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
             ClientNSDHelper.Action action = (ClientNSDHelper.Action) extra.get(ClientNSDHelper.EXTRA_ACTION);
             String serviceName = extra.getString(ClientNSDHelper.EXTRA_SERVICE_NAME);
 
+            if(action == null)
+                return;
+
             switch(action){
                 case ADD_SERVICE:{
-                    Log.d("EMILY", "Add service called");
                     String ip = extra.getString(ClientNSDHelper.EXTRA_SERVICE_IP);
                     int port = extra.getInt(ClientNSDHelper.EXTRA_SERVICE_PORT);
 
@@ -203,7 +205,6 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
                     break;
                 }
                 case REMOVE_SERVICE:{
-                    Log.d("EMILY", "Remove service called");
                     hosts.remove(new Host(serviceName));
                     hostAdapter.notifyDataSetChanged();
                     break;

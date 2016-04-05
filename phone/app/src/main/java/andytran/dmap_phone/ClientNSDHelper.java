@@ -22,7 +22,7 @@ public class ClientNSDHelper {
     }
 
     public static final String SERVICE_TYPE = "_http._tcp.";
-    public static final String SERVICE_NAME = "DMAP";
+    public static final String SERVICE_NAME = "EMILY";
     public static final String EXTRA_SERVICE_NAME = "EXTRA_SERVICE_NAME";
     public static final String EXTRA_SERVICE_IP = "EXTRA_SERVICE_IP";
     public static final String EXTRA_SERVICE_PORT = "EXTRA_SERVICE_PORT";
