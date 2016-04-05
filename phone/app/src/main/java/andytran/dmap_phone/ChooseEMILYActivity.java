@@ -15,7 +15,7 @@ public class ChooseEMILYActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_EMILY);
+        setContentView(R.layout.activity_choose_emily);
     }
 
     @Override
