@@ -14,7 +14,6 @@ public class ServerNSDHelper {
     public static final String SERVICE_NAME = "EMILY";
     public static final String TAG = "ServerNsdHelper";
 
-    private String mServiceName;
     private Context mContext;
     private NsdManager mNsdManager;
     private NsdManager.RegistrationListener mRegistrationListener;
@@ -32,17 +31,18 @@ public class ServerNSDHelper {
         mRegistrationListener = new NsdManager.RegistrationListener() {
 
             @Override
-            public void onServiceRegistered(NsdServiceInfo NsdServiceInfo) {
+            public void onServiceRegistered(final NsdServiceInfo nsdServiceInfo) {
                 Log.d(TAG, "Service Registered");
 
-                mServiceName = NsdServiceInfo.getServiceName();
 
                 NSDBroadcastActivity activity = (NSDBroadcastActivity)mContext;
                 final TextView tabletName = (TextView) activity.findViewById(R.id.tablet_name);
+                final TextView ip = (TextView) activity.findViewById(R.id.text_ip);
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tabletName.setText(mServiceName);
+                        tabletName.setText(nsdServiceInfo.getServiceName());
+                        ip.setText(Utils.getIpAddress());
                     }
                 });
             }
@@ -54,7 +54,6 @@ public class ServerNSDHelper {
             @Override
             public void onServiceUnregistered(NsdServiceInfo arg0) {
                 Log.d(TAG, "Service Unregistered");
-                mServiceName = null;
             }
 
             @Override

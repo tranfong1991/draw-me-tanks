@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Name"
         android:id="@+id/tablet_name"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
@@ -44,6 +45,22 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:indeterminate="true"
+        android:layout_below="@+id/text_port"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IP"
+        android:id="@+id/text_ip"
         android:layout_below="@+id/tablet_name"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8080"
+        android:id="@+id/text_port"
+        android:layout_below="@+id/text_ip"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

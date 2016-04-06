@@ -63,10 +63,11 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         //check if access token is already there
         SharedPreferences pref = getSharedPreferences(prefName, 0);
         String token = pref.getString(prefToken, null);
-        String ip = pref.getString(prefIp, null);
-        int port = pref.getInt(prefPort, 0);
 
         if(token != null){
+            String ip = pref.getString(prefIp, null);
+            int port = pref.getInt(prefPort, 0);
+
             proceedToMain(ip, port);
             return;
         }
@@ -79,6 +80,10 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         hosts = new ArrayList<>();
         hostAdapter = new HostAdapter(this, hosts);
 
+        ListView tabletListView = (ListView) findViewById(R.id.chooseEmilyListView);
+        tabletListView.setAdapter(hostAdapter);
+        tabletListView.setOnItemClickListener(this);
+
         nsdHelper = new ClientNSDHelper(this);
         nsdHelper.initializeNsd();
         nsdHelper.discoverServices();
@@ -86,18 +91,12 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         LocalBroadcastManager.
                 getInstance(this).
                 registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
-
-        ListView tabletListView = (ListView) findViewById(R.id.chooseEmilyListView);
-        tabletListView.setAdapter(hostAdapter);
-        tabletListView.setOnItemClickListener(this);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        final String name = String.valueOf(parent.getItemAtPosition(position));
-        serviceName.setText(name);
-
         final Host host = hosts.get(position);
+        serviceName.setText(host.getName());
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
@@ -107,6 +106,8 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
                 .append(":")
                 .append(host.getPort())
                 .append("/generate");
+
+        Log.d("EMILY", buffer.toString());
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, buffer.toString(),
@@ -134,19 +135,12 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     removeOverlay();
-                    Toast.makeText(ChooseEMILYActivity.this, "Cannot connect to " + name, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseEMILYActivity.this, "Cannot connect to " + host.getName(), Toast.LENGTH_SHORT).show();
                 }
             });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
         addOverlay();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_load_screen, menu);
-        return true;
     }
 
     public void removeOverlay() {
@@ -171,18 +165,6 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         intent.putExtra(EXTRA_PORT, port);
         startActivity(intent);
         finish();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private class ClientNSDBroadcastReceiver extends BroadcastReceiver{

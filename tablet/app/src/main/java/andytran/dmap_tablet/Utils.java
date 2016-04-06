@@ -13,7 +13,7 @@ public final class Utils {
     private static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public static String getIpAddress() {
-        String ip = "";
+        String ip = null;
         try {
             Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
                     .getNetworkInterfaces();
@@ -26,14 +26,13 @@ public final class Utils {
                     InetAddress inetAddress = enumInetAddress.nextElement();
 
                     if (inetAddress.isSiteLocalAddress()) {
-                        ip += "Site Local Address: "
-                                + inetAddress.getHostAddress() + "\n";
+                        ip = inetAddress.getHostAddress();
                     }
                 }
             }
         } catch (SocketException e) {
             e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
+            ip = "Something Wrong! " + e.toString() + "\n";
         }
 
         return ip;

@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
@@ -26,6 +29,34 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.
                 getInstance(this).
                 registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_delete_token) {
+            SharedPreferences pref = getSharedPreferences(getResources().getString(R.string.pref_name), 0);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString(getResources().getString(R.string.pref_token), null);
+            editor.apply();
+
+            Intent intent = new Intent(this, NSDBroadcastActivity.class);
+            startActivity(intent);
+            finish();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class MainActivityBroadcastReceiver extends BroadcastReceiver{
