@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_delete_token) {
             SharedPreferences pref = getSharedPreferences(getResources().getString(R.string.pref_name), 0);
             SharedPreferences.Editor editor = pref.edit();

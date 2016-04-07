@@ -80,7 +80,8 @@ public class DMAPServer extends NanoHTTPD {
             return generateToken();
 
         //check if token is not present or doesn't match
-        if(params.get("token") == null || !params.get("token").equals(token))
+        String receivedToken = params.get("token");
+        if(receivedToken == null || !receivedToken.equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
         switch(method){
