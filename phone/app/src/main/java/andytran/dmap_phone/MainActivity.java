@@ -11,30 +11,11 @@ import android.widget.Button;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
-    Button addImage;
-    private ArrayAdapter<String> lsAdapter;
-    ListView list;
-    String[] items = {"Stay Calm", "Do not stand up", "Follow Me", "Keep your life jacket on"};
-    Integer[] imgid = {R.drawable.images,R.drawable.sitdown,R.drawable.images,R.drawable.images};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Log.v("LstAdapter", "Inside LstAdapter");
-        GraphicAdapter adapter = new GraphicAdapter(this,items, imgid);
-        list = (ListView)findViewById(R.id.listView);
-        list.setAdapter(adapter);
-
-//        ListView listView = (ListView) findViewById(R.id.listView); this is the code that works
-//        ArrayList<String> itemList = new ArrayList<String>();
-//        itemList.addAll(Arrays.asList(items));
-//        lsAdapter = new ArrayAdapter<String>(this,R.layout.graphic_item, R.id.textView1, items);  this is the code that works
-//        listView.setAdapter(lsAdapter);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        //populateListView();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -45,24 +26,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-//    private void populateListView(){
-//        String[] myItems = {"blue","red"};
-//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.graphic_item, myItems);
-//        ListView list = (ListView) findViewById(R.id.image)
-//    }
-
-
-
-//    public void addImage() {
-//        addImage = (Button) findViewById(R.id.addImage);
-//        addImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(MainActivity.this, AddImage.class);
-//                startActivity(i);
-//            }
-//        });
-//    }
 
 }

@@ -10,7 +10,7 @@ import java.util.Random;
  * Created by Andy Tran on 3/4/2016.
  */
 public final class Utils {
-    private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public static String getIpAddress() {
         String ip = "";

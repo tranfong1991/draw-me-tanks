@@ -5,33 +5,40 @@ package andytran.dmap_phone;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
 
 
 public class ClientNSDHelper {
-
-    Context mContext;
-
-    NsdManager mNsdManager;
-    NsdManager.ResolveListener mResolveListener;
-    NsdManager.DiscoveryListener mDiscoveryListener;
+    public enum Action{
+        ADD_SERVICE,
+        REMOVE_SERVICE
+    }
 
     public static final String SERVICE_TYPE = "_http._tcp.";
-
+    public static final String SERVICE_NAME = "EMILY";
+    public static final String EXTRA_SERVICE_NAME = "EXTRA_SERVICE_NAME";
+    public static final String EXTRA_SERVICE_IP = "EXTRA_SERVICE_IP";
+    public static final String EXTRA_SERVICE_PORT = "EXTRA_SERVICE_PORT";
+    public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final String TAG = "ClientNSDHelper";
-    public String mServiceName = "DMAP";
 
-    NsdServiceInfo mService;
+    private Context mContext;
+    private NsdManager mNsdManager;
+    private NsdManager.DiscoveryListener mDiscoveryListener;
 
-    public ClientNSDHelper(Context context) {
+    public ClientNSDHelper(Context context){
         mContext = context;
         mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
     }
 
     public void initializeNsd() {
-        initializeResolveListener();
         initializeDiscoveryListener();
     }
 
@@ -45,23 +52,22 @@ public class ClientNSDHelper {
 
             @Override
             public void onServiceFound(NsdServiceInfo service) {
-                Log.d(TAG, "Service discovery success" + service);
+                Log.d(TAG, "Service discovery success: " + service);
                 if (!service.getServiceType().equals(SERVICE_TYPE)) {
                     Log.d(TAG, "Unknown Service Type: " + service.getServiceType());
-                } else if (service.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "Same machine: " + mServiceName);
-                    mNsdManager.resolveService(service, mResolveListener);
-                } else if (service.getServiceName().contains(mServiceName)){
-                    mNsdManager.resolveService(service, mResolveListener);
+                }  else if (service.getServiceName().contains(SERVICE_NAME)){
+                    mNsdManager.resolveService(service, new MyResolveListener());
                 }
             }
 
             @Override
-            public void onServiceLost(NsdServiceInfo service) {
-                Log.e(TAG, "service lost" + service);
-                if (mService == service) {
-                    mService = null;
-                }
+            public void onServiceLost(NsdServiceInfo serviceInfo) {
+                Log.e(TAG, "Service lost " + serviceInfo);
+
+                Intent intent = new Intent(mContext.getResources().getString(R.string.package_name));
+                intent.putExtra(EXTRA_ACTION, Action.REMOVE_SERVICE);
+                intent.putExtra(EXTRA_SERVICE_NAME, serviceInfo.getServiceName());
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
             }
 
             @Override
@@ -71,35 +77,14 @@ public class ClientNSDHelper {
 
             @Override
             public void onStartDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "Discovery failed: Error code: " + errorCode);
                 mNsdManager.stopServiceDiscovery(this);
             }
 
             @Override
             public void onStopDiscoveryFailed(String serviceType, int errorCode) {
-                Log.e(TAG, "Discovery failed: Error code:" + errorCode);
+                Log.e(TAG, "Discovery failed: Error code: " + errorCode);
                 mNsdManager.stopServiceDiscovery(this);
-            }
-        };
-    }
-
-    public void initializeResolveListener() {
-        mResolveListener = new NsdManager.ResolveListener() {
-
-            @Override
-            public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
-                Log.e(TAG, "Resolve failed" + errorCode);
-            }
-
-            @Override
-            public void onServiceResolved(NsdServiceInfo serviceInfo) {
-                Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
-
-                if (serviceInfo.getServiceName().equals(mServiceName)) {
-                    Log.d(TAG, "Same IP.");
-                    return;
-                }
-                mService = serviceInfo;
             }
         };
     }
@@ -113,8 +98,23 @@ public class ClientNSDHelper {
         mNsdManager.stopServiceDiscovery(mDiscoveryListener);
     }
 
-    public NsdServiceInfo getChosenServiceInfo() {
-        return mService;
+    private class MyResolveListener implements NsdManager.ResolveListener{
+        @Override
+        public void onResolveFailed(NsdServiceInfo serviceInfo, int errorCode) {
+            Log.e(TAG, "Resolve failed " + errorCode);
+        }
+
+        @Override
+        public void onServiceResolved(NsdServiceInfo serviceInfo) {
+            Log.e(TAG, "Resolve Succeeded. " + serviceInfo);
+
+            Intent intent = new Intent(mContext.getResources().getString(R.string.package_name));
+            intent.putExtra(EXTRA_ACTION, Action.ADD_SERVICE);
+            intent.putExtra(EXTRA_SERVICE_NAME, serviceInfo.getServiceName());
+            intent.putExtra(EXTRA_SERVICE_IP, serviceInfo.getHost().toString());
+            intent.putExtra(EXTRA_SERVICE_PORT, serviceInfo.getPort());
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        }
     }
 }
 

@@ -24,7 +24,7 @@
         </activity>
         <activity
             android:name=".ModigMainActivity"
-            android:label="ModigMainActivity">
+            android:label="@string/title_activity_choose">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,6 +38,15 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:parentActivityName="andytran.dmap_phone.ChooseEMILYActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="andytran.dmap_phone.ChooseEMILYActivity" />
+        </activity>
     </application>
 
 </manifest>

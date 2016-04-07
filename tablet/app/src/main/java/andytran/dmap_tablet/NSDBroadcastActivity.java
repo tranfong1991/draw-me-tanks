@@ -5,40 +5,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NSDBroadcastActivity extends AppCompatActivity {
     private ServerNSDHelper nsdHelper;
-    private BroadcastReceiver receiver = new LoadActivityBroadcastReceiver();
+    private BroadcastReceiver receiver = new ServerNSDBroadcastReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nsd_broadcast);
 
-        final TextView ip = (TextView)findViewById(R.id.textView2);
-        NSDBroadcastActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ip.setText(Utils.getIpAddress());
-            }
-        });
-
         //start DMAP server
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
 
         //get access token
-        SharedPreferences pref = getSharedPreferences(DMAPServer.PREF_NAME, 0);
-        String token = pref.getString(DMAPServer.PREF_TOKEN, null);
+        SharedPreferences pref = getSharedPreferences(getResources().getString(R.string.pref_name), 0);
+        String token = pref.getString(getResources().getString(R.string.pref_token), null);
 
         //start nsd if no token found
         if(token == null) {
-            nsdHelper = new ServerNSDHelper(this);
+            nsdHelper = new ServerNSDHelper(NSDBroadcastActivity.this);
             nsdHelper.initializeNsd();
             nsdHelper.registerService(DMAPServer.PORT);
         } else {
@@ -52,10 +44,31 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
         LocalBroadcastManager.
                 getInstance(this).
-                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
+                registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
     }
 
-    private class LoadActivityBroadcastReceiver extends BroadcastReceiver{
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(nsdHelper != null)
+            nsdHelper.unregisterService();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(nsdHelper != null)
+            nsdHelper.registerService(DMAPServer.PORT);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(nsdHelper != null)
+            nsdHelper.unregisterService();
+        super.onDestroy();
+    }
+
+    private class ServerNSDBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle extra = intent.getExtras();
@@ -65,10 +78,7 @@ public class NSDBroadcastActivity extends AppCompatActivity {
                 return;
 
             switch(action){
-                case STOP_NSD:{
-                    nsdHelper.unregisterService();
-                    Toast.makeText(NSDBroadcastActivity.this, "NSD Stopped", Toast.LENGTH_SHORT).show();
-
+                case GO_TO_MAIN:{
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);
                     startActivity(i);

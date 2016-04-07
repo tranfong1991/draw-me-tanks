@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
@@ -26,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         graphicView = (ImageView)findViewById(R.id.graphic_view);
         LocalBroadcastManager.
                 getInstance(this).
-                registerReceiver(receiver, new IntentFilter(DMAPServer.PACKAGE_NAME));
+                registerReceiver(receiver, new IntentFilter(getResources().getString(R.string.package_name)));
     }
 
     private class MainActivityBroadcastReceiver extends BroadcastReceiver{

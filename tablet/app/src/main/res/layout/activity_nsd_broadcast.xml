@@ -15,15 +15,14 @@
         android:text="@string/salutations"
         android:id="@+id/textView"
         android:textSize="30sp"
-        android:layout_above="@+id/textView2"
+        android:layout_above="@+id/tablet_name"
         android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/tablet_name"
-        android:id="@+id/textView2"
+        android:id="@+id/tablet_name"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:textSize="40sp" />
@@ -45,6 +44,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:indeterminate="true"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/tablet_name"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

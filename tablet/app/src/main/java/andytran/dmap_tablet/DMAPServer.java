@@ -26,7 +26,7 @@ import fi.iki.elonen.NanoHTTPD;
 public class DMAPServer extends NanoHTTPD {
     public enum Action{
         GO_TO_LOAD,
-        STOP_NSD,
+        GO_TO_MAIN,
         PLAY_GRAPHIC,
         STOP_GRAPHIC
     }
@@ -35,9 +35,6 @@ public class DMAPServer extends NanoHTTPD {
     private static final int FILE_NAME_LENGTH = 10;
     private static final String TAG = "DMAPServer";
 
-    public static final String PREF_NAME = "DMAP_PREF";
-    public static final String PREF_TOKEN = "DMAP_TOKEN";
-    public static final String PACKAGE_NAME = "andytran.dmap_tablet";
     public static final String EXTRA_GRAPHIC_NAME = "EXTRA_GRAPHIC_NAME";
     public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
@@ -46,16 +43,23 @@ public class DMAPServer extends NanoHTTPD {
     public static final int HTTP_UNAUTHORIZED = 401;
     public static final int HTTP_NOT_FOUND = 404;
 
+    private String prefName;
+    private String prefToken;
+    private String packageName;
     private String token;
     private Context context;
     private GraphicDbHelper dbHelper;
-    private Map<Long, String> mapping;  //for faster entry access
+    private Map<Long, String> mapping;  //for faster entry access instead of querying database every time
 
     public DMAPServer(Context context)throws IOException{
         super(PORT);
 
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
-        this.token = pref.getString(PREF_TOKEN, null);
+        prefName = context.getResources().getString(R.string.pref_name);
+        prefToken = context.getResources().getString(R.string.pref_token);
+        packageName = context.getResources().getString(R.string.package_name);
+
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+        this.token = pref.getString(prefToken, null);
 
         this.context = context;
         this.dbHelper = new GraphicDbHelper(context);
@@ -79,12 +83,16 @@ public class DMAPServer extends NanoHTTPD {
         if(params.get("token") == null || !params.get("token").equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
-        if(method == Method.GET)
-            return doGet(session);
-        else if(method == Method.POST)
-            return doPost(session);
-        else if(method == Method.DELETE)
-            return doDelete(session);
+        switch(method){
+            case GET:
+                return doGet(session);
+            case POST:
+                return doPost(session);
+            case PUT:
+                return doPut(session);
+            case DELETE:
+                return doDelete(session);
+        }
 
         return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
     }
@@ -96,6 +104,8 @@ public class DMAPServer extends NanoHTTPD {
                 return playGraphic(session);
             case "/stop":
                 return stopGraphic();
+            case "/ping":
+                return pingServer();
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
         }
@@ -104,13 +114,15 @@ public class DMAPServer extends NanoHTTPD {
     private Response doPost(IHTTPSession session){
         String uri = session.getUri();
         switch(uri){
-            case "/ping":
-                return pingServer();
-            case "/graphic":    //http://localhost:8080/graphic?token=XXXXX
+            case "/graphic":
                 return postGraphic(session);
             default:
                 return newFixedLengthResponse("{\"status\":" + HTTP_NOT_FOUND + "}");
         }
+    }
+
+    private Response doPut(IHTTPSession session){
+        return null;
     }
 
     private Response doDelete(IHTTPSession session){
@@ -134,28 +146,28 @@ public class DMAPServer extends NanoHTTPD {
         this.token = Utils.generateRandomString(TOKEN_LENGTH);
 
         //save token to shared preferences
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_TOKEN, this.token);
+        editor.putString(prefToken, this.token);
         editor.apply();
 
         //tells the NSDBroadcastActivity to stop nsd and switch to Main Activity once a token is generated
-        Intent intent = new Intent(PACKAGE_NAME);
-        intent.putExtra(EXTRA_ACTION, Action.STOP_NSD);
+        Intent intent = new Intent(packageName);
+        intent.putExtra(EXTRA_ACTION, Action.GO_TO_MAIN);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         return newFixedLengthResponse("{\"token\" : \"" + this.token + "\"}");
     }
 
     private Response deactivateToken(){
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_TOKEN, null);
+        editor.putString(prefToken, null);
         editor.apply();
 
         this.token = null;
 
-        Intent intent = new Intent(PACKAGE_NAME);
+        Intent intent = new Intent(packageName);
         intent.putExtra(EXTRA_ACTION, Action.GO_TO_LOAD);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -227,7 +239,7 @@ public class DMAPServer extends NanoHTTPD {
         if(fileName == null)
             return newFixedLengthResponse("{\"status\" : " + HTTP_NOT_FOUND + "}");
 
-        Intent intent = new Intent(PACKAGE_NAME);
+        Intent intent = new Intent(packageName);
         intent.putExtra(EXTRA_GRAPHIC_NAME, fileName);
         intent.putExtra(EXTRA_ACTION, Action.PLAY_GRAPHIC);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -236,7 +248,7 @@ public class DMAPServer extends NanoHTTPD {
     }
 
     private Response stopGraphic(){
-        Intent intent = new Intent(PACKAGE_NAME);
+        Intent intent = new Intent(packageName);
         intent.putExtra(EXTRA_ACTION, Action.STOP_GRAPHIC);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
