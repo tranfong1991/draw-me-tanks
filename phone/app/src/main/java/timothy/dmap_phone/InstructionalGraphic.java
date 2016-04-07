@@ -1,5 +1,6 @@
 package timothy.dmap_phone;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,7 +16,8 @@ import org.json.JSONObject;
  *
  *  Internal representation of a set of frames used in a graphic.
  *  ***********************************************************************************************/
-public class InstructionalGraphic {
+@SuppressWarnings("serial")
+public class InstructionalGraphic implements Serializable {
     public static final String NULL_NAME_MESSAGE = "Name given to Instructional Graphic is null";
     public static final String INVALID_INTERVAL_MESSAGE = "An invalid interval was given";
 
@@ -34,6 +36,25 @@ public class InstructionalGraphic {
         this.interval = DEFAULT_INTERVAL;
         this.ids = new ArrayList();
         this.imageRefs = new HashMap();
+    }
+
+
+    /**
+     * Constructs a duplicate of another Instructional Graphic.
+     * @param other Instructional Graphic to copy.
+     */
+    public InstructionalGraphic(InstructionalGraphic other) {
+        this.name = other.name;
+        this.interval = other.interval;
+        this.ids = other.ids;
+        this.imageRefs = other.imageRefs;
+        this.ids = new ArrayList();
+        this.imageRefs = new HashMap();
+        for(int i = 0; i < other.numOfFrames(); ++i) {
+            Integer id = new Integer(other.ids.get(i));
+            this.ids.add(id);
+            this.imageRefs.put(id, other.imageRefs.get(id));
+        }
     }
 
 /*  Accessors
@@ -146,77 +167,21 @@ public class InstructionalGraphic {
         removeImageAt(ids.indexOf(id));
     }
 
-/*  JSON Methods
- *  ==============================================================================================*/
-
-    /**
-     * @return the JSON version of the InstructionalGraphic
-     */
-    public JSONObject getJSONObject() {
-        JSONObject obj = new JSONObject();
-        try {
-            obj.put("name", name);
-            obj.put("interval", interval);
-            obj.put("images", makeImageArray());
-        } catch(JSONException je) {
-            // TODO: handle this!
-
-        }
-        return obj;
-    }
-
-    private JSONObject makeImageArray() throws JSONException {
-        JSONObject array = new JSONObject();
-        for(int i = 0; i < ids.size(); ++i) {
-            Integer id = ids.get(i);
-            array.put(String.valueOf(id), imageRefs.get(id));
-        }
-        return array;
-    }
-
-    /**
-     *
-     * @param json to parse into a string
-     * @return the InstructionalGraphic extracted from the JSON
-     * @throws JSONException
-     */
-    public static InstructionalGraphic parseJSON(JSONObject json) throws JSONException {
-        InstructionalGraphic ig = new InstructionalGraphic(json.getString("name"));
-        ig.setInterval(Integer.parseInt(json.getString("interval")));
-        fillIGfromJSON(ig, json);
-        return ig;
-    }
-
-    /**
-     * Inserts the list items (IDs and references to images) into the InstructionalGraphic
-     * from the JSON object.
-     * @param ig The InstructionalGraphic
-     * @param json The JSON object
-     * @throws JSONException
-     */
-    private static void fillIGfromJSON(InstructionalGraphic ig, JSONObject json) throws JSONException {
-        JSONObject json_ids = json.getJSONObject("images");
-
-        for(Iterator<String> i = json_ids.keys(); i.hasNext() ;) {
-            String str_id = i.next();
-            Integer int_id = Integer.parseInt(str_id);
-            String ref = json_ids.getString(str_id);
-            ig.ids.add(int_id);
-            ig.imageRefs.put(int_id, ref);
-        }
-
-        return;
-    }
-
     /*  Comparison methods
  *  ==============================================================================================*/
 
+    /**
+     * Compares two Instructional Graphics. Order does matter for the image ids.
+     * @param ig The Instructional Graphic to compare against
+     * @return True if equivalent, false if not.
+     */
     public boolean equals(InstructionalGraphic ig) {
-        if(ig.name != name || ig.interval != interval || ig.ids.size() != ids.size()) {
+        if(!ig.name.equals(this.name) || !ig.interval.equals(this.interval) || ig.ids.size() != this.ids.size()) {
             return false;
         }
-        for(int i = 0; i < ids.size(); ++i) {
-            if(ig.ids.get(i) != ids.get(i) || ig.imageRefs.get(i) != imageRefs.get(i)) {
+        for(int i = 0; i < this.ids.size(); ++i) {
+            Integer id = this.ids.get(i);
+            if(!ig.ids.get(i).equals(id) || !ig.imageRefs.get(id).equals(this.imageRefs.get(id))) {
                 return false;
             }
         }

@@ -37,8 +37,8 @@ public class ModigMainActivity extends Activity {
          */
         new_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                InstructionalGraphic ig = initializeIG();
-
+                InstructionalGraphic ig = createIG();
+                sendIntent(ig);
             }
         });
     }
@@ -48,9 +48,11 @@ public class ModigMainActivity extends Activity {
      * @param ig InstructionalGraphic to send
      */
     private void sendIntent(InstructionalGraphic ig) {
-        Intent sendIntent = new Intent(this, ModifyInstructionalGraphicActivity.class);
-        sendIntent.setAction(Intent.ACTION_SEND);
-        //sendIntent.putExtra(InstructionalGraphic.class.getName(), (Object) ig);
+        InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
+        Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
+        intent.putExtra(InstructionalGraphic.class.getName(), ig);
+        intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+        startActivity(intent);
         return;
     }
 
@@ -83,7 +85,7 @@ public class ModigMainActivity extends Activity {
     private void populateIG(InstructionalGraphic ig) {
         int number_rounds = getNumberRounds();
         for(int i = 0; i < number_rounds; ++i) {
-            ig.addImage(i, Integer.toString(database.get_random_graphic()));
+            ig.addImage(database.get_random_graphic(), "test");
         }
         return;
     }
@@ -94,6 +96,7 @@ public class ModigMainActivity extends Activity {
      */
     private int getNumberRounds() {
         Random rand = new Random(System.currentTimeMillis());
-        return rand.nextInt();
+        int number_rounds = Math.abs(rand.nextInt())%5 + 1;
+        return number_rounds;
     }
 }

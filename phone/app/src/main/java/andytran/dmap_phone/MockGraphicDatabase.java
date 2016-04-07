@@ -1,6 +1,7 @@
 package andytran.dmap_phone;
 
 import java.util.Random;
+import java.lang.Math;
 
 /**
  * Created by Natalie on 3/29/2016.
@@ -37,7 +38,7 @@ public class MockGraphicDatabase {
      */
     public int get_random_graphic() {
         int index = rand.nextInt()%graphics.length;
-        return graphics[index];
+        return graphics[Math.abs(index)];
     }
 
     /**

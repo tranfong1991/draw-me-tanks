@@ -82,10 +82,8 @@
     <string name="title_activity_add_instructional_graphic">AddInstructionalGraphicActivity</string>
 
     <!-- Strings for modifying instructional graphics -->
-    <string name="modig_new_graphic">New Graphic</string>
     <string name="modig_default_title">Instruction Title</string>
-    <string name="modig_cycle_left_portion">Cycle every</string>
-    <string name="modig_cycle_right_portion">seconds.</string>
+    <string name="modig_cycle">second cycles.</string>
     <string name="modig_preview">Preview</string>
     <string name="modig_ok">OK</string>
 </resources>

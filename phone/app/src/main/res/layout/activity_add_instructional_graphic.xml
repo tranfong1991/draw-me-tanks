@@ -23,56 +23,86 @@
         android:showDividers="middle"
         android:layout_centerVertical="true">
 
-        <!-- Row 1 - New Graphic Insertion -->
-        <LinearLayout
-            android:orientation="horizontal"
+        <!-- Row 1 - Instructional Graphic Name -->
+        <EditText
+            android:id="@+id/modig_instructional_graphic_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
-            <ImageButton
-                android:id="@+id/modigInsertLeftButton"
-                android:src="@drawable/ic_chevron_left_24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:gravity="center_vertical"/>
-            <EditText
-                android:id="@+id/modigNewGraphicLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/modig_new_graphic"/>
-            <ImageButton
-                android:id="@+id/modigInsertRightButton"
-                android:src="@drawable/ic_keyboard_arrow_right_24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:gravity="center_horizontal"/>
-        </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:singleLine="true"
+            android:lines="1"
+            android:hint="@string/modig_default_title"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimaryDark"/>
 
         <!-- Row 2 - Graphic Carousel -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:scrollbars="none"
+            android:layout_weight="1">
             <LinearLayout
-                android:id="@+id/carousel"
+                android:id="@+id/modig_carousel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"/>
         </HorizontalScrollView>
 
-       <!-- From Old Test.
-        <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="187dp">
-        </android.support.v4.view.ViewPager>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/hello_world"/>
-            -->
+        <!-- Row 3 - Cycle -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:id="@+id/modig_cycle_value"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentTop="false"
+                android:layout_centerHorizontal="false" />
+            <TextView
+                android:id="@+id/modig_cycle_right_portion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp"
+                android:hint="@string/modig_cycle"/>
+        </LinearLayout>
+
+        <!-- Row 4 - Buttons -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/modig_preview_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:hint="@string/modig_preview"
+                android:layout_marginRight="10.0dip"
+                android:backgroundTint="@color/colorWhite"/>
+            <Button
+                android:id="@+id/modig_ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:hint="@string/modig_ok"
+                android:layout_marginLeft="10.0dip"
+                android:backgroundTint="@color/colorWhite"/>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
