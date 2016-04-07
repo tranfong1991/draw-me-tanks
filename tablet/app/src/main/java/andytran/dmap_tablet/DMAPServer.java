@@ -76,7 +76,7 @@ public class DMAPServer extends NanoHTTPD {
         Map<String, String> params = session.getParms();
 
         //when the phone first connects to the tablet
-        if(method == Method.GET && uri.equals("/generate"))
+        if(token == null && method == Method.GET && uri.equals("/generate"))
             return generateToken();
 
         //check if token is not present or doesn't match

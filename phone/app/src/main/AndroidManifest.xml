@@ -13,21 +13,24 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".ChooseEMILYActivity"
-            android:label="@string/title_activity_choose">
+            android:label="@string/title_activity_choose"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main"
-            android:parentActivityName="andytran.dmap_phone.ChooseEMILYActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="andytran.dmap_phone.ChooseEMILYActivity" />
-        </activity>
+        <!--<activity-->
+            <!--android:name=".ClientSocketTestActivity"-->
+            <!--android:label="@string/title_activity_client_socket_test">-->
+        <!--</activity>-->
+
     </application>
 
 </manifest>

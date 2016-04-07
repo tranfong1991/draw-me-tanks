@@ -81,9 +81,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case GO_TO_LOAD:{
-                    Intent service = new Intent(MainActivity.this, DMAPIntentService.class);
-                    stopService(service);
-
                     Intent i = new Intent(MainActivity.this, NSDBroadcastActivity.class);
                     startActivity(i);
                     finish();

@@ -13,13 +13,13 @@
     tools:showIn="@layout/activity_main">
 
     <!--<Button-->
-        <!--android:id="@+id/button1"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:icon="@drawable/4_collections_view_as_list"-->
-        <!--android:layout_above="@+id/radioButton"-->
-        <!--android:layout_alignLeft="@+id/view"-->
-        <!--android:layout_alignStart="@+id/view" />-->
+    <!--android:id="@+id/button1"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:icon="@drawable/4_collections_view_as_list"-->
+    <!--android:layout_above="@+id/radioButton"-->
+    <!--android:layout_alignLeft="@+id/view"-->
+    <!--android:layout_alignStart="@+id/view" />-->
 
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/fab_ic_add"
@@ -38,7 +38,6 @@
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/view" />
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
