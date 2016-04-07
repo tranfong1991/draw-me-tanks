@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import core.InstructionalGraphic;
+import timothy.dmap_phone.InstructionalGraphic;
 
 /** InstructionalGraphicDbAccess Class
  *  @author Timothy Foster, Shane Scott

@@ -19,11 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import core.DataHolder;
-import core.InstructionalGraphic;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import timothy.dmap_phone.InstructionalGraphic;
 
 public class MainActivity extends AppCompatActivity {
     private String prefName;
