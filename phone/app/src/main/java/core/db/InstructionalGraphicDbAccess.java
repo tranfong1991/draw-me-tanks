@@ -20,6 +20,8 @@ import core.InstructionalGraphic;
  *  @usage
  *  InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(getContext());
  *  InstructionalGraphic g = db.getGraphicByName("Sit Down");
+ *
+ *  @TODO Using shared preferences, we can obsolete the need for the Index field and use an array of Graphic _IDs instead
  */
 public class InstructionalGraphicDbAccess {
 
@@ -104,7 +106,8 @@ public class InstructionalGraphicDbAccess {
     //  Inserting ids is hard
         StringBuilder idStr = new StringBuilder();
         for(int i = 0; i < graphic.numOfFrames(); ++i) {
-        //  @TODO check if id exists
+            if(!isIdRegistered(graphic.idAt(i)))
+                registerId(graphic.idAt(i), graphic.imageRefAt(i));
 
             idStr.append(graphic.idAt(i));
             if(i < graphic.numOfFrames() - 1)
@@ -114,33 +117,106 @@ public class InstructionalGraphicDbAccess {
         values.put(InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_IDSTR, idStr.toString());
 
         db.insert(
-            InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
-            null,
-            values
+                InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
+                null,
+                values
         );
     }
 
     public void addGraphicAt(InstructionalGraphic graphic, Integer index) {
-    //  @TODO should do some checking here
+        if(index < 0 || index > getNumberOfGraphics())
+            throw new DbAccessError("addGraphicAt: Attempted to insert at invalid index");
+
         Integer from = getNumberOfGraphics();
         addGraphicToEnd(graphic);
         moveGraphic(from, index);
     }
 
     public void removeGraphicFromEnd() {
-        throw new DbAccessError("removeLastGraphic not yet implemented");
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INDEX + " =?";
+        String[] selectionArgs = { String.valueOf(getNumberOfGraphics() - 1) };
+
+        db.delete(
+                InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
+                selection, selectionArgs
+        );
     }
 
     public void removeGraphicAt(Integer index) {
-        throw new DbAccessError("removeGraphicAt not yet implemented");
+        if(index < 0 || index >= getNumberOfGraphics())
+            throw new DbAccessError("removeGraphicAt: Attempted to remove from invalid index");
+
+        moveGraphic(index, getNumberOfGraphics() - 1);
+        removeGraphicFromEnd();
     }
 
     public void removeGraphic(InstructionalGraphic graphic) {
-        throw new DbAccessError("removeGraphic not yet implemented");
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] proj = InstructionalGraphicDbContract.GraphicEntry.all();
+        String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_NAME + " =?";
+        String[] selectionArgs = { graphic.getName() };
+
+        Cursor c = db.query(
+            InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
+            proj,
+            selection,
+            selectionArgs,
+            null, null, null
+        );
+
+        Integer index = c.getInt(c.getColumnIndex(InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INDEX));
+
+        c.close();
+
+        removeGraphicAt(index);
     }
 
+    public void updateGraphic(InstructionalGraphic graphic) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_NAME, graphic.getName());
+        values.put(InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INTERVAL, graphic.getInterval());
+
+        StringBuilder idStr = new StringBuilder();
+        for(int i = 0; i < graphic.numOfFrames(); ++i) {
+            if(!isIdRegistered(graphic.idAt(i)))
+                registerId(graphic.idAt(i), graphic.imageRefAt(i));
+
+            idStr.append(graphic.idAt(i));
+            if(i < graphic.numOfFrames() - 1)
+                idStr.append(",");
+        }
+
+        values.put(InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_IDSTR, idStr.toString());
+
+        String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_NAME + " =?";
+        String[] selectionArgs = { graphic.getName() };
+
+        db.update(
+            InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
+            values,
+            selection,
+            selectionArgs
+        );
+    }
+
+/**
+ *  Moves the graphic from the given index to the other index.  Updates all of the indices of
+ *  the graphics between the two given indices as well.
+ *
+ *  @TODO we can remove this if we use Shared Preferences
+ *
+ *  @param fromIndex
+ *  @param toIndex
+ */
     public void moveGraphic(Integer fromIndex, Integer toIndex) {
-    //  @TODO needs some serious testing
+        if(fromIndex < 0 || fromIndex >= getNumberOfGraphics() || toIndex < 0 || toIndex >= getNumberOfGraphics())
+            throw new DbAccessError("moveGraphic: Attempted to move from or to invalid index");
+
         if(fromIndex.equals(toIndex))
             return;
 
@@ -282,10 +358,42 @@ public class InstructionalGraphicDbAccess {
         String[] selectionArgs = { name };
 
         db.update(
-            InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
-            values,
-            selection,
-            selectionArgs
+                InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs
+        );
+    }
+
+    private Boolean isIdRegistered(Integer id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] proj = { InstructionalGraphicDbContract.ImageMapEntry._ID };
+        String selection = InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_IMAGE_ID + " =?";
+        String[] selectionArgs = { id.toString() };
+
+        Cursor c = db.query(
+                InstructionalGraphicDbContract.ImageMapEntry.TABLE_NAME,
+                proj,
+                selection,
+                selectionArgs,
+                null, null, null
+        );
+
+        return c.getCount() > 0;
+    }
+
+    private void registerId(Integer id, String ref) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_IMAGE_ID, id);
+        values.put(InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_PATH, ref);
+
+        db.insert(
+                InstructionalGraphicDbContract.ImageMapEntry.TABLE_NAME,
+                null,
+                values
         );
     }
 
