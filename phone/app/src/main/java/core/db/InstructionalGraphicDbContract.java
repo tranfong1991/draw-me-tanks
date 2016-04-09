@@ -7,10 +7,10 @@ public final class InstructionalGraphicDbContract {
 
     public static abstract class GraphicEntry implements BaseColumns {
         public static final String TABLE_NAME = "graphics";
-        public static final String COLUMN_NAME_NAME = "name";
-        public static final String COLUMN_NAME_INTERVAL = "interval";
-        public static final String COLUMN_NAME_INDEX = "index";
-        public static final String COLUMN_NAME_IDSTR = "idstr";
+        public static final String COLUMN_NAME_NAME = "graphic_name";
+        public static final String COLUMN_NAME_INTERVAL = "graphic_interval";
+        public static final String COLUMN_NAME_INDEX = "graphic_index";
+        public static final String COLUMN_NAME_IDSTR = "graphic_idstr";
 
         public static String[] all() {
             return new String[] {
@@ -25,8 +25,8 @@ public final class InstructionalGraphicDbContract {
 
     public static abstract class ImageMapEntry implements BaseColumns {
         public static final String TABLE_NAME = "imagemap";
-        public static final String COLUMN_NAME_IMAGE_ID = "imageid";
-        public static final String COLUMN_NAME_PATH = "path";
+        public static final String COLUMN_NAME_IMAGE_ID = "image_imageid";
+        public static final String COLUMN_NAME_PATH = "image_path";
 
         public static String[] all() {
             return new String[] {
