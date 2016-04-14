@@ -1,5 +1,7 @@
 package andytran.dmap_phone;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,6 +14,8 @@ import timothy.dmap_phone.InstructionalGraphic;
 public class InstructionalGraphicChangeRecord implements Serializable {
     private InstructionalGraphic original_ig;
     private InstructionalGraphic working_ig;
+
+    private int count = 3;  // used for id's to ensure they're unique
 
     private Integer number_original_graphics_deleted;
     private Integer number_graphics_added;
@@ -26,25 +30,33 @@ public class InstructionalGraphicChangeRecord implements Serializable {
     public void removeGraphic() {
         if(number_graphics_added > 0) {
             --number_graphics_added;
-            removeGraphicFromDatabase(working_ig.idAt(working_ig.numOfFrames() - 1));
+            removeGraphicFromDatabase(working_ig.imageRefAt(working_ig.numOfFrames() - 1));
         } else {
             ++number_original_graphics_deleted;
         }
         working_ig.removeImage();
     }
 
-    public void addGraphic(Integer id) {
-        working_ig.addImage(id, "false");
+    public void addGraphic(String ref) {
+        working_ig.addImage(count++, ref);
         ++number_graphics_added;
     }
 
-    public ArrayList<Integer> getNewIds() {
-        ArrayList<Integer> new_ids = new ArrayList();
+    public void setName(String name) {
+        working_ig.setName(name);
+    }
+
+    public void setInterval(Integer interval) {
+        working_ig.setInterval(interval);
+    }
+
+    public ArrayList<String> getRefs() {
+        ArrayList<String> new_refs = new ArrayList();
         for(int i = 0; i < number_graphics_added; ++i) {
             Integer index = original_ig.numOfFrames() - number_original_graphics_deleted + i;
-            new_ids.add(working_ig.idAt(index));
+            new_refs.add(working_ig.imageRefAt(index));
         }
-        return new_ids;
+        return new_refs;
     }
 
     public Integer getNumberDeleted() {
@@ -52,14 +64,22 @@ public class InstructionalGraphicChangeRecord implements Serializable {
     }
 
     public InstructionalGraphic cancel() {
+        Log.i("message", "cancelled");
         return original_ig;
+    }
+
+    public InstructionalGraphic finalizeChanges() {
+        Log.i("message", "finalized");
+        return working_ig;
     }
 
     public InstructionalGraphic getCurrentInstructionalGraphic() {
         return working_ig;
     }
 
-    private void removeGraphicFromDatabase(Integer image_id) {
+    public InstructionalGraphic getOriginalInstructionalGraphic() { return original_ig; }
+
+    private void removeGraphicFromDatabase(String image_ref) {
         // TODO
     }
 }

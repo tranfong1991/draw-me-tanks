@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -36,17 +37,19 @@
             android:backgroundTint="@color/colorPrimaryDark"/>
 
         <!-- Row 2 - Graphic Carousel -->
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:layout_weight="1">
-            <LinearLayout
-                android:id="@+id/modig_carousel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"/>
-        </HorizontalScrollView>
+        <com.synnapps.carouselview.CarouselView
+            android:id="@+id/carousel"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            app:fillColor="@color/colorWhite"
+            app:pageColor="@color/transparentPrimary"
+            app:animateOnBoundary="true"
+            app:radius="6dp"
+            app:autoPlay="false"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="1dp"
+            android:layout_weight="1" />
+        <!-- </HorizontalScrollView> -->
 
         <!-- Row 3 - Cycle -->
         <LinearLayout

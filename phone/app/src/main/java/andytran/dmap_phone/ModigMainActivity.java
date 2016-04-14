@@ -50,8 +50,8 @@ public class ModigMainActivity extends Activity {
     private void sendIntent(InstructionalGraphic ig) {
         InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
         Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
-        intent.putExtra(InstructionalGraphic.class.getName(), ig);
         intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+
         startActivity(intent);
         return;
     }
@@ -85,7 +85,7 @@ public class ModigMainActivity extends Activity {
     private void populateIG(InstructionalGraphic ig) {
         int number_rounds = getNumberRounds();
         for(int i = 0; i < number_rounds; ++i) {
-            ig.addImage(database.get_random_graphic(), "test");
+            ig.addImage(-1*i, database.get_random_graphic());
         }
         return;
     }

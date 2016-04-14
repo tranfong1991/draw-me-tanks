@@ -36,9 +36,9 @@ public class MockGraphicDatabase {
     /**
      * @return A reference to a randomly selected image.
      */
-    public int get_random_graphic() {
+    public String get_random_graphic() {
         int index = rand.nextInt()%graphics.length;
-        return graphics[Math.abs(index)];
+        return String.valueOf(graphics[Math.abs(index)]);
     }
 
     /**

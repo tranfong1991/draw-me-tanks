@@ -1,37 +1,39 @@
 package andytran.dmap_phone;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.net.Uri;
+import com.squareup.picasso.Picasso;
+import com.synnapps.carouselview.CarouselView;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
-import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.NumberPicker;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
+import android.widget.TextView;
+
+import com.synnapps.carouselview.ImageListener;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
 public class ModifyInstructionalGraphicActivity extends Activity implements NumberPicker.OnValueChangeListener {
 
-    private static final float NUMBER_INITIAL_ITEMS = 1.5F;
-
     private InstructionalGraphic ig;
     private InstructionalGraphicChangeRecord cr;
-    private LinearLayout mCarouselContainer;
+
+    CarouselView carousel;
+    ImageListener image_listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_instructional_graphic);
 
-        setInstructionalGraphicandChangeRecord();
+        setInstructionalGraphicAndChangeRecord();
         setNumberPicker();
+        setEditText();
         setCarouselContainer();
     }
 
@@ -40,7 +42,48 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
      * @return
      */
     private void setCarouselContainer() {
-        mCarouselContainer = (LinearLayout) findViewById(R.id.modig_carousel);
+        initializeCarousel();
+        initializeImageListener();
+        carousel.setImageListener(image_listener);
+    }
+
+    private void initializeImageListener() {
+        image_listener = new ImageListener() {
+            @Override
+            public void setImageForPosition(int position, ImageView image_view) {
+                image_view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                if(position == ig.numOfFrames()) {
+                    image_view.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            addToGraphic();
+                        }
+                    });
+                }
+
+                Picasso.with(getApplicationContext())
+                        .load(getImage(position))
+                        .fit()
+                        .centerInside()
+                        .into(image_view);
+            }
+
+            private int getImage(int position) {
+                if(position < ig.numOfFrames()) {
+                    return Integer.parseInt(ig.imageRefAt(position));
+                } else {
+                    return R.drawable.dragicon;
+                }
+            }
+        };
+    }
+
+    private void initializeCarousel() {
+        carousel = (CarouselView) findViewById(R.id.carousel);
+        if(ig.numOfFrames() >= 15) {
+            carousel.setPageCount(ig.numOfFrames());    // Test phone could hold at most 17 frames on one page
+        } else {
+            carousel.setPageCount(ig.numOfFrames() + 1);
+        }
     }
 
     private void setNumberPicker() {
@@ -49,6 +92,14 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         np.setMinValue(1);
         np.setWrapSelectorWheel(false);
         np.setOnValueChangedListener(this);
+        if(ig.getInterval()/1000 <= np.getMaxValue()) {
+            np.setValue(ig.getInterval() / 1000);
+        }
+    }
+
+    private void setEditText() {
+        EditText editText = (EditText)findViewById(R.id.modig_instructional_graphic_title);
+        editText.setText(ig.getName(), TextView.BufferType.EDITABLE);
     }
 
     @Override
@@ -60,70 +111,57 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
      * set instructional graphic to display and the current change record
      * @return
      */
-    private void setInstructionalGraphicandChangeRecord() {
+    private void setInstructionalGraphicAndChangeRecord() {
         Intent intent = getIntent();
-        String ig_string = InstructionalGraphic.class.getName();
-        String cr_string = InstructionalGraphicChangeRecord.class.getName();
-        ig = (InstructionalGraphic) intent.getSerializableExtra(ig_string);
-        cr = (InstructionalGraphicChangeRecord) intent.getSerializableExtra(cr_string);
+        setChangeRecord(intent);
+        setInstructionalGraphic();
     }
 
-    /**
-     * construct view
-     * @param savedInstanceState
-     */
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
+    private void setInstructionalGraphic() {
+        ig = cr.getCurrentInstructionalGraphic();
         if(ig.numOfFrames() == 0) {
-            initializeGraphic();
+            setEditText();
+            addToGraphic();
         }
+    }
 
-        createCarousel();
+    private void setChangeRecord(Intent intent) {
+        String cr_string = InstructionalGraphicChangeRecord.class.getName();
+        cr = (InstructionalGraphicChangeRecord) intent.getSerializableExtra(cr_string);
     }
 
     /**
      * TODO REPLACE LATER
      */
-    private void initializeGraphic() {
+    private void addToGraphic() {
         cr.addGraphic((new MockGraphicDatabase()).get_random_graphic());
+        getData();
+        this.recreate();
     }
 
-    /**
-     * construct carousel part of view
-     */
-    private void createCarousel() {
-        final int imageWidth = getImageWidth();
-
-        for(int i = 0; i < ig.numOfFrames(); ++i) {
-            ImageView imageItem = getImageView(imageWidth, i);
-            mCarouselContainer.addView(imageItem);
-        }
+    private void getInterval() {
+        final NumberPicker np = (NumberPicker) findViewById(R.id.modig_cycle_value);
+        Integer interval = np.getValue()*1000;
+        cr.setInterval(interval);
     }
 
-    /**
-     * create image item with image at index based on given size
-     * @param imageWidth
-     * @param index
-     * @return
-     */
-    @NonNull
-    private ImageView getImageView(int imageWidth, int index) {
-        ImageView imageItem;
-        imageItem = new ImageView(this);
-        imageItem.setImageResource(ig.idAt(index));
-        imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
-        return imageItem;
+    private void getName() {
+        EditText edit_text   = (EditText)findViewById(R.id.modig_instructional_graphic_title);
+        String name = edit_text.getText().toString();
+        cr.setName(name);
     }
 
-    /**
-     * Compute width of carousel item based on screen dimensions and initial item count
-     * @return
-     */
-    private int getImageWidth() {
-        final DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        return (int) (displayMetrics.widthPixels/NUMBER_INITIAL_ITEMS);
+    private void getData() {
+        getInterval();
+        getName();
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        cr.cancel();
+        finish();
+
     }
 }
