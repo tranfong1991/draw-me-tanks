@@ -1,7 +1,17 @@
 package timothy.dmap_phone;
 
+import android.content.Context;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import andytran.dmap_phone.Utils;
 
 /** InstructionalGraphicTimer Class
  *  @author Timothy Foster, Karrie Cheng
@@ -28,11 +38,19 @@ public class InstructionalGraphicTimer extends Timer {
  *  ==============================================================================================*/
 /**
  *  Constructs the timer given a graphic.  You must explicitly call start() for this object to start sending messages.
+ *  @param context The current activity
+ *  @param ip The IP to send to
+ *  @param port The Port number
+ *  @param token The access token
  *  @param graphic The graphic this timer is responsible for
  */
-    public InstructionalGraphicTimer(InstructionalGraphic graphic) {
+    public InstructionalGraphicTimer(Context context, String ip, String port, String token, InstructionalGraphic graphic) {
         if(graphic.numOfFrames() <= 0)
             throw new IllegalArgumentException(EMPTY_GRAPHIC_MESSAGE);
+        this.context = context;
+        this.ip = ip;
+        this.port = port;
+        this.token = token;
         this.graphic = graphic;
         started = false;
     }
@@ -44,7 +62,7 @@ public class InstructionalGraphicTimer extends Timer {
  */
 
 
-public void start() {
+    public void start() {
         if(!started) {
             initialize();
             if (graphic.getInterval() == 0)
@@ -59,7 +77,7 @@ public void start() {
                 started = true;
             }
         }
-}
+    }
 
 
     public Integer getCurrentFrame(){
@@ -68,6 +86,10 @@ public void start() {
 
 /*  Private Members
  *  ==============================================================================================*/
+    private Context context;
+    private String ip;
+    private String port;
+    private String token;
     private InstructionalGraphic graphic;
     private Integer currentFrame;
     private Boolean started;
@@ -79,24 +101,54 @@ public void start() {
  *  Connects with the Tablet and sends the id as payload.
  *  @param id The id to send
  */
-//    TimerTask task = new TimerTask() {
-//        @Override
-//        public void run() {
-//            sendIdToTablet(nextId());
-//        }
-//    };
     private void sendIdToTablet(Integer id) {
-        ;
-    //  @TODO andy
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("id", id.toString());
+        Utils.sendPackage(
+                context,
+                Request.Method.GET,
+                Utils.buildURL(ip, port, "/playGraphic", params),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
     }
 
     private void stop(){
-        //@TODO
-        //Make a GET request to
         if (started) {
             this.cancel();
             started = false;
         }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        Utils.sendPackage(
+                context,
+                Request.Method.GET,
+                Utils.buildURL(ip, port, "/stopGraphic", params),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
     }
 
 /**

@@ -12,13 +12,22 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 
 public class Utils {
-    static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
+
+/**
+ *  Sends a request to the tablet.
+ *  @param context The current activity
+ *  @param method Use Request.Method.METHOD_TYPE
+ *  @param URL
+ *  @param listener
+ *  @param errorListener
+ */
+    public static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
         queue.add(stringRequest); //sends the package
     }
 
-    static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
+    public static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
         StringBuffer buffer = new StringBuffer();
         buffer.append(IP);
         buffer.append(":");
