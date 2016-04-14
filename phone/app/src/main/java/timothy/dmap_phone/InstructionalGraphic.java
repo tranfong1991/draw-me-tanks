@@ -45,11 +45,11 @@ public class InstructionalGraphic {
     }
 
 /**
- *  Sets the inverval, in milliseconds.
+ *  Sets the interval, in milliseconds.
  *  @param value The new interval in milliseconds.  Must be greater than or equal to 0.
  */
     public void setInterval(Integer value) {
-        if(value < 0)
+        if(value <= 0)
             throw new IllegalArgumentException(INVALID_INTERVAL_MESSAGE + ": " + value.toString());
         this.interval = value;
     }
