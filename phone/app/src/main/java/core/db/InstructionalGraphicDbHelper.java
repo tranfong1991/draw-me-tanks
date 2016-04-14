@@ -39,7 +39,7 @@ public class InstructionalGraphicDbHelper extends SQLiteOpenHelper {
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_GRAPHICS =
-        "CREATE_TABLE " + InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME + " (" +
+        "CREATE TABLE " + InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME + " (" +
         InstructionalGraphicDbContract.GraphicEntry._ID + " INTEGER PRIMARY KEY," +
         InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_NAME     + TEXT_TYPE + COMMA_SEP +
         InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INTERVAL + INT_TYPE  + COMMA_SEP +
@@ -51,10 +51,10 @@ public class InstructionalGraphicDbHelper extends SQLiteOpenHelper {
         "DROP TABLE IF EXISTS " + InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME;
 
     private static final String SQL_CREATE_IMAGEMAP =
-        "CREATE_TABLE " + InstructionalGraphicDbContract.ImageMapEntry.TABLE_NAME + " (" +
+        "CREATE TABLE " + InstructionalGraphicDbContract.ImageMapEntry.TABLE_NAME + " (" +
         InstructionalGraphicDbContract.ImageMapEntry._ID + " INTEGER PRIMARY KEY," +
         InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_IMAGE_ID + INT_TYPE  + COMMA_SEP +
-        InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_PATH     + TEXT_TYPE + COMMA_SEP +
+        InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_PATH     + TEXT_TYPE +
     " )";
 
     private static final String SQL_DELETE_IMAGEMAP =
