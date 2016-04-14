@@ -49,4 +49,6 @@ dependencies {
     compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.synnapps:carouselview:0.0.9'
     compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
 }

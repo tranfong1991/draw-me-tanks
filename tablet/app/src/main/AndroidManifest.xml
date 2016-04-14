@@ -14,7 +14,7 @@
         <activity
             android:name=".NSDBroadcastActivity"
             android:label="@string/title_activity_nsd"
-
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main"
+            android:screenOrientation="landscape">
         </activity>
 
         <service android:name=".DMAPIntentService" />

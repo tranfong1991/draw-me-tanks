@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
 
 public class NSDBroadcastActivity extends AppCompatActivity {
     private ServerNSDHelper nsdHelper;
@@ -79,6 +77,11 @@ public class NSDBroadcastActivity extends AppCompatActivity {
 
             switch(action){
                 case GO_TO_MAIN:{
+                    if(nsdHelper != null) {
+                        nsdHelper.unregisterService();
+                        nsdHelper = null;
+                    }
+
                     //switch to main screen
                     Intent i = new Intent(NSDBroadcastActivity.this, MainActivity.class);
                     startActivity(i);

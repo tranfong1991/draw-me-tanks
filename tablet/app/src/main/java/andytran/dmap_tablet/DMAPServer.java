@@ -76,11 +76,12 @@ public class DMAPServer extends NanoHTTPD {
         Map<String, String> params = session.getParms();
 
         //when the phone first connects to the tablet
-        if(method == Method.GET && uri.equals("/generate"))
+        if(token == null && method == Method.GET && uri.equals("/generate"))
             return generateToken();
 
         //check if token is not present or doesn't match
-        if(params.get("token") == null || !params.get("token").equals(token))
+        String receivedToken = params.get("token");
+        if(receivedToken == null || !receivedToken.equals(token))
             return newFixedLengthResponse("{\"status\":" + HTTP_UNAUTHORIZED + "}");
 
         switch(method){
