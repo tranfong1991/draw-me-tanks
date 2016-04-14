@@ -17,9 +17,9 @@ public class Utils {
  *  Sends a request to the tablet.
  *  @param context The current activity
  *  @param method Use Request.Method.METHOD_TYPE
- *  @param URL
- *  @param listener
- *  @param errorListener
+ *  @param URL Use Utils.buildURL for this
+ *  @param listener Callback for what happens upon success
+ *  @param errorListener Callback for what happens upon failure
  */
     public static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -27,6 +27,14 @@ public class Utils {
         queue.add(stringRequest); //sends the package
     }
 
+/**
+ *  Constructs a URL request to send to the tablet
+ *  @param IP
+ *  @param port
+ *  @param endpoint The type of request.  Can use "/playGraphic", or "/stopGraphic"
+ *  @param map List of parameters for the request
+ *  @return The URL to use in the URL parameter of sendPackage
+ */
     public static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
         StringBuffer buffer = new StringBuffer();
         buffer.append(IP);

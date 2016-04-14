@@ -111,14 +111,13 @@ public class InstructionalGraphicTimer extends Timer {
                 Utils.buildURL(ip, port, "/playGraphic", params),
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-
-                    }
+                    public void onResponse(String response) {}
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        stop();
+                        throw new Error("ERROR in sendIdToTablet: Failed to send ID");
                     }
                 }
         );
@@ -138,14 +137,12 @@ public class InstructionalGraphicTimer extends Timer {
                 Utils.buildURL(ip, port, "/stopGraphic", params),
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-
-                    }
+                    public void onResponse(String response) {}
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        throw new Error("ERROR in stop: Could not send stop request to tablet");
                     }
                 }
         );
