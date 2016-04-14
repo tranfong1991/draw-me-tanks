@@ -16,8 +16,12 @@ import java.util.TimerTask;
  *  InstructionalGraphicTimer timer = new InstructionalGraphicTimer(graphic);
  *  timer.start();
  *  timer.cancel(); // stops the timer
+ *
+ *  @TODO
  *  ***********************************************************************************************/
 public class InstructionalGraphicTimer extends Timer {
+    private static final String TAG = InstructionalGraphicTimer.class.getSimpleName();
+
     public static final String EMPTY_GRAPHIC_MESSAGE = "You cannot create a timer for an empty graphic";
 
 /*  Constructor
@@ -30,6 +34,7 @@ public class InstructionalGraphicTimer extends Timer {
         if(graphic.numOfFrames() <= 0)
             throw new IllegalArgumentException(EMPTY_GRAPHIC_MESSAGE);
         this.graphic = graphic;
+        started = false;
     }
 
 /*  Public Methods
@@ -37,17 +42,28 @@ public class InstructionalGraphicTimer extends Timer {
 /**
  *  Commences a schedule which periodically sends ids to the tablet.
  */
-    public void start() {
+
+
+public void start() {
         if(!started) {
             initialize();
-            this.schedule(new TimerTask() {
-                @Override public void run() {
-                    sendIdToTablet(nextId());
-                }
-            }, 0, graphic.getInterval());
-
-            started = true;
+            if (graphic.getInterval() == 0)
+                sendIdToTablet(graphic.idAt(0));
+            else {
+                this.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        sendIdToTablet(nextId());
+                    }
+                }, 0, graphic.getInterval());
+                started = true;
+            }
         }
+}
+
+
+    public Integer getCurrentFrame(){
+        return currentFrame;
     }
 
 /*  Private Members
@@ -63,8 +79,24 @@ public class InstructionalGraphicTimer extends Timer {
  *  Connects with the Tablet and sends the id as payload.
  *  @param id The id to send
  */
+//    TimerTask task = new TimerTask() {
+//        @Override
+//        public void run() {
+//            sendIdToTablet(nextId());
+//        }
+//    };
     private void sendIdToTablet(Integer id) {
+        ;
     //  @TODO andy
+    }
+
+    private void stop(){
+        //@TODO
+        //Make a GET request to
+        if (started) {
+            this.cancel();
+            started = false;
+        }
     }
 
 /**
