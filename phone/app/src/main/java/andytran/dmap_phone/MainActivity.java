@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import java.util.HashMap;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
@@ -40,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        HashMap<String,String> map = new HashMap<String,String>();
+        map.put("id", "1");
+        map.put("token", "token1");
+
+        String URL = Util.buildURL("172.92.43.25", "8080", "display", map);
+        Log.d("MainActivity", URL);
 
         list = (ListView)findViewById(R.id.listView);
         buildListView();
