@@ -44,13 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HashMap<String,String> map = new HashMap<String,String>();
-        map.put("id", "1");
-        map.put("token", "token1");
-
-        String URL = Util.buildURL("172.92.43.25", "8080", "display", map);
-        Log.d("MainActivity", URL);
-
         list = (ListView)findViewById(R.id.listView);
         buildListView();
 

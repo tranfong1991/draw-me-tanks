@@ -11,7 +11,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 
-public class Util extends Activity {
+public class Utils {
     static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
