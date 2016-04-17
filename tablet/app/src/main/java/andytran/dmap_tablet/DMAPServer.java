@@ -191,6 +191,8 @@ public class DMAPServer extends NanoHTTPD {
             ArrayList<Long> ids = new ArrayList<>();
             Set<String> keys = files.keySet();
             for(String key: keys){
+                Log.d(TAG, "Key is " + key);
+
                 String fileName = Utils.generateRandomString(FILE_NAME_LENGTH);
                 long id = addEntryToDb(fileName);
 

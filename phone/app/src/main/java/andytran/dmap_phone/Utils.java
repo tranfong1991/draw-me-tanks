@@ -1,4 +1,5 @@
 package andytran.dmap_phone;
+
 import android.app.Activity;
 import android.content.Context;
 
@@ -12,7 +13,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 
 public class Utils {
-    static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    static void sendPackage(Context context, int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
         queue.add(stringRequest); //sends the package

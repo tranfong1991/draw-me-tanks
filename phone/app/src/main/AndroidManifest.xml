@@ -25,10 +25,10 @@
             android:label="MainActivity">
         </activity>
 
-        <!--<activity-->
-            <!--android:name=".ClientSocketTestActivity"-->
-            <!--android:label="@string/title_activity_client_socket_test">-->
-        <!--</activity>-->
+        <activity
+            android:name=".ClientSocketTestActivity"
+            android:label="Test Socket">
+        </activity>
 
     </application>
 
