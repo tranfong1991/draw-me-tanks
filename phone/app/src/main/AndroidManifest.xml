@@ -14,10 +14,6 @@
         <activity
             android:name=".ChooseEMILYActivity"
             android:label="@string/title_activity_choose">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
@@ -28,6 +24,10 @@
         <activity
             android:name=".ClientSocketTestActivity"
             android:label="Test Socket">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>
