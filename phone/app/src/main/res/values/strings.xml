@@ -12,4 +12,8 @@
     <string name="pref_ip">DMAP_IP</string>
     <string name="pref_port">DMAP_PORT</string>
     <string name="package_name">andytran.dmap_phone</string>
+    <string name="title_activity_add_to_app_db">AddToAppDBActivity</string>
+
+    <string name="default_path"> </string>
+    <string name="ata_button">Add To App Database!</string>
 </resources>
