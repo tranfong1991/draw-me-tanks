@@ -1,6 +1,7 @@
 package timothy.dmap_phone;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -63,12 +64,14 @@ public class InstructionalGraphicTimer extends Timer {
     public void start() {
         if(!started) {
             initialize();
-            if (graphic.getInterval() == 0)
+            if (graphic.getInterval() == 0) {
                 sendIdToTablet(graphic.idAt(0));
+            }
             else {
                 this.schedule(new TimerTask() {
                     @Override
                     public void run() {
+                        Log.d(TAG, "Sending to tablet");
                         sendIdToTablet(nextId());
                     }
                 }, 0, graphic.getInterval());
@@ -92,7 +95,7 @@ public class InstructionalGraphicTimer extends Timer {
         Utils.sendPackage(
                 context,
                 Request.Method.GET,
-                Utils.buildURL(ip, port, "/stopGraphic", params),
+                Utils.buildURL(ip, port, "stop", params),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {}
@@ -135,7 +138,7 @@ public class InstructionalGraphicTimer extends Timer {
         Utils.sendPackage(
                 context,
                 Request.Method.GET,
-                Utils.buildURL(ip, port, "/playGraphic", params),
+                Utils.buildURL(ip, port, "play", params),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {}

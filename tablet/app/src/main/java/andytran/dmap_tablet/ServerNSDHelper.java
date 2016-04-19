@@ -34,7 +34,6 @@ public class ServerNSDHelper {
             public void onServiceRegistered(final NsdServiceInfo nsdServiceInfo) {
                 Log.d(TAG, "Service Registered");
 
-
                 NSDBroadcastActivity activity = (NSDBroadcastActivity)mContext;
                 final TextView tabletName = (TextView) activity.findViewById(R.id.tablet_name);
                 final TextView ip = (TextView) activity.findViewById(R.id.text_ip);

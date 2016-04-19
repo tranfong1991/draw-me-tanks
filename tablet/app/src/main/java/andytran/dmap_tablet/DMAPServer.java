@@ -59,8 +59,10 @@ public class DMAPServer extends NanoHTTPD {
         prefToken = context.getResources().getString(R.string.pref_token);
         packageName = context.getResources().getString(R.string.package_name);
 
-        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
-        this.token = pref.getString(prefToken, null);
+//        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+//        this.token = pref.getString(prefToken, null);
+
+        this.token = "abc";
 
         this.context = context;
         this.dbHelper = new GraphicDbHelper(context);
@@ -68,7 +70,7 @@ public class DMAPServer extends NanoHTTPD {
         populateMappingFromDb();
 
         start();
-        Log.d(TAG, "Server Started!");
+        Log.d(TAG, "Server Started! " + Utils.getIpAddress());
     }
 
     @Override

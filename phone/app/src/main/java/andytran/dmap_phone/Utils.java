@@ -1,6 +1,8 @@
 package andytran.dmap_phone;
+
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -12,7 +14,6 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 
 public class Utils {
-
 /**
  *  Sends a request to the tablet.
  *  @param context The current activity
@@ -21,7 +22,7 @@ public class Utils {
  *  @param listener Callback for what happens upon success
  *  @param errorListener Callback for what happens upon failure
  */
-    public static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public static void sendPackage(Context context, int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
         queue.add(stringRequest); //sends the package
