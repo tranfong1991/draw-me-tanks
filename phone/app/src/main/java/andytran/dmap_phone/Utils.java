@@ -1,6 +1,8 @@
 package andytran.dmap_phone;
+
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -12,13 +14,29 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 
 public class Utils {
-    static void sendPackage(Context context,int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
+/**
+ *  Sends a request to the tablet.
+ *  @param context The current activity
+ *  @param method Use Request.Method.METHOD_TYPE
+ *  @param URL Use Utils.buildURL for this
+ *  @param listener Callback for what happens upon success
+ *  @param errorListener Callback for what happens upon failure
+ */
+    public static void sendPackage(Context context, int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
         RequestQueue queue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
         queue.add(stringRequest); //sends the package
     }
 
-    static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
+/**
+ *  Constructs a URL request to send to the tablet
+ *  @param IP
+ *  @param port
+ *  @param endpoint The type of request.  Can use "/playGraphic", or "/stopGraphic"
+ *  @param map List of parameters for the request
+ *  @return The URL to use in the URL parameter of sendPackage
+ */
+    public static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
         StringBuffer buffer = new StringBuffer();
         buffer.append(IP);
         buffer.append(":");
