@@ -60,8 +60,6 @@ public class InstructionalGraphicTimer extends Timer {
 /**
  *  Commences a schedule which periodically sends ids to the tablet.
  */
-
-
     public void start() {
         if(!started) {
             initialize();
@@ -77,6 +75,35 @@ public class InstructionalGraphicTimer extends Timer {
                 started = true;
             }
         }
+    }
+
+/**
+ *  Stops the graphic from sending requests to the timer, and sends a stop request so the
+ *  tablet stops displaying its current image
+ */
+    public void stop(){
+        if (started) {
+            this.cancel();
+            started = false;
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        Utils.sendPackage(
+                context,
+                Request.Method.GET,
+                Utils.buildURL(ip, port, "/stopGraphic", params),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {}
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        throw new Error("ERROR in stop: Could not send stop request to tablet");
+                    }
+                }
+        );
     }
 
 
@@ -123,30 +150,6 @@ public class InstructionalGraphicTimer extends Timer {
         );
     }
 
-    private void stop(){
-        if (started) {
-            this.cancel();
-            started = false;
-        }
-
-        HashMap<String, String> params = new HashMap<>();
-        params.put("token", token);
-        Utils.sendPackage(
-                context,
-                Request.Method.GET,
-                Utils.buildURL(ip, port, "/stopGraphic", params),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {}
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        throw new Error("ERROR in stop: Could not send stop request to tablet");
-                    }
-                }
-        );
-    }
 
 /**
  *  Prepares the graphic for display.
