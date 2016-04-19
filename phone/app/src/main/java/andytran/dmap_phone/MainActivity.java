@@ -1,16 +1,22 @@
 package andytran.dmap_phone;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,8 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.daimajia.swipe.SwipeLayout;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import core.db.InstructionalGraphicDbAccess;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
@@ -36,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     ListView list;
     GraphicAdapter adapter;
+    ArrayList<InstructionalGraphic> igs;
 
 /*  Creation
  *  ==============================================================================================*/
@@ -45,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         list = (ListView)findViewById(R.id.listView);
+
         buildListView();
 
         prefName = getResources().getString(R.string.pref_name);
@@ -57,14 +69,32 @@ public class MainActivity extends AppCompatActivity {
         hostIp = pref.getString(prefIp, null);
         hostPort = pref.getInt(prefPort, 0);
 
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                HashMap<String,String> map = new HashMap<String, String>();
+                map.put("token",token);
+                map.put("id",Integer.toString(igs.get(position).idAt(0)));
+                String URL = Utils.buildURL(hostIp, Integer.toString(hostPort),"/play",map);
+//                //Utils.sendPackage(MainActivity.this,Request.Method.POST,URL, null, null);
+//                view.setSelected(true);
+//                adapter.notifyDataSetChanged();
+//                Log.d("click worked", Integer.toString(position));
+            }
+        });
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            //natalie's code
             }
         });
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,16 +154,13 @@ public class MainActivity extends AppCompatActivity {
 /*  Private Methods
  *  ==============================================================================================*/
     private void buildListView() {
-//        ArrayList<String> names = new ArrayList<>();
-//        ArrayList<Integer> imageIds = new ArrayList<>();
-//
-//        Iterator<InstructionalGraphic> iterator  = DataHolder.instance().getGraphicsListIterator();
-//        while(iterator.hasNext()) {
-//            names.add(graphic.getName());
-//            imageIds.add(graphic.idAt(0));
-//        }
-//
-//        list.setAdapter(new GraphicAdapter(this, names.toArray(new String[names.size()]), imageIds.toArray(new Integer[imageIds.size()])));
+        InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
+        InstructionalGraphic ig = new InstructionalGraphic("ig1");
+        ig.addImage(1,Integer.toString(R.drawable.images));
+        db.addGraphicToEnd(ig);
+        igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
+        adapter = new GraphicAdapter(this, igs);
+        list.setAdapter(adapter); //build the listview with the adapter
     }
 
 }

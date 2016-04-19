@@ -1,5 +1,7 @@
 package timothy.dmap_phone;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;

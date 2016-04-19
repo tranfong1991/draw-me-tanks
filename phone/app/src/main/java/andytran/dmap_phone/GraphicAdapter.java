@@ -1,43 +1,53 @@
 package andytran.dmap_phone;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.ArraySwipeAdapter;
+import com.squareup.picasso.Picasso;
 
-class GraphicAdapter extends ArraySwipeAdapter<String> {
+import java.util.ArrayList;
+
+import timothy.dmap_phone.InstructionalGraphic;
+
+class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     private final Activity context;
-    private final String[] arr;
-    private final Integer[] imgid;
     private SwipeLayout swipeLayout;
+    ArrayList<InstructionalGraphic> igs;
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.sample1;
     }
 
-    public GraphicAdapter(Activity context, String[] arr, Integer[] imgid) {
-        super(context, R.layout.graphic_item, arr);
+    public GraphicAdapter(Activity context, ArrayList<InstructionalGraphic> igs) {
+        super(context, R.layout.graphic_item);
         this.context = context;
-        this.arr = arr;
-        this.imgid = imgid;
+        this.igs = igs;
+    }
+
+    @Override
+    public int getCount(){
+        return igs.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-
         swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
         //set show mode.
         swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
         //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+
         swipeLayout.addDrag(SwipeLayout.DragEdge.Right, swipeLayout.findViewById(R.id.bottom_wrapper));
         swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
             @Override
@@ -71,11 +81,12 @@ class GraphicAdapter extends ArraySwipeAdapter<String> {
             }
         });
 
-        TextView textView = (TextView) swipeLayout.findViewById(R.id.textView1);
-        ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.imageView1);
 
-        textView.setText(arr[position]);
-        imageView1.setImageResource(imgid[position]);
+        TextView textView = (TextView) swipeLayout.findViewById(R.id.instruction_name);
+        ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
+
+        textView.setText(igs.get(position).getName());
+        imageView1.setImageResource(Integer.parseInt(igs.get(position).imageRefAt(0)));
         return swipeLayout;
     }
 }

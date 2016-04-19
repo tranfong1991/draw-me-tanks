@@ -7,29 +7,41 @@
         android:layout_width="160dp"
         android:weightSum="1"
         android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/trash_can"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:src="@drawable/images"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/trash_can"/>
+        <ImageButton
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/edit"/>
+
+        <!--<ImageView-->
+            <!--android:id="@+id/trash_can"-->
+            <!--android:layout_width="75dp"-->
+            <!--android:layout_height="75dp"-->
+            <!--android:src="@drawable/trash_can"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true" />-->
         <!--What you want to show-->
     </LinearLayout>
     <!-- Bottom View End-->
 
     <!-- Surface View Start -->
     <LinearLayout
+        android:id="@+id/surface_layout"
         android:padding="10dp"
-        android:background="#ffffff"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/instruction_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@drawable/images"
-            android:layout_below="@+id/imageButton1"
+            android:layout_below="@+id/trash_can"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
@@ -38,17 +50,18 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=" Medium Text"
-            android:id="@+id/textView1"
+            android:id="@+id/instruction_name"
             android:layout_gravity="center"
-            android:gravity="center" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/dragicon"
-            android:gravity="right"
+            android:gravity="center"
             />
+
+        <!--<ImageView-->
+            <!--android:id="@+id/imageView2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:src="@drawable/dragicon"-->
+            <!--android:gravity="right"-->
+            <!--/>-->
 
         <!--What you want to show in SurfaceView-->
     </LinearLayout>
