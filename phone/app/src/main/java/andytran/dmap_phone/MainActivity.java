@@ -1,9 +1,12 @@
 package andytran.dmap_phone;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import core.db.InstructionalGraphicDbAccess;
+import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
@@ -44,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private String hostIp;
     private int hostPort;
 
+    private InstructionalGraphicTimer timer;
+
     ListView list;
     GraphicAdapter adapter;
     ArrayList<InstructionalGraphic> igs;
+
 
 /*  Creation
  *  ==============================================================================================*/
@@ -72,11 +80,21 @@ public class MainActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("msg2","listview click");
 
-                HashMap<String,String> map = new HashMap<String, String>();
-                map.put("token",token);
-                map.put("id",Integer.toString(igs.get(position).idAt(0)));
-                String URL = Utils.buildURL(hostIp, Integer.toString(hostPort),"/play",map);
+                //InstructionalGraphic ig = igs.get(position);
+//                if (timer != null){ //if there's already a timer, stop it first
+//                    timer.stop();
+//                }
+                //need these two lines
+//                timer = new InstructionalGraphicTimer(ig);
+//                timer.start();
+
+
+//                HashMap<String,String> map = new HashMap<String, String>();
+//                map.put("token",token);
+//                map.put("id",Integer.toString(igs.get(position).idAt(0)));
+//                String URL = Utils.buildURL(hostIp, Integer.toString(hostPort),"/play",map);
 //                //Utils.sendPackage(MainActivity.this,Request.Method.POST,URL, null, null);
 //                view.setSelected(true);
 //                adapter.notifyDataSetChanged();
@@ -84,10 +102,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+//        ImageButton imgButton = (ImageButton) findViewById(R.id.delete);
+//        imgButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view){
+//                Log.d("msg1","what up Karrie");
+//            }
+//        });
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("msg1","what up Karrie");
             //natalie's code
             }
         });

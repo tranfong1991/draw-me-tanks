@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -44,6 +45,13 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         LayoutInflater inflater = context.getLayoutInflater();
         swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
         //set show mode.
+        ImageButton imgButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
+        imgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("msg3", "What up Karrie");
+            }
+        });
         swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
         //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
