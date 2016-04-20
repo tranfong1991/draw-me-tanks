@@ -40,17 +40,17 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_name"
-        android:hint="File Name"
+        android:id="@+id/txt_ip"
+        android:hint="IP"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txt_ip"
-        android:hint="IP"
-        android:layout_below="@+id/txt_name"
+        android:id="@+id/txt_token"
+        android:hint="Token"
+        android:layout_below="@+id/txt_ip"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

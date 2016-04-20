@@ -1,7 +1,18 @@
 package timothy.dmap_phone;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import andytran.dmap_phone.Utils;
 
 /** InstructionalGraphicTimer Class
  *  @author Timothy Foster, Karrie Cheng
@@ -16,20 +27,33 @@ import java.util.TimerTask;
  *  InstructionalGraphicTimer timer = new InstructionalGraphicTimer(graphic);
  *  timer.start();
  *  timer.cancel(); // stops the timer
+ *
+ *  @TODO
  *  ***********************************************************************************************/
 public class InstructionalGraphicTimer extends Timer {
+    private static final String TAG = InstructionalGraphicTimer.class.getSimpleName();
+
     public static final String EMPTY_GRAPHIC_MESSAGE = "You cannot create a timer for an empty graphic";
 
 /*  Constructor
  *  ==============================================================================================*/
 /**
  *  Constructs the timer given a graphic.  You must explicitly call start() for this object to start sending messages.
+ *  @param context The current activity
+ *  @param ip The IP to send to
+ *  @param port The Port number
+ *  @param token The access token
  *  @param graphic The graphic this timer is responsible for
  */
-    public InstructionalGraphicTimer(InstructionalGraphic graphic) {
+    public InstructionalGraphicTimer(Context context, String ip, String port, String token, InstructionalGraphic graphic) {
         if(graphic.numOfFrames() <= 0)
             throw new IllegalArgumentException(EMPTY_GRAPHIC_MESSAGE);
+        this.context = context;
+        this.ip = ip;
+        this.port = port;
+        this.token = token;
         this.graphic = graphic;
+        started = false;
     }
 
 /*  Public Methods
@@ -40,18 +64,62 @@ public class InstructionalGraphicTimer extends Timer {
     public void start() {
         if(!started) {
             initialize();
-            this.schedule(new TimerTask() {
-                @Override public void run() {
-                    sendIdToTablet(nextId());
-                }
-            }, 0, graphic.getInterval());
-
-            started = true;
+            if (graphic.getInterval() == 0) {
+                sendIdToTablet(graphic.idAt(0));
+            }
+            else {
+                this.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "Sending to tablet");
+                        sendIdToTablet(nextId());
+                    }
+                }, 0, graphic.getInterval());
+                started = true;
+            }
         }
+    }
+
+/**
+ *  Stops the graphic from sending requests to the timer, and sends a stop request so the
+ *  tablet stops displaying its current image
+ */
+    public void stop(){
+        if (started) {
+            this.cancel();
+            started = false;
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        Utils.sendPackage(
+                context,
+                Request.Method.GET,
+                Utils.buildURL(ip, port, "stop", params),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {}
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        throw new Error("ERROR in stop: Could not send stop request to tablet");
+                    }
+                }
+        );
+    }
+
+
+    public Integer getCurrentFrame(){
+        return currentFrame;
     }
 
 /*  Private Members
  *  ==============================================================================================*/
+    private Context context;
+    private String ip;
+    private String port;
+    private String token;
     private InstructionalGraphic graphic;
     private Integer currentFrame;
     private Boolean started;
@@ -64,8 +132,27 @@ public class InstructionalGraphicTimer extends Timer {
  *  @param id The id to send
  */
     private void sendIdToTablet(Integer id) {
-    //  @TODO andy
+        HashMap<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("id", id.toString());
+        Utils.sendPackage(
+                context,
+                Request.Method.GET,
+                Utils.buildURL(ip, port, "play", params),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {}
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        stop();
+                        throw new Error("ERROR in sendIdToTablet: Failed to send ID");
+                    }
+                }
+        );
     }
+
 
 /**
  *  Prepares the graphic for display.
