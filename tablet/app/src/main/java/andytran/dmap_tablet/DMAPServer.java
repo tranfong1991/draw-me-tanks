@@ -59,10 +59,8 @@ public class DMAPServer extends NanoHTTPD {
         prefToken = context.getResources().getString(R.string.pref_token);
         packageName = context.getResources().getString(R.string.package_name);
 
-//        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
-//        this.token = pref.getString(prefToken, null);
-
-        this.token = "abc";
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+        this.token = pref.getString(prefToken, null);
 
         this.context = context;
         this.dbHelper = new GraphicDbHelper(context);
