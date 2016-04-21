@@ -38,6 +38,7 @@ public class Utils {
  */
     public static String buildURL(String IP, String port, String endpoint, HashMap<String,String> map){
         StringBuffer buffer = new StringBuffer();
+        buffer.append("http://");
         buffer.append(IP);
         buffer.append(":");
         buffer.append(port);

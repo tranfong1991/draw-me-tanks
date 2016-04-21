@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     GraphicAdapter adapter;
     ArrayList<InstructionalGraphic> igs;
 
+    int clicks = 0;
+    int listPosition = 0;
+
 
 /*  Creation
  *  ==============================================================================================*/
@@ -78,18 +81,28 @@ public class MainActivity extends AppCompatActivity {
         hostIp = pref.getString(prefIp, null);
         hostPort = pref.getInt(prefPort, 0);
 
+
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("msg2","listview click");
+                InstructionalGraphic ig = igs.get(position);
+                if (timer != null){ //if there's already a timer, stop it first
+                    timer.stop();
+                }
+                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.57", "8080", "abc", ig);
+                timer.start();
+                if (position != listPosition) //if user clicks different IG, then reset click counter
+                    clicks = 0;
+                Log.d("msg2", "listview click");
+                clicks++;
+                Log.d("clicks", Integer.toString(clicks));
+                Log.d("position", Integer.toString(position));
 
-                //InstructionalGraphic ig = igs.get(position);
-//                if (timer != null){ //if there's already a timer, stop it first
-//                    timer.stop();
-//                }
-                //need these two lines
-//                timer = new InstructionalGraphicTimer(ig);
-//                timer.start();
+                if (clicks > 0 && clicks % 2 == 0)
+                    timer.stop();
+                listPosition = position;
+
 //                HashMap<String,String> map = new HashMap<String, String>();
 //                map.put("token",token);
 //                map.put("id",Integer.toString(igs.get(position).idAt(0)));
@@ -173,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
         Integer randnum = new Random().nextInt()%10000;
         InstructionalGraphic ig = new InstructionalGraphic("ig" + Integer.toString(randnum));
         ig.addImage(1,Integer.toString(R.drawable.images));
+        ig.addImage(2,Integer.toString(R.drawable.images));
+        ig.addImage(3,Integer.toString(R.drawable.images));
+        ig.setInterval(2000);
         db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
