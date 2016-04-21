@@ -1,6 +1,8 @@
 package andytran.dmap_phone;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphic;
 
 class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
@@ -41,17 +44,42 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
         swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
         //set show mode.
-        ImageButton imgButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
-        imgButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton deleteButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("msg3", "What up Karrie");
+                new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Closing Activity")
+                        .setMessage("Are you sure you want to delete the instruction?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
+                                db.removeGraphicAt(position);
+                                igs.remove(position);
+                                notifyDataSetChanged();
+                            }
+
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
             }
         });
+
+        ImageButton editButton = (ImageButton)swipeLayout.findViewById(R.id.edit);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change intent to edit activity
+                Log.d("msg1","hello");
+            }
+        });
+
         swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
 
         //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)

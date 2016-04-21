@@ -33,6 +33,7 @@ import com.daimajia.swipe.SwipeLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphicTimer;
@@ -89,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 //need these two lines
 //                timer = new InstructionalGraphicTimer(ig);
 //                timer.start();
-
-
 //                HashMap<String,String> map = new HashMap<String, String>();
 //                map.put("token",token);
 //                map.put("id",Integer.toString(igs.get(position).idAt(0)));
@@ -102,14 +101,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        ImageButton imgButton = (ImageButton) findViewById(R.id.delete);
-//        imgButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                Log.d("msg1","what up Karrie");
-//            }
-//        });
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
  *  ==============================================================================================*/
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
-        InstructionalGraphic ig = new InstructionalGraphic("ig1");
+        Integer randnum = new Random().nextInt()%10000;
+        InstructionalGraphic ig = new InstructionalGraphic("ig" + Integer.toString(randnum));
         ig.addImage(1,Integer.toString(R.drawable.images));
         db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
