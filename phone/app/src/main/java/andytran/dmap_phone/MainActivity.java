@@ -96,21 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     clicks = 0;
                 Log.d("msg2", "listview click");
                 clicks++;
-                Log.d("clicks", Integer.toString(clicks));
-                Log.d("position", Integer.toString(position));
 
                 if (clicks > 0 && clicks % 2 == 0)
                     timer.stop();
                 listPosition = position;
-
-//                HashMap<String,String> map = new HashMap<String, String>();
-//                map.put("token",token);
-//                map.put("id",Integer.toString(igs.get(position).idAt(0)));
-//                String URL = Utils.buildURL(hostIp, Integer.toString(hostPort),"/play",map);
-//                //Utils.sendPackage(MainActivity.this,Request.Method.POST,URL, null, null);
-//                view.setSelected(true);
-//                adapter.notifyDataSetChanged();
-//                Log.d("click worked", Integer.toString(position));
             }
         });
 
