@@ -2,10 +2,6 @@ package andytran.dmap_phone;
 
 import android.content.Context;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
@@ -13,6 +9,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.HashMap;
 import java.util.Random;
+
 
 public class Utils {
     private static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -47,7 +44,7 @@ public class Utils {
         buffer.append(port);
         buffer.append("/");
         buffer.append(endpoint);
-        if (map.size() > 0) {
+        if (map != null && map.size() > 0) {
             buffer.append("?");
             Object[] mapArray = map.keySet().toArray(); //convert map to array to iterate through
             for (int i = 0; i < mapArray.length; i++) { //append whatever parameters are stored in map
@@ -73,5 +70,9 @@ public class Utils {
 
         return buffer.toString();
     }
+
+
+
+
 }
 

@@ -20,18 +20,16 @@
             android:name=".MainActivity"
             android:label="MainActivity" >
         </activity>
-
-        <activity
-            android:name=".AddToAppDBActivity"
-            android:label="@string/title_activity_add_to_app_db" >
-            <!-- Move the intent filter to Choose Emily activity after finishing-->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
         <activity
             android:name=".ClientSocketTestActivity"
             android:label="Test Socket">
         </activity>
-
+        <activity
+            android:name=".ImageManagerActivity"
+            android:label="@string/title_activity_add_to_app_db" >
+            <!-- Move the intent filter to Choose Emily activity after finishing-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
