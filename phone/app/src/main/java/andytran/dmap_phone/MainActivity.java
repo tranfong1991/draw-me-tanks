@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private String hostIp;
     private int hostPort;
 
-    private InstructionalGraphicTimer timer;
+    public static InstructionalGraphicTimer timer;
+
+    public View row;
 
     ListView list;
     GraphicAdapter adapter;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     int clicks = 0;
     int listPosition = 0;
-
+    public static int selectedPosition;
 
 /*  Creation
  *  ==============================================================================================*/
@@ -86,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    if(position == i ){
+                        list.getChildAt(i).setBackgroundColor(Color.BLUE);
+                    }else{
+                        list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+                    }
+                }
                 InstructionalGraphic ig = igs.get(position);
                 if (timer != null){ //if there's already a timer, stop it first
                     timer.stop();
@@ -181,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
-        list.setAdapter(adapter); //build the listview with the adapter
+        adapter.setSelectedItem(1);
+        list.setAdapter(adapter); //build the listview with the adapted
     }
-
 }
