@@ -9,6 +9,7 @@ import android.app.Activity;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
@@ -25,6 +26,9 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
 
     CarouselView carousel;
     ImageListener image_listener;
+    Button preview_button;
+    Button ok_button;
+    Button delete_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,9 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         setNumberPicker();
         setEditText();
         setCarouselContainer();
+        setPreviewButton();
+        setOkButton();
+        setDeleteButton();
     }
 
     /**
@@ -95,6 +102,9 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         if(ig.getInterval()/1000 <= np.getMaxValue()) {
             np.setValue(ig.getInterval() / 1000);
         }
+        if(ig.numOfFrames() < 2) {
+            np.setEnabled(false);
+        }
     }
 
     private void setEditText() {
@@ -102,9 +112,39 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         editText.setText(ig.getName(), TextView.BufferType.EDITABLE);
     }
 
+    private void setPreviewButton() {
+        preview_button = (Button) findViewById(R.id.modig_preview_button);
+        preview_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i("clicked", "preview");
+            }
+        });
+    }
+
+    private void setOkButton() {
+        ok_button = (Button) findViewById(R.id.modig_ok_button);
+        ok_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i("clicked", "ok");
+                carousel.setCurrentItem(1);
+            }
+        });
+    }
+
+    private void setDeleteButton() {
+        delete_button = (Button) findViewById(R.id.modig_delete_button);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i("clicked", "delete");
+                removeFromGraphic();
+            }
+        });
+    }
+
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         Log.i("value is", "" + newVal);
+        cr.setInterval(newVal);
     }
 
     /**
@@ -128,6 +168,12 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
     private void setChangeRecord(Intent intent) {
         String cr_string = InstructionalGraphicChangeRecord.class.getName();
         cr = (InstructionalGraphicChangeRecord) intent.getSerializableExtra(cr_string);
+    }
+
+    private void removeFromGraphic() {
+        cr.removeGraphic();
+        getData();
+        this.recreate();
     }
 
     /**

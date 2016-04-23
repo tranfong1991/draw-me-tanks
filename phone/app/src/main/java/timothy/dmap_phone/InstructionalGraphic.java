@@ -1,8 +1,11 @@
 package timothy.dmap_phone;
 
+import android.nfc.tech.IsoDep;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -149,7 +152,7 @@ public class InstructionalGraphic implements Serializable {
  */
     public void removeImageAt(Integer frame) {
         imageRefs.remove(ids.get(frame));
-        ids.remove(frame);
+        ids.remove(frame.intValue());
     }
 
 /**
@@ -172,20 +175,39 @@ public class InstructionalGraphic implements Serializable {
 
     /**
      * Compares two Instructional Graphics. Order does matter for the image ids.
-     * @param ig The Instructional Graphic to compare against
+     * @param o The Instructional Graphic to compare against
      * @return True if equivalent, false if not.
      */
-    public boolean equals(InstructionalGraphic ig) {
-        if(!ig.name.equals(this.name) || !ig.interval.equals(this.interval) || ig.ids.size() != this.ids.size()) {
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(!InstructionalGraphic.class.isInstance(o)) return false;
+        InstructionalGraphic ig = (InstructionalGraphic) o;
+        if(!ig.name.equals(this.name)
+                || !ig.interval.equals(this.interval)
+                || ig.ids.size() != this.ids.size()) {
             return false;
         }
         for(int i = 0; i < this.ids.size(); ++i) {
             Integer id = this.ids.get(i);
-            if(!ig.ids.get(i).equals(id) || !ig.imageRefs.get(id).equals(this.imageRefs.get(id))) {
+            if(!ig.ids.get(i).equals(id)
+                    || !ig.imageRefs.get(id).equals(this.imageRefs.get(id))) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime*result + ((name == null) ? 0 : name.hashCode());
+        result = prime*result + ((interval == null) ? 0 : interval.hashCode());
+        result = prime*result + Arrays.deepHashCode(ids.toArray());
+        result = prime*result + Arrays.deepHashCode(imageRefs.keySet().toArray());
+        result = prime*result + Arrays.deepHashCode(imageRefs.values().toArray());
+        return result;
     }
 
     /*  Private Members

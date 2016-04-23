@@ -1,6 +1,7 @@
 package andytran.dmap_phone;
 
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class InstructionalGraphicChangeRecord implements Serializable {
     private InstructionalGraphic original_ig;
     private InstructionalGraphic working_ig;
 
-    private int count = 3;  // used for id's to ensure they're unique
+    Integer count = -1;
 
     private Integer number_original_graphics_deleted;
     private Integer number_graphics_added;
@@ -27,10 +28,15 @@ public class InstructionalGraphicChangeRecord implements Serializable {
         number_graphics_added = 0;
     }
 
+    private void removeGraphicFromPhone(InstructionalGraphic ig, Integer index) {
+        removeGraphicFromDatabase(ig.imageRefAt(index));
+        return;
+    }
+
     public void removeGraphic() {
         if(number_graphics_added > 0) {
             --number_graphics_added;
-            removeGraphicFromDatabase(working_ig.imageRefAt(working_ig.numOfFrames() - 1));
+            removeGraphicFromPhone(working_ig, working_ig.numOfFrames() - 1);
         } else {
             ++number_original_graphics_deleted;
         }
@@ -38,7 +44,7 @@ public class InstructionalGraphicChangeRecord implements Serializable {
     }
 
     public void addGraphic(String ref) {
-        working_ig.addImage(count++, ref);
+        working_ig.addImage(count--, ref);
         ++number_graphics_added;
     }
 
@@ -65,12 +71,25 @@ public class InstructionalGraphicChangeRecord implements Serializable {
 
     public InstructionalGraphic cancel() {
         Log.i("message", "cancelled");
+        for(int i = 0; i < number_graphics_added; ++i) {
+            removeGraphicFromPhone(working_ig, working_ig.numOfFrames() - 1);
+        }
         return original_ig;
     }
 
     public InstructionalGraphic finalizeChanges() {
         Log.i("message", "finalized");
-        return working_ig;
+        for(int i = 0; i < number_original_graphics_deleted; ++i) {
+            removeFromTablet(original_ig.idAt(original_ig.numOfFrames() - 1));
+            removeGraphicFromPhone(original_ig, original_ig.numOfFrames() - 1);
+        }
+        ArrayList<String> refs = getRefs();
+        for(int i = 0; i < refs.size(); ++i) {
+            Log.i("adding", "image " + i);
+            Integer id = sendToTablet(refs.get(i));
+            original_ig.addImage(id, refs.get(i));
+        }
+        return original_ig;
     }
 
     public InstructionalGraphic getCurrentInstructionalGraphic() {
@@ -79,7 +98,18 @@ public class InstructionalGraphicChangeRecord implements Serializable {
 
     public InstructionalGraphic getOriginalInstructionalGraphic() { return original_ig; }
 
+    private void removeFromTablet(Integer id) {
+        // TODO: sent remove request to tablet and get response
+    }
+
+    private Integer sendToTablet(String ref) {
+        // TODO: send to tablet and get response
+        Log.i("sending", " to tablet");
+        return 0;
+    }
+
     private void removeGraphicFromDatabase(String image_ref) {
-        // TODO
+        Log.i("message", "removed from database");
+        // TODO call graphic database and tell to delete
     }
 }
