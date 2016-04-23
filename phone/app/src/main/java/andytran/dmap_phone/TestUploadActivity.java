@@ -11,12 +11,18 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import timothy.dmap_phone.InstructionalGraphic;
+
 public class TestUploadActivity extends ImageManagerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_upload);
+
+        ip = "192.168.43.75";
+        port = "8080";
+        token = "abc";
 
         btnTry = (Button)findViewById(R.id.try_btn);
         btnTry.setOnClickListener(new View.OnClickListener() {
@@ -33,6 +39,8 @@ public class TestUploadActivity extends ImageManagerActivity {
                 String dest = copyFileToPhone(image_refs.get(image_refs.size() - 1));
                 Log.d("REF", dest);
                 imageView.setImageURI(Utils.refToUri(TestUploadActivity.this, dest));
+
+                submitImages(new InstructionalGraphic("thing"));
             }
         });
 
