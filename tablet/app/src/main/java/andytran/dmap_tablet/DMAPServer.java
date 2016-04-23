@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,6 +68,7 @@ public class DMAPServer extends NanoHTTPD {
         populateMappingFromDb();
 
         start();
+        Log.d(TAG, "Server Started! " + Utils.getIpAddress());
     }
 
     @Override

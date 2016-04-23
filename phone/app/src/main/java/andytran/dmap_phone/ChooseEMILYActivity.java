@@ -95,6 +95,8 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        addOverlay();
+
         final Host host = hosts.get(position);
         serviceName.setText(host.getName());
 
@@ -107,7 +109,7 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
                 .append(host.getPort())
                 .append("/generate");
 
-        Log.d("EMILY", buffer.toString());
+//        Log.d("EMILY", buffer.toString());
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, buffer.toString(),
@@ -140,7 +142,6 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
             });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
-        addOverlay();
     }
 
     public void removeOverlay() {

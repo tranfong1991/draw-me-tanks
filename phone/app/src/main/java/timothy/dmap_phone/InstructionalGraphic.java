@@ -4,6 +4,8 @@ import android.nfc.tech.IsoDep;
 
 import java.io.Serializable;
 import java.text.ParseException;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -85,11 +87,11 @@ public class InstructionalGraphic implements Serializable {
     }
 
 /**
- *  Sets the inverval, in milliseconds.
+ *  Sets the interval, in milliseconds.
  *  @param value The new interval in milliseconds.  Must be greater than or equal to 0.
  */
     public void setInterval(Integer value) {
-        if(value < 0)
+        if(value <= 0)
             throw new IllegalArgumentException(INVALID_INTERVAL_MESSAGE + ": " + value.toString());
         this.interval = value;
     }

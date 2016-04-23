@@ -5,9 +5,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,7 +30,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -42,7 +41,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     private ImageView chosenImage;
     private Button chooseButton;
     private Button uploadButton;
-    private EditText nameText;
+    private EditText tokenText;
     private EditText ipText;
     private String filePath;
     private ClientNSDHelper nsdHelper;
@@ -57,7 +56,7 @@ public class ClientSocketTestActivity extends AppCompatActivity {
         nsdHelper.discoverServices();
 
         chosenImage = (ImageView) findViewById(R.id.img_chosen_pic);
-        nameText = (EditText) findViewById(R.id.txt_name);
+        tokenText = (EditText) findViewById(R.id.txt_token);
         ipText = (EditText) findViewById(R.id.txt_ip);
         chooseButton = (Button) findViewById(R.id.btn_choose);
         chooseButton.setOnClickListener(new View.OnClickListener() {
@@ -75,12 +74,12 @@ public class ClientSocketTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ArrayList<NameValuePair> list = new ArrayList<>();
-                list.add(new BasicNameValuePair("name", nameText.getText().toString()));
                 list.add(new BasicNameValuePair("graphic", filePath));
 
-                String ip = ipText.getText().toString();
+                //put differnt key names when there are more than 1 graphic
 
-                new UploadGraphicAsyncTask("http://" + ip + ":8080/graphic?token=NPXM7UR2197QN375DW1T", list).execute();
+                String ip = ipText.getText().toString();
+                new UploadGraphicAsyncTask("http://" + ip + ":8080/graphic?token=" + tokenText.getText(), list).execute();
             }
         });
     }
@@ -96,13 +95,29 @@ public class ClientSocketTestActivity extends AppCompatActivity {
     }
 
     private String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        String path = cursor.getString(idx);
+        // Will return "image:x*"
+        String wholeID = DocumentsContract.getDocumentId(uri);
+
+        // Split at colon, use second item in the array
+        String id = wholeID.split(":")[1];
+
+        String[] column = { MediaStore.Images.Media.DATA };
+
+        // where id is equal to
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = getContentResolver().
+                query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        column, sel, new String[]{ id }, null);
+
+        String filePath = "";
+        int columnIndex = cursor.getColumnIndex(column[0]);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
 
         cursor.close();
-        return path;
+        return filePath;
     }
 
     private class UploadGraphicAsyncTask extends AsyncTask<Void, Void, String>{
@@ -127,9 +142,9 @@ public class ClientSocketTestActivity extends AppCompatActivity {
                     String name = nameValuePairs.get(i).getName();
                     String value = nameValuePairs.get(i).getValue();
 
-                    if(name.equalsIgnoreCase("graphic"))
+                    if(name.contains("graphic"))
                         builder.addPart(name, new FileBody(new File(value)));
-                    else builder.addPart(name, new StringBody(value, ContentType.TEXT_PLAIN));
+//                    else builder.addPart(name, new StringBody(value, ContentType.TEXT_PLAIN));
                 }
 
                 httpPost.setEntity(builder.build());
