@@ -60,6 +60,21 @@ public class InstructionalGraphicDbAccess {
     }
 
 /**
+ *  Returns whether or not the graphic exists in the database
+ *  @param graphic
+ *  @return true if the graphic is in the database, false otherwise
+ */
+    public Boolean isGraphicInDatabase(InstructionalGraphic graphic) {
+    //  To be honest, this is a very sucky way of checking, but I'm lazy and it works.
+        try {
+            return getGraphicByName(graphic.getName()) != null;
+        }
+        catch(DbAccessError err) {
+            return false;
+        }
+    }
+
+/**
  *  Returns the total number of graphics in the database
  */
     public Integer getNumberOfGraphics() {

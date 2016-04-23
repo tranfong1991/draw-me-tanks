@@ -1,12 +1,14 @@
 package andytran.dmap_phone;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -71,7 +73,27 @@ public class Utils {
         return buffer.toString();
     }
 
-
+/**
+ *  Returns a valid Uri for the given private file information.  This is generally used with
+ *  the file references stored in InstructionalGraphics.  Because of the way the phone stores
+ *  stuff, the references will be graphic_somerandomjunk.  However, this does not represent
+ *  the full file path to the image.
+ *
+ *  Use this function to get the full path.
+ *
+ *  By the way, this code was way harder to find than it should have been.
+ *
+ *  @usage
+ *  Uri uri = Utils.refToUri(this, graphic.imageRefAt(3));
+ *  imageView.setImageUri(uri);
+ *
+ *  @param context The activity you are in
+ *  @param ref "graphic_lettersandjunk"
+ *  @return The Uri
+ */
+    public static Uri refToUri(Context context, String ref) {
+        return Uri.fromFile(new File(context.getFilesDir().getAbsolutePath() + "/" + ref));
+    }
 
 
 }
