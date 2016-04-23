@@ -139,7 +139,7 @@ public class ImageManagerActivity extends AppCompatActivity {
  *  @return null if a failure occurred; otherwise, the file path to the copied image
  */
     public String copyFileToPhone(Uri uri){
-        String dest_path_name = "grahic_" + Utils.generateRandomString(10);
+        String dest_path_name = "graphic_" + Utils.generateRandomString(10);
         try {
             copyFile(uri, dest_path_name);
         }
