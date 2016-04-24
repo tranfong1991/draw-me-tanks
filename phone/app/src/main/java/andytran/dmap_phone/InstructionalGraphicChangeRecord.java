@@ -12,6 +12,14 @@ import timothy.dmap_phone.InstructionalGraphic;
  * Created by Natalie Rawle on 4/4/2016.
  */
 @SuppressWarnings("serial")
+
+/**
+ * TODO
+ * Overwrite the image_refs with URI versions getRefs (image_refs will have way extra)
+ * Then pass original_ig to submitImages
+ * @Override onActivityResult
+ * extend imagemanageractivity
+ */
 public class InstructionalGraphicChangeRecord implements Serializable {
     private InstructionalGraphic original_ig;
     private InstructionalGraphic working_ig;
@@ -58,8 +66,9 @@ public class InstructionalGraphicChangeRecord implements Serializable {
 
     public ArrayList<String> getRefs() {
         ArrayList<String> new_refs = new ArrayList();
+        Integer displacement = original_ig.numOfFrames() - number_original_graphics_deleted;
         for(int i = 0; i < number_graphics_added; ++i) {
-            Integer index = original_ig.numOfFrames() - number_original_graphics_deleted + i;
+            Integer index = displacement + i;
             new_refs.add(working_ig.imageRefAt(index));
         }
         return new_refs;

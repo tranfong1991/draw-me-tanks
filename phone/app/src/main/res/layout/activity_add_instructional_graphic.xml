@@ -107,15 +107,6 @@
                 android:hint="@string/modig_ok"
                 android:layout_marginLeft="10.0dip"
                 android:backgroundTint="@color/colorWhite"/>
-            <Button
-                android:id="@+id/modig_delete_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:layout_gravity="center_vertical"
-                android:hint="delete last"
-                android:layout_marginLeft="10.0dip"
-                android:backgroundTint="@color/colorWhite"/>
         </LinearLayout>
     </LinearLayout>
 

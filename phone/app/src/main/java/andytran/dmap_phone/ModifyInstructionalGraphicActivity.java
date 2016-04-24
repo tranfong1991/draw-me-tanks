@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import com.synnapps.carouselview.ImageListener;
+import com.synnapps.carouselview.ViewListener;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
@@ -25,10 +27,9 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
     private InstructionalGraphicChangeRecord cr;
 
     CarouselView carousel;
-    ImageListener image_listener;
+    ViewListener view_listener;
     Button preview_button;
     Button ok_button;
-    Button delete_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,6 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         setCarouselContainer();
         setPreviewButton();
         setOkButton();
-        setDeleteButton();
     }
 
     /**
@@ -50,22 +50,62 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
      */
     private void setCarouselContainer() {
         initializeCarousel();
-        initializeImageListener();
-        carousel.setImageListener(image_listener);
+        initializeViewListener();
+        carousel.setViewListener(view_listener);
     }
 
-    private void initializeImageListener() {
-        image_listener = new ImageListener() {
+    private void initializeViewListener() {
+        view_listener = new ViewListener() {
             @Override
-            public void setImageForPosition(int position, ImageView image_view) {
-                image_view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                if(position == ig.numOfFrames()) {
-                    image_view.setOnClickListener(new View.OnClickListener() {
+            public View setViewForPosition(int position) {
+                View custom_view;
+                if(position < ig.numOfFrames()) {
+                    custom_view = getDisplayGraphicView(position);
+                } else {
+                    custom_view = getAddGraphicView();
+                }
+                return custom_view;
+            }
+
+            @NonNull
+            private View getAddGraphicView() {
+                View custom_view = getLayoutInflater().inflate(R.layout.content_modig_carousel_add, null);
+                FloatingActionButton add_button = (FloatingActionButton) custom_view.findViewById(R.id.modig_carousel_add_button);
+                add_button.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        addToGraphic();
+                    }
+                });
+                return custom_view;
+            }
+
+            @NonNull
+            private View getDisplayGraphicView(int position) {
+                View custom_view = getLayoutInflater().inflate(R.layout.content_modig_carousel, null);
+
+                setImage(position, custom_view);
+                setDeleteButton(position, custom_view);
+
+                return custom_view;
+            }
+
+            private void setDeleteButton(int position, View custom_view) {
+                FloatingActionButton delete_button = (FloatingActionButton) custom_view.findViewById(R.id.modig_carousel_delete_button);
+                if(position < ig.numOfFrames() - 1) {
+                    delete_button.hide();
+                } else {
+                    delete_button.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            addToGraphic();
+                            Log.i("clicked", "delete");
+                            removeFromGraphic();
                         }
                     });
                 }
+            }
+
+            private void setImage(int position, View custom_view) {
+                ImageView image_view = (ImageView) custom_view.findViewById(R.id.modig_carousel_image_view);
+                image_view.setImageResource(getImage(position));
 
                 Picasso.with(getApplicationContext())
                         .load(getImage(position))
@@ -73,15 +113,17 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
                         .centerInside()
                         .into(image_view);
             }
-
-            private int getImage(int position) {
-                if(position < ig.numOfFrames()) {
-                    return Integer.parseInt(ig.imageRefAt(position));
-                } else {
-                    return R.drawable.dragicon;
-                }
-            }
         };
+    }
+
+    private int getImage(int position) {
+        if(position < ig.numOfFrames()) {
+            //Log.i("position", String.valueOf(position));
+            Log.i(String.valueOf(position), ig.imageRefAt(position).substring(6));
+            return Integer.parseInt(ig.imageRefAt(position));
+        } else {
+            throw new IndexOutOfBoundsException("Modify Graphic UI attempted to load an invalid image");
+        }
     }
 
     private void initializeCarousel() {
@@ -102,7 +144,7 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         if(ig.getInterval()/1000 <= np.getMaxValue()) {
             np.setValue(ig.getInterval() / 1000);
         }
-        if(ig.numOfFrames() < 2) {
+        if (ig.numOfFrames() < 2) {
             np.setEnabled(false);
         }
     }
@@ -131,16 +173,6 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         });
     }
 
-    private void setDeleteButton() {
-        delete_button = (Button) findViewById(R.id.modig_delete_button);
-        delete_button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.i("clicked", "delete");
-                removeFromGraphic();
-            }
-        });
-    }
-
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         Log.i("value is", "" + newVal);
@@ -152,9 +184,11 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
      * @return
      */
     private void setInstructionalGraphicAndChangeRecord() {
-        Intent intent = getIntent();
-        setChangeRecord(intent);
-        setInstructionalGraphic();
+        if(cr == null) {
+            Intent intent = getIntent();
+            setChangeRecord(intent);
+            setInstructionalGraphic();
+        }
     }
 
     private void setInstructionalGraphic() {
@@ -188,13 +222,17 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
     private void getInterval() {
         final NumberPicker np = (NumberPicker) findViewById(R.id.modig_cycle_value);
         Integer interval = np.getValue()*1000;
-        cr.setInterval(interval);
+        if(interval > 0) {
+            cr.setInterval(interval);
+        }
     }
 
     private void getName() {
         EditText edit_text   = (EditText)findViewById(R.id.modig_instructional_graphic_title);
         String name = edit_text.getText().toString();
-        cr.setName(name);
+        if(name.length() > 0) {
+            cr.setName(name);
+        }
     }
 
     private void getData() {

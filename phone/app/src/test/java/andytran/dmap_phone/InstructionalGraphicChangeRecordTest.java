@@ -3,6 +3,7 @@ package andytran.dmap_phone;
 import junit.framework.TestCase;
 
 import org.hamcrest.Matcher;
+import static org.hamcrest.core.IsNot.not;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -233,6 +234,22 @@ public class InstructionalGraphicChangeRecordTest extends TestCase {
         removeFromGraphic(remove_number, cr);
 
         assertThat(cr.getNumberDeleted(), is(remove_number - number_added));
+    }
+
+    public void testAddAddDelete() {
+        Integer base_number = 6; //getNumberImages();
+
+        InstructionalGraphic control = newIg(base_number);
+        InstructionalGraphicChangeRecord cr = new InstructionalGraphicChangeRecord(newIg(base_number));
+
+        addToGraphic(2, control);
+        addToGraphic(3, cr);
+        removeFromGraphic(1, cr);
+        assertThat(cr.getCurrentInstructionalGraphic(), is(equalTo(control)));
+        for(int i = 0; i < cr.getCurrentInstructionalGraphic().numOfFrames(); ++i) {
+            assertThat(cr.getCurrentInstructionalGraphic().idAt(i), is(notNullValue()));
+            assertThat(cr.getCurrentInstructionalGraphic().imageRefAt(i), is(notNullValue()));
+        }
     }
 
     /*public void testCancel() throws Exception {
