@@ -2,12 +2,14 @@ package andytran.dmap_phone;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -160,7 +162,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         ArrayList<NameValuePair> toTabletList = new ArrayList<>();
         for(Uri imageUri : image_refs) {
             String dest = copyFileToPhone(imageUri);
-            toTabletList.add(new BasicNameValuePair(dest, dest));
+            toTabletList.add(new BasicNameValuePair(dest, getRealPathFromURI(imageUri)));
         }
 
         HashMap<String, String> params = new HashMap<>();
@@ -171,6 +173,8 @@ public class ImageManagerActivity extends AppCompatActivity {
                 ig
         );
         toTabletTask.execute();
+
+
     }
 
 /*  Protected Methods
@@ -232,6 +236,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         for (int i = 0; i < ids.size(); i++)
             graphic.addImage(ids.get(i), refs.get(i));
 
+
         if (isIGNew)
             db.addGraphicToEnd(graphic);
         else
@@ -287,7 +292,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         private ArrayList<String> getRefsFromNameValuePairs() {
             ArrayList<String> refs = new ArrayList<>();
             for(NameValuePair pair : nameValuePairs)
-                refs.add(pair.getValue());
+                refs.add(pair.getName());
             return refs;
         }
 
@@ -334,6 +339,30 @@ public class ImageManagerActivity extends AppCompatActivity {
 
 
 
+    private String getRealPathFromURI(Uri uri) {
+        // Will return "image:x*"
+        String wholeID = DocumentsContract.getDocumentId(uri);
 
+        // Split at colon, use second item in the array
+        String id = wholeID.split(":")[1];
+
+        String[] column = { MediaStore.Images.Media.DATA };
+
+        // where id is equal to
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = getContentResolver().
+                query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        column, sel, new String[]{ id }, null);
+
+        String filePath = "";
+        int columnIndex = cursor.getColumnIndex(column[0]);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+
+        cursor.close();
+        return filePath;
+    }
 
 }
