@@ -30,6 +30,11 @@
         <!--</activity>-->
 
             <!-- Move the intent filter to Choose Emily activity after finishing -->
+
+        </activity>
+        <activity android:name=".TestUploadActivity"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
