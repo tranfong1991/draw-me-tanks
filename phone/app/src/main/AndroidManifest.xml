@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:label="MainActivity">
@@ -30,6 +29,15 @@
             <!--android:label="Test Socket">-->
         <!--</activity>-->
 
+            <!-- Move the intent filter to Choose Emily activity after finishing -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".TestUploadActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>
