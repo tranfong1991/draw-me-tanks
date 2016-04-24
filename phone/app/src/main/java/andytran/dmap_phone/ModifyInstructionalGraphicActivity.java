@@ -163,8 +163,17 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         preview_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.i("clicked", "preview");
+                getData();
+                sendPreviewIntent();
             }
         });
+    }
+
+    private void sendPreviewIntent() {
+        Intent intent = new Intent(this, PreviewModificationActivity.class);
+        intent.putExtra(InstructionalGraphic.class.getName(), cr.getCurrentInstructionalGraphic());
+        startActivity(intent);
+        return;
     }
 
     private void setOkButton() {
