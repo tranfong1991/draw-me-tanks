@@ -34,4 +34,13 @@
         android:layout_below="@+id/flush_btn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="146dp" />
+
+    <Button
+        android:id="@+id/check_db"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Database"
+        android:layout_below="@+id/flush_btn"
+        android:layout_centerHorizontal="true"
+        />
 </RelativeLayout>
