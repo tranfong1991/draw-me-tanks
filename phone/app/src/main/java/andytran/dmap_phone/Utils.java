@@ -1,10 +1,7 @@
 package andytran.dmap_phone;
 
 import android.content.Context;
-<<<<<<< HEAD
-=======
 import android.net.Uri;
->>>>>>> add-to-app-db
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -38,7 +35,7 @@ public class Utils {
  *  Constructs a URL request to send to the tablet
  *  @param IP
  *  @param port
- *  @param endpoint The type of request.  Can use "/playGraphic", or "/stopGraphic"
+ *  @param endpoint The type of request.  Can use "/play", or "/stop"
  *  @param map List of parameters for the request
  *  @return The URL to use in the URL parameter of sendPackage
  */
