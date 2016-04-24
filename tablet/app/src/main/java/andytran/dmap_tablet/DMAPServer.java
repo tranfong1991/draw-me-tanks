@@ -203,7 +203,7 @@ public class DMAPServer extends NanoHTTPD {
             buffer = new StringBuffer();
             buffer.append("{\"status\" : ");
             buffer.append(HTTP_CREATED);
-            buffer.append(", \"ids:\"[");
+            buffer.append(", \"ids\":[");
             for(int i = 0; i<ids.size(); i++){
                 buffer.append(ids.get(i));
                 if(i != ids.size() - 1)

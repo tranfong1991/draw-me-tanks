@@ -15,9 +15,9 @@
         <activity
             android:name=".ModifyInstructionalGraphicActivity"
             android:label="@string/title_activity_add_instructional_graphic">
-            <meta-data
+            <!--<meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="andytran.dmap_phone.ModigMainActivity" />
+                android:value="andytran.dmap_phone.ModigMainActivity" />-->
         </activity>
         <activity
             android:name=".ChooseEMILYActivity"
@@ -31,22 +31,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--
-             ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <!-- <activity -->
-        <!-- android:name=".ClientSocketTestActivity" -->
-        <!-- android:label="Test Socket"> -->
-        <!-- </activity> -->
-
         <activity
             android:name=".PreviewModificationActivity"
             android:label="@string/title_activity_preview_modification"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="MainActivity">
+        </activity>
+
+        <!--<activity-->
+            <!--android:name=".ClientSocketTestActivity"-->
+            <!--android:label="Test Socket">-->
+        <!--</activity>-->
+
+            <!-- Move the intent filter to Choose Emily activity after finishing -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        <activity android:name=".TestUploadActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

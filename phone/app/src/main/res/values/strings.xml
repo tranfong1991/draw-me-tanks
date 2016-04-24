@@ -33,5 +33,8 @@
     <string name="pref_first_use">DMAP_FIRST_USE</string>
     <string name="package_name">andytran.dmap_phone</string>
     <string name="title_activity_preview_modification">PreviewModificationActivity</string>
+    <string name="title_activity_add_to_app_db">AddToAppDBActivity</string>
 
+    <string name="default_path"> </string>
+    <string name="ata_button">Add To App Database!</string>
 </resources>
