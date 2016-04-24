@@ -85,7 +85,7 @@ public class ModigMainActivity extends Activity {
     private void populateIG(InstructionalGraphic ig) {
         int number_rounds = getNumberRounds();
         for(int i = 0; i < number_rounds; ++i) {
-            ig.addImage(-1*i, database.get_random_graphic());
+            ig.addImage(i, database.get_random_graphic());
         }
         return;
     }

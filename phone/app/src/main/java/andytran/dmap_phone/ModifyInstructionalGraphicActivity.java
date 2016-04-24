@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -59,8 +60,10 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
             @Override
             public View setViewForPosition(int position) {
                 View custom_view;
-                if(position < ig.numOfFrames()) {
+                if(position < ig.numOfFrames() - 1) {
                     custom_view = getDisplayGraphicView(position);
+                } else if(position == ig.numOfFrames() - 1) {
+                    custom_view = getDeleteGraphicView(position);
                 } else {
                     custom_view = getAddGraphicView();
                 }
@@ -79,28 +82,30 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
                 return custom_view;
             }
 
-            @NonNull
             private View getDisplayGraphicView(int position) {
                 View custom_view = getLayoutInflater().inflate(R.layout.content_modig_carousel, null);
+                setImage(position, custom_view);
+                return custom_view;
+            }
+
+            @NonNull
+            private View getDeleteGraphicView(int position) {
+                View custom_view = getLayoutInflater().inflate(R.layout.content_modig_carousel_delete, null);
 
                 setImage(position, custom_view);
-                setDeleteButton(position, custom_view);
+                setDeleteButton(custom_view);
 
                 return custom_view;
             }
 
-            private void setDeleteButton(int position, View custom_view) {
-                FloatingActionButton delete_button = (FloatingActionButton) custom_view.findViewById(R.id.modig_carousel_delete_button);
-                if(position < ig.numOfFrames() - 1) {
-                    delete_button.hide();
-                } else {
-                    delete_button.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View v) {
-                            Log.i("clicked", "delete");
-                            removeFromGraphic();
-                        }
-                    });
-                }
+            private void setDeleteButton(View custom_view) {
+                ImageButton delete_button = (ImageButton) custom_view.findViewById(R.id.modig_carousel_delete_button);
+                delete_button.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Log.i("clicked", "delete");
+                        removeFromGraphic();
+                    }
+                });
             }
 
             private void setImage(int position, View custom_view) {
@@ -118,8 +123,7 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
 
     private int getImage(int position) {
         if(position < ig.numOfFrames()) {
-            //Log.i("position", String.valueOf(position));
-            Log.i(String.valueOf(position), ig.imageRefAt(position).substring(6));
+            Log.i(String.valueOf(position), ig.imageRefAt(position).substring(6) + ", " + ig.idAt(position));
             return Integer.parseInt(ig.imageRefAt(position));
         } else {
             throw new IndexOutOfBoundsException("Modify Graphic UI attempted to load an invalid image");
