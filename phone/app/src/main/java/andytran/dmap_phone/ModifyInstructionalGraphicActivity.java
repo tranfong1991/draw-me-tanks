@@ -181,6 +181,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
                 Log.i("clicked", "ok");
                 image_refs = cr.getUris();
                 submitImages(cr.getOriginalInstructionalGraphic());
+                finish();
             }
         });
     }

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name="android.support.multidex.MultiDexApplication"
@@ -48,8 +49,12 @@
 
             <!-- Move the intent filter to Choose Emily activity after finishing -->
 
+
         <activity android:name=".TestUploadActivity"
-            android:exported="true"></activity>
+            android:exported="true">
+
+
+        </activity>
     </application>
 
 </manifest>

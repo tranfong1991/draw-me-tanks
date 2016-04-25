@@ -3,6 +3,7 @@ package andytran.dmap_phone;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,7 +123,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
 
         textView.setText(igs.get(position).getName());
-        imageView1.setImageResource(Integer.parseInt(igs.get(position).imageRefAt(0)));
+        Picasso.with(context)
+                .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
+                        .into(imageView1);
         return swipeLayout;
     }
 }

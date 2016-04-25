@@ -16,9 +16,9 @@ public class TestUploadActivity extends ImageManagerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_upload);
 
-        ip = "http://192.168.43.75";
+        ip = "10.201.158.37";
         port = "8080";
-        token = "s3kKLfxsUvkh1qhs2K3q";
+        token = "abc";
 
         btnTry = (Button)findViewById(R.id.try_btn);
         btnTry.setOnClickListener(new View.OnClickListener() {
@@ -38,6 +38,7 @@ public class TestUploadActivity extends ImageManagerActivity {
 
                 InstructionalGraphic ig = new InstructionalGraphic("thing");
                 ig.setInterval(3000);
+
                 submitImages(ig);
             }
         });
