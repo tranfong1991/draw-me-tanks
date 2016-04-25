@@ -64,6 +64,7 @@ public class Utils {
                     buffer.append("&");
             }
         }
+        Log.d("URL",buffer.toString());
         return buffer.toString();
     }
 

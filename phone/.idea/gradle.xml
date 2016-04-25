@@ -11,10 +11,14 @@
 =======
         <option name="gradleHome" value="C:\Program Files\Android\Android Studio\gradle\gradle-2.10" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> develop
 =======
         <option name="gradleJvm" value="1.8" />
 >>>>>>> develop
+=======
+        <option name="gradleJvm" value="1.7" />
+>>>>>>> 3f5d48efca601c7928258710bf5e99102b8eaf38
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
