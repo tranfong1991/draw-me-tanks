@@ -117,18 +117,36 @@ public class MainActivity extends ImageManagerActivity {
 
     private void loadDefaultGraphics(){
         InstructionalGraphic ig = new InstructionalGraphic("Tie Cleat Hitch");
+        ig.addImage(1, copyFromDrawable(R.drawable.cleat0));
+        ig.addImage(2, copyFromDrawable(R.drawable.cleat1));
+        ig.addImage(3, copyFromDrawable(R.drawable.cleat2));
+        ig.addImage(4, copyFromDrawable(R.drawable.cleat3));
+        ig.addImage(5, copyFromDrawable(R.drawable.cleat4));
+        ig.addImage(6, copyFromDrawable(R.drawable.cleat5));
+        ig.addImage(7, copyFromDrawable(R.drawable.cleat6));
+        ig.addImage(8, copyFromDrawable(R.drawable.cleat7));
+        ig.addImage(9, copyFromDrawable(R.drawable.cleat8));
+
         ig.setInterval(2000);
-
-        ig.addImage(1, copyFromDrawable(R.drawable.cleat00));
-        ig.addImage(2, copyFromDrawable(R.drawable.cleat01));
-        ig.addImage(3, copyFromDrawable(R.drawable.cleat02));
-        ig.addImage(4, copyFromDrawable(R.drawable.cleat03));
-        ig.addImage(5, copyFromDrawable(R.drawable.cleat04));
-        ig.addImage(6, copyFromDrawable(R.drawable.cleat05));
-        ig.addImage(7, copyFromDrawable(R.drawable.cleat06));
-        ig.addImage(8, copyFromDrawable(R.drawable.cleat07));
-        ig.addImage(9, copyFromDrawable(R.drawable.cleat08));
-
         db.addGraphicToEnd(ig);
+
+        InstructionalGraphic ig1 = new InstructionalGraphic("Don't Stand / Do Sit");
+        ig1.addImage(10, copyFromDrawable(R.drawable.dontstand));
+        ig1.addImage(11, copyFromDrawable(R.drawable.dosit));
+
+        ig1.setInterval(2000);
+        db.addGraphicToEnd(ig1);
+
+        InstructionalGraphic ig2 = new InstructionalGraphic("Steer Left");
+        ig2.addImage(12, copyFromDrawable(R.drawable.leftboat));
+        db.addGraphicToEnd(ig2);
+
+        InstructionalGraphic ig3 = new InstructionalGraphic("Steer Right");
+        ig3.addImage(13, copyFromDrawable(R.drawable.rightboat));
+        db.addGraphicToEnd(ig3);
+
+        InstructionalGraphic ig4 = new InstructionalGraphic("Stop");
+        ig4.addImage(14, copyFromDrawable(R.drawable.stop));
+        db.addGraphicToEnd(ig4);
     }
 }

@@ -355,7 +355,10 @@ public class DMAPServer extends NanoHTTPD {
         addEntryToDb(String.valueOf(R.drawable.cleat06));
         addEntryToDb(String.valueOf(R.drawable.cleat07));
         addEntryToDb(String.valueOf(R.drawable.cleat08));
-
-        Log.d(TAG, "Loading done!");
+        addEntryToDb(String.valueOf(R.drawable.dontstand));
+        addEntryToDb(String.valueOf(R.drawable.dosit));
+        addEntryToDb(String.valueOf(R.drawable.leftboat));
+        addEntryToDb(String.valueOf(R.drawable.rightboat));
+        addEntryToDb(String.valueOf(R.drawable.stop));
     }
 }
