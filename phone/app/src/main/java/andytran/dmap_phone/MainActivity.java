@@ -88,18 +88,17 @@ public class MainActivity extends AppCompatActivity {
                         list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
-//                InstructionalGraphic ig = igs.get(position);
-//                if (timer != null){ //if there's already a timer, stop it first
-//                    timer.stop();
-//                }
-//                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
-//                timer.start();
-//                if (position != listPosition) //if user clicks different IG, then reset click counter
-//                    clicks = 0;
-//                clicks++;
-//
-//                if (clicks > 0 && clicks % 2 == 0)
-//                    timer.stop();
+                InstructionalGraphic ig = igs.get(position);
+                if (timer != null){ //if there's already a timer, stop it first
+                    timer.stop();
+                }
+                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
+                timer.start();
+                if (position != listPosition) //if user clicks different IG, then reset click counter
+                    clicks = 0;
+                clicks++;
+                if (clicks > 0 && clicks % 2 == 0)
+                    timer.stop();
                 listPosition = position;
             }
         });
