@@ -77,10 +77,6 @@ public class MainActivity extends ImageManagerActivity {
                 View c = list.getChildAt(0);
                 int scrolly = -c.getTop() + list.getFirstVisiblePosition() * c.getHeight();
                 int topIndex = list.getFirstVisiblePosition();
-
-                Log.d("scrolly", Integer.toString(scrolly));
-                Log.d("topIndex", Integer.toString(topIndex));
-                Log.d("position",Integer.toString(position));
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if(position-topIndex == i ){
                         list.getChildAt(i).setBackgroundColor(Color.BLUE);
@@ -88,18 +84,18 @@ public class MainActivity extends ImageManagerActivity {
                         list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
-//                InstructionalGraphic ig = igs.get(position);
-//                if (timer != null){ //if there's already a timer, stop it first
-//                    timer.stop();
-//                }
-//
-//                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
-//                timer.start();
-//                if (position != listPosition) //if user clicks different IG, then reset click counter
-//                    clicks = 0;
-//                clicks++;
-//                if (clicks > 0 && clicks % 2 == 0)
-//                    timer.stop();
+                InstructionalGraphic ig = igs.get(position);
+                if (timer != null){ //if there's already a timer, stop it first
+                    timer.stop();
+                }
+
+                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
+                timer.start();
+                if (position != listPosition) //if user clicks different IG, then reset click counter
+                    clicks = 0;
+                clicks++;
+                if (clicks > 0 && clicks % 2 == 0)
+                    timer.stop();
                 listPosition = position;
             }
         });
