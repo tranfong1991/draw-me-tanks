@@ -14,14 +14,15 @@
         <activity
             android:name=".ChooseEMILYActivity"
             android:label="@string/title_activity_choose">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".MainActivity"
             android:label="MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!--<activity-->
@@ -29,19 +30,6 @@
             <!--android:label="Test Socket">-->
         <!--</activity>-->
 
-            <!-- Move the intent filter to Choose Emily activity after finishing -->
-
-        </activity>
-        <activity android:name=".TestUploadActivity"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        <activity android:name=".TestUploadActivity"
-            android:exported="true"></activity>
     </application>
 
 </manifest>

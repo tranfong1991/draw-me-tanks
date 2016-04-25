@@ -1,9 +1,11 @@
 package andytran.dmap_phone;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,16 +20,12 @@ import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ImageManagerActivity {
     private String prefName;
     private String prefToken;
     private String prefIp;
     private String prefPort;
     private String prefFirstUse;
-
-    private String token;
-    private String hostIp;
-    private int hostPort;
 
     private InstructionalGraphicTimer timer;
     private ListView list;
@@ -47,19 +45,19 @@ public class MainActivity extends AppCompatActivity {
         list = (ListView)findViewById(R.id.listView);
 
         prefName = getResources().getString(R.string.pref_name);
-        prefToken = getResources().getString(R.string.pref_token);
-        prefIp = getResources().getString(R.string.pref_ip);
-        prefPort = getResources().getString(R.string.pref_port);
-        prefFirstUse = getResources().getString(R.string.pref_first_use);
-
+//        prefToken = getResources().getString(R.string.pref_token);
+//        prefIp = getResources().getString(R.string.pref_ip);
+//        prefPort = getResources().getString(R.string.pref_port);
+//        prefFirstUse = getResources().getString(R.string.pref_first_use);
+//
         SharedPreferences pref = getSharedPreferences(prefName, 0);
-        token = pref.getString(prefToken, null);
-        hostIp = pref.getString(prefIp, null);
-        hostPort = pref.getInt(prefPort, 0);
+//        token = pref.getString(prefToken, null);
+//        hostIp = pref.getString(prefIp, null);
+//        hostPort = pref.getInt(prefPort, 0);
 
         boolean isFirstTime = pref.getBoolean(prefFirstUse, true);
         if(isFirstTime) {
-            getDefaultGraphics();
+            loadDefaultGraphics();
 
             SharedPreferences.Editor editor = pref.edit();
             editor.putBoolean(prefFirstUse, false);
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 if (timer != null){ //if there's already a timer, stop it first
                     timer.stop();
                 }
-                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.57", "8080", "abc", ig);
+                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
                 timer.start();
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
@@ -117,7 +115,20 @@ public class MainActivity extends AppCompatActivity {
         list.setAdapter(adapter); //build the listview with the adapter
     }
 
-    private void getDefaultGraphics(){
+    private void loadDefaultGraphics(){
+        InstructionalGraphic ig = new InstructionalGraphic("Tie Cleat Hitch");
+        ig.setInterval(2000);
 
+        ig.addImage(1, copyFromDrawable(R.drawable.cleat00));
+        ig.addImage(2, copyFromDrawable(R.drawable.cleat01));
+        ig.addImage(3, copyFromDrawable(R.drawable.cleat02));
+        ig.addImage(4, copyFromDrawable(R.drawable.cleat03));
+        ig.addImage(5, copyFromDrawable(R.drawable.cleat04));
+        ig.addImage(6, copyFromDrawable(R.drawable.cleat05));
+        ig.addImage(7, copyFromDrawable(R.drawable.cleat06));
+        ig.addImage(8, copyFromDrawable(R.drawable.cleat07));
+        ig.addImage(9, copyFromDrawable(R.drawable.cleat08));
+
+        db.addGraphicToEnd(ig);
     }
 }

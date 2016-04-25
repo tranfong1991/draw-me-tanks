@@ -2,6 +2,7 @@ package andytran.dmap_phone;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;

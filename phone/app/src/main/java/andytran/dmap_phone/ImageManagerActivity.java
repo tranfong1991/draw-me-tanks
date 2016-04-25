@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.telecom.Call;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -94,7 +96,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "192.168.1.1";
+        ip = "10.201.149.221";
         port = "8080";
         token = "abc";
 //        imageToUpload = (ImageView) findViewById(R.id.imageToUpload);
@@ -124,6 +126,27 @@ public class ImageManagerActivity extends AppCompatActivity {
 
 /*  Public Methods
  *  ==============================================================================================*/
+    public String copyFromDrawable(int resourceId){
+        String dst = Utils.generateRandomString(5);
+        InputStream in = getResources().openRawResource(resourceId);
+        try {
+            OutputStream out = this.openFileOutput(dst, Context.MODE_PRIVATE);
+
+            // Transfer bytes from in to out
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0) {
+                out.write(buf, 0, len);
+            }
+            in.close();
+            out.close();
+        }catch(IOException e){
+            e.printStackTrace();
+            return null;
+        }
+        return dst;
+    }
+
 /**
  *  Opens the image gallery for the user to select an image.  Upon completion, onActivityResult
  *  will fire.
@@ -159,6 +182,15 @@ public class ImageManagerActivity extends AppCompatActivity {
  *  @param ig The InstructionalGraphic to update
  */
     public void submitImages(InstructionalGraphic ig){
+        submitImages(ig, new Callback() {
+            @Override
+            public void run() {
+                //do nothing
+            }
+        });
+    }
+
+    public void submitImages(InstructionalGraphic ig, Callback callback){
         ArrayList<NameValuePair> toTabletList = new ArrayList<>();
         for(Uri imageUri : image_refs) {
             String dest = copyFileToPhone(imageUri);
@@ -170,7 +202,8 @@ public class ImageManagerActivity extends AppCompatActivity {
         UploadGraphicAsyncTask toTabletTask = new UploadGraphicAsyncTask(
                 Utils.buildURL(ip, port, "graphic", params),
                 toTabletList,
-                ig
+                ig,
+                callback
         );
         toTabletTask.execute();
 
@@ -197,6 +230,7 @@ public class ImageManagerActivity extends AppCompatActivity {
 
 /*  Private Methods
  *  ==============================================================================================*/
+
 /**
  *  @private
  *  Copies the file at src to the dst location.
@@ -251,11 +285,13 @@ public class ImageManagerActivity extends AppCompatActivity {
         private String url;
         private List<NameValuePair> nameValuePairs;
         private InstructionalGraphic graphic;
+        private Callback callback;
 
-        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic){
+        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic, Callback callback){
             this.url = url;
             this.nameValuePairs = nameValuePairs;
             this.graphic = graphic;
+            this.callback = callback;
         }
 
         @Override
@@ -273,7 +309,6 @@ public class ImageManagerActivity extends AppCompatActivity {
 
                     if(name.contains("graphic"))
                         builder.addPart(name, new FileBody(new File(value)));
-//                    else builder.addPart(name, new StringBody(value, ContentType.TEXT_PLAIN));
                 }
 
                 httpPost.setEntity(builder.build());
@@ -281,7 +316,7 @@ public class ImageManagerActivity extends AppCompatActivity {
                 ResponseHandler<String> handler = new BasicResponseHandler();
 
                 appendIdsAndRefsToGraphic(graphic, getIdsFromResponse(handler.handleResponse(r)), getRefsFromNameValuePairs());
-                //return handler.handleResponse(r);
+                callback.run();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -301,10 +336,10 @@ public class ImageManagerActivity extends AppCompatActivity {
             try {
                 JSONObject obj = new JSONObject(json);
                 int status = obj.getInt("status");
-            /*
-                if(status != 301)
-                    return null;
-             */
+
+                if(status != 201)
+                    return ids;
+
                 JSONArray idsJson = obj.getJSONArray("ids");
                 for(int i = 0; i < idsJson.length(); ++i)
                     ids.add((Integer)idsJson.get(i));
@@ -314,10 +349,6 @@ public class ImageManagerActivity extends AppCompatActivity {
             }
             return ids;
         }
-
-//        protected void onPostExecute(String result) {
-//            Toast.makeText(ImageManagerActivity.this, result, Toast.LENGTH_LONG).show();
-//        }
     }
 
     //Send

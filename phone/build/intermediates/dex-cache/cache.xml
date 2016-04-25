@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.koushikdutta.ion\ion\2.1.7\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="8bbd470f524833532e041b110abe9e3d514d63eb">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.koushikdutta.ion-ion-2.1.7_c1408ea0a298732c043408fc052dbc913b420104\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.1.1_addeed5c9d95fefff1c7274348b59d751f42d3ae\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.daimajia.swipelayout\library\1.2.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="e84b30031d4bab89a2b5c45af4eb9213828524dd">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.daimajia.swipelayout-library-1.2.0_cc02acb9b365c7a721d2f828bd71f940c02d0810\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.koushikdutta.async\androidasync\2.1.7\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="eace26bfd08119044e19e9fc0f9ae1bdffac83ed">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.koushikdutta.async-androidasync-2.1.7_ea5bce5de0e0d65b3bd8e6396910eb85557423c7\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\.gradle\caches\modules-2\files-2.1\com.mcxiaoke.volley\library\1.0.19\a8f23f65fc1e522ee4a1a697ee569901a46741fa\library-1.0.19.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="a8f23f65fc1e522ee4a1a697ee569901a46741fa">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\library-1.0.19_1ea7a1073ccde40003b3cbf8ceacae390681098c\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.1.1_2e3a28da04ea4b63c734cd92e111b4bdb31f49a9\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\multidex\1.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="78ea232052df889856dcb7b7b542707c89bb3bfb">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-multidex-1.0.1_2e3c3ead481d4a8f432e5d02f72dac4189adacd3\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.1.1_a48ef5e40ee1030b99097c9352d49104dfa9be1a\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.1.1_6fa88c32c9e27a5cc2777c0982f7f076c7c9a157\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="73edbf178375696b9f4ccceb774d71d9b4ea8c3a">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_bb59ac6dfd243d1a6b184c325b4050dbe1811c75\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.3\5fc52c41ef0239d1093a1eb7c3697036183677ce\gson-2.3.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="5fc52c41ef0239d1093a1eb7c3697036183677ce">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\gson-2.3_d3135c361c44e7887703c32839ef2adb71ba6f3b\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="29734df4c4830ef4d8d421076aea7198a9633a05">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_797f253d9ed45567f0c180a1fbf71131bd15b515\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\libs\httpcore-4.3.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="98e2eefcf524f757188f172642ecf5e2c7421947">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\2\httpcore-4.3.1_cbddb4ae02c8927c29076f6439534744938087ec\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.1.1_3e90c12b980f3f3b777be46130a1493f060b3f0b\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.1.1_9aadcc1142424892c796b977eb6e99e4a745e39c\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\picasso-2.5.2_2105f3ce82bc552deb44c9bf5a07f0aabdb7e730\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\libs\httpmime-4.3.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="f7899276dddd01d8a42ecfe27e7031fcf9824422">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\2\httpmime-4.3.1_2f4d808c4c7f44d6d12dac216b7806c5cc4e0eaa\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\libs\httpclient-4.3.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="0ec13f6423eb6d5858e229939a2bc118473ef94c">
+        <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\2\httpclient-4.3.1_1ba083e6d99938fce62df13a0b355f0aa6ac7715\classes.dex" />
+    </item>
+
+</items>
