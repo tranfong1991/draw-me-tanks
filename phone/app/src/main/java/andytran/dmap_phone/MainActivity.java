@@ -88,13 +88,13 @@ public class MainActivity extends ImageManagerActivity {
                         list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
-                InstructionalGraphic ig = igs.get(position);
-                if (timer != null){ //if there's already a timer, stop it first
-                    timer.stop();
-                }
-
-                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
-                timer.start();
+//                InstructionalGraphic ig = igs.get(position);
+//                if (timer != null){ //if there's already a timer, stop it first
+//                    timer.stop();
+//                }
+//
+//                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
+//                timer.start();
 //                if (position != listPosition) //if user clicks different IG, then reset click counter
 //                    clicks = 0;
 //                clicks++;
@@ -137,7 +137,6 @@ public class MainActivity extends ImageManagerActivity {
 //        db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
-        //adapter.setSelectedItem(1);
         list.setAdapter(adapter); //build the listview with the adapted
     }
 
