@@ -15,9 +15,6 @@
         <activity
             android:name=".ModifyInstructionalGraphicActivity"
             android:label="@string/title_activity_add_instructional_graphic">
-            <!--<meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="andytran.dmap_phone.ModigMainActivity" />-->
         </activity>
         <activity
             android:name=".ChooseEMILYActivity"
@@ -25,11 +22,11 @@
         <activity
             android:name=".ModigMainActivity"
             android:label="@string/modig_main_activity_label">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".PreviewModificationActivity"
@@ -37,6 +34,11 @@
         <activity
             android:name=".MainActivity"
             android:label="MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!--<activity-->
@@ -45,11 +47,7 @@
         <!--</activity>-->
 
             <!-- Move the intent filter to Choose Emily activity after finishing -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         <activity android:name=".TestUploadActivity"
             android:exported="true"></activity>
     </application>

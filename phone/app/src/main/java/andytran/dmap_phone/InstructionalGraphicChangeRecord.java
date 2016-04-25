@@ -1,8 +1,7 @@
 package andytran.dmap_phone;
 
+import android.net.Uri;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -72,6 +71,15 @@ public class InstructionalGraphicChangeRecord implements Serializable {
             new_refs.add(working_ig.imageRefAt(index));
         }
         return new_refs;
+    }
+
+    public ArrayList<Uri> getUris() {
+        ArrayList<String> refs = getRefs();
+        ArrayList<Uri> uris = new ArrayList<Uri>();
+        for(int i = 0; i < refs.size(); ++i) {
+            uris.add(Uri.parse(refs.get(i)));
+        }
+        return uris;
     }
 
     public Integer getNumberDeleted() {

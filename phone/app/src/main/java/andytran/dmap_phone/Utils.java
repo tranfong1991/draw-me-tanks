@@ -1,11 +1,7 @@
 package andytran.dmap_phone;
 
 import android.content.Context;
-<<<<<<< HEAD
-=======
 import android.net.Uri;
->>>>>>> add-to-app-db
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;

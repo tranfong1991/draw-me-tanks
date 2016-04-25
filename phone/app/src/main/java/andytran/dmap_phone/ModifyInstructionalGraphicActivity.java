@@ -4,8 +4,8 @@ import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -22,7 +22,7 @@ import com.synnapps.carouselview.ViewListener;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class ModifyInstructionalGraphicActivity extends Activity implements NumberPicker.OnValueChangeListener {
+public class ModifyInstructionalGraphicActivity extends ImageManagerActivity implements NumberPicker.OnValueChangeListener {
 
     private InstructionalGraphic ig;
     private InstructionalGraphicChangeRecord cr;
@@ -110,8 +110,6 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
 
             private void setImage(int position, View custom_view) {
                 ImageView image_view = (ImageView) custom_view.findViewById(R.id.modig_carousel_image_view);
-                image_view.setImageResource(getImage(position));
-
                 Picasso.with(getApplicationContext())
                         .load(getImage(position))
                         .fit()
@@ -121,10 +119,10 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         };
     }
 
-    private int getImage(int position) {
+    private Uri getImage(int position) {
         if(position < ig.numOfFrames()) {
             Log.i(String.valueOf(position), ig.imageRefAt(position).substring(6) + ", " + ig.idAt(position));
-            return Integer.parseInt(ig.imageRefAt(position));
+            return Uri.parse(ig.imageRefAt(position));
         } else {
             throw new IndexOutOfBoundsException("Modify Graphic UI attempted to load an invalid image");
         }
@@ -181,7 +179,8 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         ok_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.i("clicked", "ok");
-                carousel.setCurrentItem(1);
+                image_refs = cr.getUris();
+                submitImages(cr.getOriginalInstructionalGraphic());
             }
         });
     }
@@ -223,13 +222,9 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         this.recreate();
     }
 
-    /**
-     * TODO REPLACE LATER
-     */
     private void addToGraphic() {
-        cr.addGraphic((new MockGraphicDatabase()).get_random_graphic());
-        getData();
-        this.recreate();
+        // TODO Test this for if someone cancels selecting from their gallery!!
+        openImageGallery();
     }
 
     private void getInterval() {
@@ -259,6 +254,15 @@ public class ModifyInstructionalGraphicActivity extends Activity implements Numb
         super.onBackPressed();
         cr.cancel();
         finish();
+    }
 
+    @Override
+    protected void onActivityResult(int request_code, int result_code, Intent data) {
+        super.onActivityResult(request_code, result_code, data);
+        if(result_code == RESULT_OK) {
+            cr.addGraphic(image_refs.get(image_refs.size() - 1).toString());
+            getData();
+            this.recreate();
+        }
     }
 }

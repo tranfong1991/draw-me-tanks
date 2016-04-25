@@ -2,6 +2,7 @@ package andytran.dmap_phone;
 
 import android.content.Intent;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -69,7 +70,7 @@ public class PreviewModificationActivity extends AppCompatActivity {
         public void setImageForPosition(int position, ImageView image_view) {
             image_view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             Picasso.with(getApplicationContext())
-                    .load(Integer.parseInt(ig.imageRefAt(position)))
+                    .load(Uri.parse(ig.imageRefAt(position)))
                     .fit()
                     .centerInside()
                     .into(image_view);

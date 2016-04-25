@@ -1,5 +1,6 @@
 package andytran.dmap_phone;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -91,9 +92,18 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            //natalie's code
+                sendModifyIntent(new InstructionalGraphic("Test Name"));
             }
         });
+    }
+
+    private void sendModifyIntent(InstructionalGraphic ig) {
+        InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
+        Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
+        intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+
+        startActivity(intent);
+        return;
     }
 
     @Override

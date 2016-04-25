@@ -92,7 +92,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "192.168.1.1";
+        ip = "10.201.158.37";
         port = "8080";
         token = "abc";
 //        imageToUpload = (ImageView) findViewById(R.id.imageToUpload);
