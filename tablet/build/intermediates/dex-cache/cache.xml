@@ -40,14 +40,14 @@
         jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\tablet\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="b79dda856d722020d2f385a11193cb828d48d440">
+        sha1="557c5a94cf87c03d2cde8cd5c1c6a88563de8753">
         <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\tablet\app\build\intermediates\pre-dexed\debug\instant-run_aed2ff53a648051dc552ad5d9721d771b169e6d8.jar" />
     </item>
     <item
         jar="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\tablet\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="75ce8d0a979251c34ffd1349349ab2e2a682b3ba">
+        sha1="dd8a1e15ec4c79ac74d623949ff923c8223bd192">
         <dex dex="C:\Users\Andy Tran\Documents\Programming Projects\Class Projects\Draw Me a Picture\tablet\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_a2bc78c9fd6761940d05f0049493a81b27e112b7.jar" />
     </item>
     <item
