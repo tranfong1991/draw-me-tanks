@@ -75,10 +75,11 @@ public class MainActivity extends ImageManagerActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 View c = list.getChildAt(0);
-                int scrolly = -c.getTop() + list.getFirstVisiblePosition() * c.getHeight();
                 int topIndex = list.getFirstVisiblePosition();
+                int clickedPosition = 0;
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if(position-topIndex == i ){
+                        clickedPosition = position-topIndex;
                         list.getChildAt(i).setBackgroundColor(Color.BLUE);
                     }else{
                         list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
@@ -87,6 +88,7 @@ public class MainActivity extends ImageManagerActivity {
                 InstructionalGraphic ig = igs.get(position);
                 if (timer != null){ //if there's already a timer, stop it first
                     timer.stop();
+
                 }
 
                 timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
@@ -94,8 +96,10 @@ public class MainActivity extends ImageManagerActivity {
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
                 clicks++;
-                if (clicks > 0 && clicks % 2 == 0)
+                if (clicks > 0 && clicks % 2 == 0){
+                    list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
                     timer.stop();
+                }
                 listPosition = position;
             }
         });
