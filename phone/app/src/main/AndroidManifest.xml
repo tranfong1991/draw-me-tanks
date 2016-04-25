@@ -19,7 +19,9 @@
         </activity>
         <activity
             android:name=".ChooseEMILYActivity"
-            android:label="@string/title_activity_choose"></activity>
+            android:label="@string/title_activity_choose">
+            android:label="@string/title_activity_choose">
+        </activity>
         <activity
             android:name=".ModigMainActivity"
             android:label="@string/modig_main_activity_label">
@@ -37,7 +39,6 @@
             android:label="MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
