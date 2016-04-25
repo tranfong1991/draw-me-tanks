@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -37,6 +38,7 @@ public class DMAPServer extends NanoHTTPD {
     private static final String TAG = "DMAPServer";
 
     public static final String EXTRA_GRAPHIC_NAME = "EXTRA_GRAPHIC_NAME";
+    public static final String EXTRA_IS_DRAWABLE = "EXTRA_IS_DRAWABLE";
     public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
     public static final int HTTP_OK = 200;
@@ -46,6 +48,7 @@ public class DMAPServer extends NanoHTTPD {
 
     private String prefName;
     private String prefToken;
+    private String prefIsFirstTime;
     private String packageName;
     private String token;
     private Context context;
@@ -57,16 +60,28 @@ public class DMAPServer extends NanoHTTPD {
 
         prefName = context.getResources().getString(R.string.pref_name);
         prefToken = context.getResources().getString(R.string.pref_token);
+        prefIsFirstTime = context.getResources().getString(R.string.pref_is_first_time);
         packageName = context.getResources().getString(R.string.package_name);
 
-        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
-        this.token = pref.getString(prefToken, null);
+//        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+//        this.token = pref.getString(prefToken, null);
 
+        this.token = "abc";
         this.context = context;
         this.dbHelper = new GraphicDbHelper(context);
         this.mapping = new HashMap<>();
-        populateMappingFromDb();
 
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+        boolean isFirstTime = pref.getBoolean(prefIsFirstTime, true);
+        if(isFirstTime) {
+            loadDefaultGraphics();
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean(prefIsFirstTime, false);
+            editor.apply();
+        }
+
+        populateMappingFromDb();
         start();
         Log.d(TAG, "Server Started! " + Utils.getIpAddress());
     }
@@ -203,7 +218,7 @@ public class DMAPServer extends NanoHTTPD {
             buffer = new StringBuffer();
             buffer.append("{\"status\" : ");
             buffer.append(HTTP_CREATED);
-            buffer.append(", \"ids:\"[");
+            buffer.append(", \"ids\":[");
             for(int i = 0; i<ids.size(); i++){
                 buffer.append(ids.get(i));
                 if(i != ids.size() - 1)
@@ -328,5 +343,19 @@ public class DMAPServer extends NanoHTTPD {
         db.delete(GraphicContract.GraphicEntry.TABLE_NAME,
                 GraphicContract.GraphicEntry._ID + " = " + id,
                 null);
+    }
+
+    private void loadDefaultGraphics(){
+        addEntryToDb(String.valueOf(R.drawable.cleat00));
+        addEntryToDb(String.valueOf(R.drawable.cleat01));
+        addEntryToDb(String.valueOf(R.drawable.cleat02));
+        addEntryToDb(String.valueOf(R.drawable.cleat03));
+        addEntryToDb(String.valueOf(R.drawable.cleat04));
+        addEntryToDb(String.valueOf(R.drawable.cleat05));
+        addEntryToDb(String.valueOf(R.drawable.cleat06));
+        addEntryToDb(String.valueOf(R.drawable.cleat07));
+        addEntryToDb(String.valueOf(R.drawable.cleat08));
+
+        Log.d(TAG, "Loading done!");
     }
 }

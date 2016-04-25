@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
@@ -73,9 +74,14 @@ public class MainActivity extends AppCompatActivity {
             switch(action){
                 case PLAY_GRAPHIC: {
                     String fileName = extra.getString(DMAPServer.EXTRA_GRAPHIC_NAME);
-                    File file = new File(getFilesDir(), fileName);
 
-                    Ion.with(MainActivity.this).load(file).intoImageView(graphicView);
+                    if(Utils.isInteger(fileName, 10))
+                        Picasso.with(MainActivity.this).load(Integer.parseInt(fileName)).into(graphicView);
+                    else{
+                        File file = new File(getFilesDir(), fileName);
+                        Ion.with(MainActivity.this).load(file).intoImageView(graphicView);
+                    }
+
                     break;
                 }
                 case STOP_GRAPHIC:{
