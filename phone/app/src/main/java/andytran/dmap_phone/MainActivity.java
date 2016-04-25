@@ -94,11 +94,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
                 timer.start();
-                if (position != listPosition) //if user clicks different IG, then reset click counter
-                    clicks = 0;
-                clicks++;
-                if (clicks > 0 && clicks % 2 == 0)
-                    timer.stop();
+//                if (position != listPosition) //if user clicks different IG, then reset click counter
+//                    clicks = 0;
+//                clicks++;
+//                if (clicks > 0 && clicks % 2 == 0)
+//                    timer.stop();
                 listPosition = position;
             }
         });

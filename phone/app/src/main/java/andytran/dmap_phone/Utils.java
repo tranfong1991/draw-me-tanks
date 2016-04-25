@@ -1,6 +1,7 @@
 package andytran.dmap_phone;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -57,6 +58,7 @@ public class Utils {
                     buffer.append("&");
             }
         }
+        Log.d("URL",buffer.toString());
         return buffer.toString();
     }
 }
