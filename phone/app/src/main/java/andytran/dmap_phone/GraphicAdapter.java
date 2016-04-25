@@ -128,7 +128,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
 
         textView.setText(igs.get(position).getName());
-        Picasso.with(context).load(igs.get(position).imageRefAt(0)).into(imageView1);
+        Picasso.with(context)
+                .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
+                .into(imageView1);
         return swipeLayout;
     }
 }
