@@ -264,6 +264,8 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
             cr.addGraphic(image_refs.get(image_refs.size() - 1).toString());
             getData();
             this.recreate();
+        } else if(result_code == RESULT_CANCELED && ig.numOfFrames() == 0) {
+            finish();
         }
     }
 }

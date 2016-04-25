@@ -21,8 +21,6 @@ public class PreviewModificationActivity extends AppCompatActivity {
 
     private CarouselView carousel;
     private InstructionalGraphic ig;
-    private ProgressBar prog_bar;
-    private CountDownTimer countdown_timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +29,6 @@ public class PreviewModificationActivity extends AppCompatActivity {
 
         setInstructionalGraphic();
         setCarousel();
-        setProgressBar();
         setImageView();
     }
 
@@ -43,10 +40,6 @@ public class PreviewModificationActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
-
-    private void setProgressBar() {
-
     }
 
     private void setCarousel() {

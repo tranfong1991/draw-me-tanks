@@ -71,7 +71,6 @@ public class InstructionalGraphicTimer extends Timer {
                 this.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Log.d(TAG, "Sending to tablet");
                         sendIdToTablet(nextId());
                     }
                 }, 0, graphic.getInterval());

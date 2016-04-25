@@ -182,15 +182,6 @@ public class ImageManagerActivity extends AppCompatActivity {
  *  @param ig The InstructionalGraphic to update
  */
     public void submitImages(InstructionalGraphic ig){
-        submitImages(ig, new Callback() {
-            @Override
-            public void run() {
-                //do nothing
-            }
-        });
-    }
-
-    public void submitImages(InstructionalGraphic ig, Callback callback){
         ArrayList<NameValuePair> toTabletList = new ArrayList<>();
         for(Uri imageUri : image_refs) {
             String dest = copyFileToPhone(imageUri);
@@ -202,9 +193,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         UploadGraphicAsyncTask toTabletTask = new UploadGraphicAsyncTask(
                 Utils.buildURL(ip, port, "graphic", params),
                 toTabletList,
-                ig,
-                callback
-        );
+                ig);
         toTabletTask.execute();
 
 
@@ -285,13 +274,11 @@ public class ImageManagerActivity extends AppCompatActivity {
         private String url;
         private List<NameValuePair> nameValuePairs;
         private InstructionalGraphic graphic;
-        private Callback callback;
 
-        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic, Callback callback){
+        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic){
             this.url = url;
             this.nameValuePairs = nameValuePairs;
             this.graphic = graphic;
-            this.callback = callback;
         }
 
         @Override
@@ -316,7 +303,6 @@ public class ImageManagerActivity extends AppCompatActivity {
                 ResponseHandler<String> handler = new BasicResponseHandler();
 
                 appendIdsAndRefsToGraphic(graphic, getIdsFromResponse(handler.handleResponse(r)), getRefsFromNameValuePairs());
-                callback.run();
             } catch (IOException e) {
                 e.printStackTrace();
             }
