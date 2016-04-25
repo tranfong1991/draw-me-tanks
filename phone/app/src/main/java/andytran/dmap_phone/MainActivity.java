@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private String hostIp;
     private int hostPort;
 
-    private static InstructionalGraphicTimer timer;
+    public static InstructionalGraphicTimer timer;
     private ListView list;
     private GraphicAdapter adapter;
     private ArrayList<InstructionalGraphic> igs;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         list = (ListView)findViewById(R.id.listView);
+        list.setCacheColorHint(Color.TRANSPARENT);
 
         prefName = getResources().getString(R.string.pref_name);
         prefToken = getResources().getString(R.string.pref_token);
@@ -72,25 +74,32 @@ public class MainActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                View c = list.getChildAt(0);
+                int scrolly = -c.getTop() + list.getFirstVisiblePosition() * c.getHeight();
+                int topIndex = list.getFirstVisiblePosition();
+
+                Log.d("scrolly", Integer.toString(scrolly));
+                Log.d("topIndex", Integer.toString(topIndex));
+                Log.d("position",Integer.toString(position));
                 for (int i = 0; i < list.getChildCount(); i++) {
-                    if(position == i ){
+                    if(position-topIndex == i ){
                         list.getChildAt(i).setBackgroundColor(Color.BLUE);
                     }else{
                         list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
-                InstructionalGraphic ig = igs.get(position);
-                if (timer != null){ //if there's already a timer, stop it first
-                    timer.stop();
-                }
-                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.57", "8080", "abc", ig);
-                timer.start();
-                if (position != listPosition) //if user clicks different IG, then reset click counter
-                    clicks = 0;
-                clicks++;
-
-                if (clicks > 0 && clicks % 2 == 0)
-                    timer.stop();
+//                InstructionalGraphic ig = igs.get(position);
+//                if (timer != null){ //if there's already a timer, stop it first
+//                    timer.stop();
+//                }
+//                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
+//                timer.start();
+//                if (position != listPosition) //if user clicks different IG, then reset click counter
+//                    clicks = 0;
+//                clicks++;
+//
+//                if (clicks > 0 && clicks % 2 == 0)
+//                    timer.stop();
                 listPosition = position;
             }
         });
@@ -120,9 +129,15 @@ public class MainActivity extends AppCompatActivity {
  *  ==============================================================================================*/
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
+        InstructionalGraphic ig = new InstructionalGraphic("img1");
+        ig.addImage(1,Integer.toString(R.drawable.images));
+//        db.addGraphicToEnd(ig);
+//        db.addGraphicToEnd(ig);
+//        db.addGraphicToEnd(ig);
+//        db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
-        adapter.setSelectedItem(1);
+        //adapter.setSelectedItem(1);
         list.setAdapter(adapter); //build the listview with the adapted
     }
 

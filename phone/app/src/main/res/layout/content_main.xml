@@ -27,7 +27,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="@drawable/my_selector"/>
+        android:background="@drawable/my_selector" />
 
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/fab_ic_add"
