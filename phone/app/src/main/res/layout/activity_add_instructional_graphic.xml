@@ -22,19 +22,48 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:showDividers="middle"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:weightSum="4">
 
         <!-- Row 1 - Instructional Graphic Name -->
-        <EditText
-            android:id="@+id/modig_instructional_graphic_title"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:singleLine="true"
-            android:lines="1"
-            android:hint="@string/modig_default_title"
             android:layout_weight="1"
-            android:backgroundTint="@color/colorPrimaryDark"/>
+            android:layout_alignParentTop="true">
+            <EditText
+                android:id="@+id/modig_instructional_graphic_title_editable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:singleLine="true"
+                android:fillViewport="true"
+                android:textSize="21sp"
+                android:lines="1"
+                android:hint="@string/modig_default_title"
+                android:visibility="invisible"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentTop="true" />
+            <TextView
+                android:id="@+id/modig_instructional_graphic_title_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:fillViewport="true"
+                android:textSize="28sp"
+                android:lines="1"
+                android:visibility="invisible"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_alignParentBottom="false" />
+        </RelativeLayout>
 
         <!-- Row 2 - Graphic Carousel -->
 

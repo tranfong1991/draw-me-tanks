@@ -20,19 +20,11 @@
             android:name=".ChooseEMILYActivity"
             android:label="@string/title_activity_choose">
         </activity>
-        <activity
-            android:name=".ModigMainActivity"
-            android:label="@string/modig_main_activity_label">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
 
         <activity
             android:name=".PreviewModificationActivity"
-            android:label="@string/title_activity_preview_modification"></activity>
+            android:label="@string/title_activity_preview_modification">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:label="MainActivity"

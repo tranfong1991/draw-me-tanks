@@ -45,7 +45,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     private ViewListener view_listener;
     private Button preview_button;
     private Button ok_button;
-    private EditText editText;
+    private TextView editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +60,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
             setInstructionalGraphic();
         }
         setNumberPicker();
+        setStaticText();
         setEditText();
         setCarouselContainer();
         setPreviewButton();
@@ -174,13 +175,25 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private void setEditText() {
-        editText = (EditText)findViewById(R.id.modig_instructional_graphic_title);
         Log.d("new graphic?", String.valueOf(new_graphic));
+        editText = (TextView)findViewById(R.id.modig_instructional_graphic_title_editable);
         if(!new_graphic) {
-            editText.setText(ig.getName(), TextView.BufferType.NORMAL);
+            editText.setText(ig.getName(), TextView.BufferType.EDITABLE);
+            editText.setVisibility(View.INVISIBLE);
             editText.setEnabled(false);
         } else {
+            editText.setVisibility(View.VISIBLE);
             editText.setEnabled(true);
+        }
+    }
+
+    private void setStaticText() {
+        editText = (TextView)findViewById(R.id.modig_instructional_graphic_title_static);
+        editText.setText(ig.getName(), TextView.BufferType.NORMAL);
+        if(new_graphic) {
+            editText.setVisibility(View.INVISIBLE);
+        } else {
+            editText.setVisibility(View.VISIBLE);
         }
     }
 
@@ -277,7 +290,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private void getName() {
-        EditText edit_text = (EditText)findViewById(R.id.modig_instructional_graphic_title);
+        EditText edit_text = (EditText)findViewById(R.id.modig_instructional_graphic_title_editable);
         String name = edit_text.getText().toString();
         if(name.length() > 0) {
             cr.setName(name);
