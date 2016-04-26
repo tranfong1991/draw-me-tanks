@@ -2,7 +2,7 @@
     android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/sample1">
     <!-- Bottom View Start-->
     <LinearLayout
-        android:background="#66ddff00"
+        android:background="@color/colorPrimary"
         android:id="@+id/bottom_wrapper"
         android:layout_width="160dp"
         android:weightSum="1"

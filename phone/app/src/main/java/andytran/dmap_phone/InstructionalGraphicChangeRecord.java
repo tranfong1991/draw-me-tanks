@@ -1,5 +1,6 @@
 package andytran.dmap_phone;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import java.io.Serializable;
@@ -63,9 +64,13 @@ public class InstructionalGraphicChangeRecord implements Serializable {
         working_ig.setInterval(interval);
     }
 
+    public Integer getIndexFirstNewGraphic() {
+        return original_ig.numOfFrames() - number_original_graphics_deleted;
+    }
+
     public ArrayList<String> getRefs() {
         ArrayList<String> new_refs = new ArrayList();
-        Integer displacement = original_ig.numOfFrames() - number_original_graphics_deleted;
+        Integer displacement = getIndexFirstNewGraphic();
         for(int i = 0; i < number_graphics_added; ++i) {
             Integer index = displacement + i;
             new_refs.add(working_ig.imageRefAt(index));
@@ -73,7 +78,7 @@ public class InstructionalGraphicChangeRecord implements Serializable {
         return new_refs;
     }
 
-    public ArrayList<Uri> getUris() {
+    public ArrayList<Uri> getUris(Context context) {
         ArrayList<String> refs = getRefs();
         ArrayList<Uri> uris = new ArrayList<Uri>();
         for(int i = 0; i < refs.size(); ++i) {

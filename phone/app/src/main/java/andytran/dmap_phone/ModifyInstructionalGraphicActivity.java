@@ -3,10 +3,14 @@ package andytran.dmap_phone;
 import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -26,6 +30,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
 
     private InstructionalGraphic ig;
     private InstructionalGraphicChangeRecord cr;
+    private Context context;
 
     CarouselView carousel;
     ViewListener view_listener;
@@ -36,6 +41,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_instructional_graphic);
+        context = this;
 
         setInstructionalGraphicAndChangeRecord();
         setNumberPicker();
@@ -120,8 +126,9 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private Uri getImage(int position) {
-        if(position < ig.numOfFrames()) {
-            Log.i(String.valueOf(position), ig.imageRefAt(position).substring(6) + ", " + ig.idAt(position));
+        if(position < cr.getIndexFirstNewGraphic()) {
+            return Utils.refToUri(context, ig.imageRefAt(position));
+        } else if(position < ig.numOfFrames()) {
             return Uri.parse(ig.imageRefAt(position));
         } else {
             throw new IndexOutOfBoundsException("Modify Graphic UI attempted to load an invalid image");
@@ -179,9 +186,9 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
         ok_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.i("clicked", "ok");
-                image_refs = cr.getUris();
+                image_refs = cr.getUris(context);
                 submitImages(cr.getOriginalInstructionalGraphic());
-                finish();
+                myOkFinish();
             }
         });
     }
@@ -224,7 +231,6 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private void addToGraphic() {
-        // TODO Test this for if someone cancels selecting from their gallery!!
         openImageGallery();
     }
 
@@ -254,18 +260,48 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     {
         super.onBackPressed();
         cr.cancel();
-        finish();
+        myCancelledFinish();
     }
 
     @Override
     protected void onActivityResult(int request_code, int result_code, Intent data) {
         super.onActivityResult(request_code, result_code, data);
+
         if(result_code == RESULT_OK) {
             cr.addGraphic(image_refs.get(image_refs.size() - 1).toString());
             getData();
-            this.recreate();
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                        finish();
+                        startActivity(getIntent());
+                    } else recreate();
+                }
+            }, 1);
+
         } else if(result_code == RESULT_CANCELED && ig.numOfFrames() == 0) {
-            finish();
+            myCancelledFinish();
         }
+    }
+
+    public void myOkFinish() {
+        if (getParent() == null) {
+            setResult(Activity.RESULT_OK, getIntent());
+        } else {
+            getParent().setResult(Activity.RESULT_OK, getIntent());
+        }
+        finish();
+    }
+
+    public void myCancelledFinish() {
+        if (getParent() == null) {
+            setResult(Activity.RESULT_CANCELED, getIntent());
+        } else {
+            getParent().setResult(Activity.RESULT_CANCELED, getIntent());
+        }
+        finish();
     }
 }

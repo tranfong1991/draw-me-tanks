@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import android.content.Intent;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +71,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
                                 db.removeGraphicAt(position);
                                 igs.remove(position);
-                                MainActivity.timer.stop();
+                                if(MainActivity.timer != null) {
+                                    MainActivity.timer.stop();
+                                }
                                 notifyDataSetChanged();
                             }
                         })
@@ -81,8 +86,17 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //change intent to edit activity
-                Log.d("msg1","hello");
+                sendModifyIntent(igs.get(position));
+                Log.d("msg1", "hello");
+            }
+
+            private void sendModifyIntent(InstructionalGraphic ig) {
+                InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
+                Intent intent = new Intent(context, ModifyInstructionalGraphicActivity.class);
+                intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+
+                context.startActivityForResult(intent, 10);
+                return;
             }
         });
 

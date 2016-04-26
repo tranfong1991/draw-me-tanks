@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import core.db.InstructionalGraphicDbAccess;
+import core.db.InstructionalGraphicDbHelper;
 import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
@@ -31,6 +35,8 @@ public class MainActivity extends ImageManagerActivity {
     private String token;
     private String hostIp;
     private int hostPort;
+
+    static final int MODIFY_IG_REQUEST_CODE = 10;
 
     public static InstructionalGraphicTimer timer;
     private ListView list;
@@ -81,9 +87,9 @@ public class MainActivity extends ImageManagerActivity {
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if(position-topIndex == i ){
                         clickedPosition = position-topIndex;
-                        list.getChildAt(i).setBackgroundColor(Color.BLUE);
+                        list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
                     }else{
-                        list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+                        list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorWhite));
                     }
                 }
                 InstructionalGraphic ig = igs.get(position);
@@ -92,14 +98,16 @@ public class MainActivity extends ImageManagerActivity {
 
                 }
 
-                timer = new InstructionalGraphicTimer(MainActivity.this, "10.201.149.221", "8080", "abc", ig);
+                timer = new InstructionalGraphicTimer(MainActivity.this, "192.168.0.167", "8080", "abc", ig);
                 timer.start();
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
                 clicks++;
                 if (clicks > 0 && clicks % 2 == 0){
                     list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
-                    timer.stop();
+                    if(timer != null) {
+                        timer.stop();
+                    }
                 }
                 listPosition = position;
             }
@@ -119,8 +127,28 @@ public class MainActivity extends ImageManagerActivity {
         Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
         intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
 
-        startActivity(intent);
+        startActivityForResult(intent, MODIFY_IG_REQUEST_CODE);
         return;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        igs = new InstructionalGraphicDbAccess(this).getOrderedGraphicList();
+        adapter.igs = igs;
+        adapter.notifyDataSetChanged();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                    finish();
+                    startActivity(getIntent());
+                } else {
+                    recreate();
+                    Log.i("recreating?", "trying");
+                }
+            }
+        }, 1);
     }
 
     @Override
