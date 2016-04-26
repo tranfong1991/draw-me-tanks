@@ -99,6 +99,7 @@ public class InstructionalGraphicChangeRecord implements Serializable {
         return original_ig;
     }
 
+    @Deprecated
     public InstructionalGraphic finalizeChanges() {
         Log.i("message", "finalized");
         for(int i = 0; i < number_original_graphics_deleted; ++i) {
@@ -112,6 +113,11 @@ public class InstructionalGraphicChangeRecord implements Serializable {
             original_ig.addImage(id, refs.get(i));
         }
         return original_ig;
+    }
+
+    public void finalizeAttributes() {
+        original_ig.setInterval(working_ig.getInterval());
+        //original_ig.setName(working_ig.getName());
     }
 
     public InstructionalGraphic getCurrentInstructionalGraphic() {

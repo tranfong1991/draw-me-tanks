@@ -110,7 +110,7 @@ public class InstructionalGraphic implements Serializable {
  *  @param frame Bounded by 0 and numOfFrames()
  */
     public Integer idAt(Integer frame) {
-        return ids.get(frame);
+        return ids.get(frame.intValue());
     }
 
 /**

@@ -32,7 +32,7 @@ public class MainActivity extends ImageManagerActivity {
     private String prefIp;
     private String prefPort;
     private String prefFirstUse;
-    private String token;
+    //private String token;
     private String hostIp;
     private int hostPort;
 
@@ -98,7 +98,7 @@ public class MainActivity extends ImageManagerActivity {
 
                 }
 
-                timer = new InstructionalGraphicTimer(MainActivity.this, "192.168.0.167", "8080", "abc", ig);
+                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
                 timer.start();
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;

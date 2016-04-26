@@ -80,9 +80,9 @@ public class ImageManagerActivity extends AppCompatActivity {
  */
     protected InstructionalGraphicDbAccess db;
 
-    public String ip;
-    public String port;
-    public String token;
+    public String ip = "10.201.132.211";
+    public String port = "8080";
+    public String token = "abc";
 
 /**
  *  @inheritDoc
@@ -96,7 +96,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "192.168.0.167";
+        ip = "10.201.132.211";
         port = "8080";
         token = "abc";
 //        imageToUpload = (ImageView) findViewById(R.id.imageToUpload);

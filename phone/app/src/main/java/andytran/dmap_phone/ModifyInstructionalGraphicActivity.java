@@ -187,8 +187,13 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
             public void onClick(View v) {
                 Log.i("clicked", "ok");
                 image_refs = cr.getUris(context);
-                submitImages(cr.getOriginalInstructionalGraphic());
-                myOkFinish();
+                cr.finalizeAttributes();
+                submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
+                    @Override
+                    public void run() {
+                        myOkFinish();
+                    }
+                });
             }
         });
     }
@@ -196,7 +201,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         Log.i("value is", "" + newVal);
-        cr.setInterval(newVal);
+        cr.setInterval(newVal*1000);
     }
 
     /**
