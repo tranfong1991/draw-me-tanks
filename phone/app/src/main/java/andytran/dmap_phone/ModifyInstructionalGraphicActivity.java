@@ -187,7 +187,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
             public void onClick(View v) {
                 Log.i("clicked", "ok");
                 image_refs = cr.getUris(context);
-                cr.finalizeAttributes();
+                cr.finalizeChanges();
                 submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
                     @Override
                     public void run() {
