@@ -198,6 +198,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     private void sendPreviewIntent() {
         Intent intent = new Intent(this, PreviewModificationActivity.class);
         intent.putExtra(InstructionalGraphic.class.getName(), cr.getCurrentInstructionalGraphic());
+        intent.putExtra(PreviewModificationActivity.startOfGalleryGraphicCode, String.valueOf(cr.getIndexFirstNewGraphic()));
         startActivity(intent);
         return;
     }

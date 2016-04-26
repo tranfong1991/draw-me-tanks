@@ -1,5 +1,6 @@
 package andytran.dmap_phone;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.net.Uri;
@@ -21,13 +22,19 @@ public class PreviewModificationActivity extends AppCompatActivity {
 
     private CarouselView carousel;
     private InstructionalGraphic ig;
+    private Integer start_of_gallery_graphics;
+    private Context context = this;
+
+    public static final String startOfGalleryGraphicCode = "StartOfGalleryGraphics";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview_modification);
 
-        setInstructionalGraphic();
+        Intent intent = getIntent();
+        setInstructionalGraphic(intent);
+        setStartOfGalleryGraphic(intent);
         setCarousel();
         setImageView();
     }
@@ -52,8 +59,12 @@ public class PreviewModificationActivity extends AppCompatActivity {
         }
     }
 
-    private void setInstructionalGraphic() {
-        Intent intent = getIntent();
+    private void setStartOfGalleryGraphic(Intent intent) {
+        String start_of_gallery_graphics_string = (String) intent.getSerializableExtra(startOfGalleryGraphicCode);
+        start_of_gallery_graphics = Integer.valueOf(start_of_gallery_graphics_string);
+    }
+
+    private void setInstructionalGraphic(Intent intent) {
         String cr_string = InstructionalGraphic.class.getName();
         ig = (InstructionalGraphic) intent.getSerializableExtra(cr_string);
     }
@@ -62,8 +73,14 @@ public class PreviewModificationActivity extends AppCompatActivity {
         @Override
         public void setImageForPosition(int position, ImageView image_view) {
             image_view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            Uri image;
+            if(position < start_of_gallery_graphics) {
+                image = Utils.refToUri(context, ig.imageRefAt(position));
+            } else {
+                image = Uri.parse(ig.imageRefAt(position));
+            }
             Picasso.with(getApplicationContext())
-                    .load(Uri.parse(ig.imageRefAt(position)))
+                    .load(image)
                     .fit()
                     .centerInside()
                     .into(image_view);
