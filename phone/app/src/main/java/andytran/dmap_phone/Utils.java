@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -124,10 +126,25 @@ public class Utils {
 
     public static void errorFromWorker(final Activity activity, final String message) {
         activity.runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 error(activity, message).show();
             }
         });
+    }
+
+//  http://stackoverflow.com/questions/24811536/android-listview-get-item-view-by-position
+    public static View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return null;
+            //return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 }
 

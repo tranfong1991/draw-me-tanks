@@ -16,7 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -88,8 +91,10 @@ public class MainActivity extends ImageManagerActivity {
                     if (position - topIndex == i) {
                         clickedPosition = position - topIndex;
                         list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
+                        adapter.setSelectedItem(position);
                     } else {
-                        list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorWhite));
+                        //list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), Color.TRANSPARENT));
+                        list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
                     }
                 }
                 InstructionalGraphic ig = igs.get(position);
@@ -99,8 +104,24 @@ public class MainActivity extends ImageManagerActivity {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
 
+            //  TIMER
                 timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
+                final int forPosition = position;
+                timer.setOnSendSuccess(new IntegerCallback() {
+                    @Override
+                    public void run(Integer n) {
+                        setImageRefFor(forPosition, n); // preview current frame in ListView
+                    }
+                });
+                timer.setOnStopSuccess(new VoidCallback() {
+                    @Override
+                    public void run() {
+                        setImageRefFor(forPosition, 0);
+                    }
+                });
                 timer.start();
+            //  END TIMER
+
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
                 clicks++;
@@ -216,5 +237,20 @@ public class MainActivity extends ImageManagerActivity {
         InstructionalGraphic ig4 = new InstructionalGraphic("Stop");
         ig4.addImage(14, copyFromDrawable(R.drawable.stop));
         db.addGraphicToEnd(ig4);
+    }
+
+    private void setImageRefFor(final int position, final Integer frame) {
+        View slider = Utils.getViewByPosition(position, list);
+        if(slider != null) {
+            final ImageView imageView = (ImageView) slider.findViewById(R.id.instruction_image);
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Picasso.with(MainActivity.this)
+                            .load(Utils.refToUri(MainActivity.this, igs.get(position).imageRefAt(frame)))
+                            .into(imageView);
+                }
+            });
+        }
     }
 }
