@@ -85,17 +85,18 @@ public class MainActivity extends ImageManagerActivity {
                 int topIndex = list.getFirstVisiblePosition();
                 int clickedPosition = 0;
                 for (int i = 0; i < list.getChildCount(); i++) {
-                    if(position-topIndex == i ){
-                        clickedPosition = position-topIndex;
+                    if (position - topIndex == i) {
+                        clickedPosition = position - topIndex;
                         list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
-                    }else{
+                    } else {
                         list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorWhite));
                     }
                 }
                 InstructionalGraphic ig = igs.get(position);
-                if (timer != null){ //if there's already a timer, stop it first
+                if (timer != null) try { //if there's already a timer, stop it first
                     timer.stop();
-
+                } catch (Error err) {
+                    Utils.error(MainActivity.this, err.getMessage()).show();
                 }
 
                 timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
@@ -103,10 +104,12 @@ public class MainActivity extends ImageManagerActivity {
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
                 clicks++;
-                if (clicks > 0 && clicks % 2 == 0){
+                if (clicks > 0 && clicks % 2 == 0) {
                     list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
-                    if(timer != null) {
+                    if (timer != null) try {
                         timer.stop();
+                    } catch (Error err) {
+                        Utils.error(MainActivity.this, err.getMessage()).show();
                     }
                 }
                 listPosition = position;

@@ -63,7 +63,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
             public void onClick(View v) {
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Closing Activity")
+                        .setTitle("Deleting Instruction")
                         .setMessage("Are you sure you want to delete the instruction?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override

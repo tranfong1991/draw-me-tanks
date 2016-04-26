@@ -1,6 +1,9 @@
 package andytran.dmap_phone;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.util.Log;
 
@@ -12,6 +15,8 @@ import com.android.volley.toolbox.Volley;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
+
+import core.db.InstructionalGraphicDbAccess;
 
 
 public class Utils {
@@ -103,6 +108,26 @@ public class Utils {
         return Uri.fromFile(new File(context.getFilesDir().getAbsolutePath() + "/" + ref));
     }
 
+    public static AlertDialog error(Context context, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder .setTitle("An error has occured")
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        return builder.create();
+    }
 
+    public static void errorFromWorker(final Activity activity, final String message) {
+        activity.runOnUiThread(new Runnable() {
+            @Override public void run() {
+                error(activity, message).show();
+            }
+        });
+    }
 }
 

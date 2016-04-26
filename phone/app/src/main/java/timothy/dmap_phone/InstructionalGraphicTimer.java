@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import andytran.dmap_phone.DmapConnectionError;
 import andytran.dmap_phone.Utils;
 
 /** InstructionalGraphicTimer Class
@@ -62,9 +63,8 @@ public class InstructionalGraphicTimer extends Timer {
     public void start() {
         if(!started) {
             initialize();
-            if (graphic.getInterval() == 0) {
+            if (graphic.getInterval() == 0)
                 sendIdToTablet(graphic.idAt(0));
-            }
             else {
                 this.schedule(new TimerTask() {
                     @Override
@@ -81,7 +81,7 @@ public class InstructionalGraphicTimer extends Timer {
  *  Stops the graphic from sending requests to the timer, and sends a stop request so the
  *  tablet stops displaying its current image
  */
-    public void stop(){
+    public void stop() {
         if (started) {
             this.cancel();
             started = false;
@@ -100,7 +100,7 @@ public class InstructionalGraphicTimer extends Timer {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        throw new Error("ERROR in stop: Could not send stop request to tablet");
+                        Utils.error(context, new DmapConnectionError("Stop message could not be sent to tablet").getMessage()).show();
                     }
                 }
         );
@@ -143,8 +143,11 @@ public class InstructionalGraphicTimer extends Timer {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        stop();
-                        throw new Error("ERROR in sendIdToTablet: Failed to send ID");
+                        if (started) {
+                            cancel();
+                            started = false;
+                        }
+                        Utils.error(context, new DmapConnectionError("Unable to call image on tablet").getMessage()).show();
                     }
                 }
         );

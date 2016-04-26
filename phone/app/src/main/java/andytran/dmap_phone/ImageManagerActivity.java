@@ -56,7 +56,6 @@ import timothy.dmap_phone.InstructionalGraphic;
  *
  *  This class is meant to be extended by other activites.
  */
-//public class ImageManagerActivity extends AppCompatActivity implements View.OnClickListener {
 public class ImageManagerActivity extends AppCompatActivity {
 /**
  *  ID used for the event in which an image is selected from a gallery
@@ -90,7 +89,6 @@ public class ImageManagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_add_to_app_db);
 
         images = new ArrayList<>();
         image_refs = new ArrayList<>();
@@ -99,33 +97,16 @@ public class ImageManagerActivity extends AppCompatActivity {
         ip = "10.201.132.211";
         port = "8080";
         token = "abc";
-//        imageToUpload = (ImageView) findViewById(R.id.imageToUpload);
-//        uploadButton = (Button) findViewById(R.id.uploadButton);
-//        pathURI = (TextView) findViewById(R.id.path);
-////
-//        imageToUpload.setOnClickListener(this);
     }
-
-    /*
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imageToUpload:
-//                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-
-                openImageGallery();
-
-
-                break;
-            case R.id.uploadButton:
-                break;
-        }
-    }
-    */
 
 /*  Public Methods
  *  ==============================================================================================*/
+/**
+ *  Used to create default instructional graphics.  Performs a copy from a resource rather than
+ *  a Uri.
+ *  @param resourceId
+ *  @return
+ */
     public String copyFromDrawable(int resourceId){
         String dst = Utils.generateRandomString(5);
         InputStream in = getResources().openRawResource(resourceId);
@@ -169,7 +150,8 @@ public class ImageManagerActivity extends AppCompatActivity {
             copyFile(uri, dest_path_name);
         }
         catch (IOException e){
-            System.err.println("Caught IOException: " + e.getMessage());
+            //System.err.println("Caught IOException: " + e.getMessage());
+            Utils.error(this, "Could not copy image to the phone's repository.").show();
             return null;
         }
         return dest_path_name;
@@ -261,12 +243,9 @@ public class ImageManagerActivity extends AppCompatActivity {
 
     //  Karrie, I put your stuff here - Timothy
         Boolean isIGNew = !db.isGraphicInDatabase(graphic);
-        //if (graphic.numOfFrames() == 0)
-         //   isIGNew = true;
 
         for (int i = 0; i < ids.size(); i++)
             graphic.addImage(ids.get(i), refs.get(i));
-
 
         if (isIGNew)
             db.addGraphicToEnd(graphic);
@@ -316,6 +295,9 @@ public class ImageManagerActivity extends AppCompatActivity {
                 cb.run();
             } catch (IOException e) {
                 e.printStackTrace();
+                Utils.errorFromWorker(ImageManagerActivity.this, new DmapConnectionError("Could not upload images to tablet").getMessage());
+            } catch(Error err) {
+                Utils.errorFromWorker(ImageManagerActivity.this, err.getMessage());
             }
 
             return null;
@@ -335,38 +317,28 @@ public class ImageManagerActivity extends AppCompatActivity {
                 int status = obj.getInt("status");
 
                 if(status != 201)
-                    return ids;
+                    throw new DmapConnectionError("Attempting to upload images to tablet failed.");
 
                 JSONArray idsJson = obj.getJSONArray("ids");
                 for(int i = 0; i < idsJson.length(); ++i)
                     ids.add((Integer)idsJson.get(i));
             }
             catch(JSONException err) {
+                Utils.errorFromWorker(ImageManagerActivity.this, "Message received from tablet is bad.");
                 Log.d("STATUS", err.getMessage());
+            }
+            catch(DmapConnectionError err) {
+                Utils.errorFromWorker(ImageManagerActivity.this, err.getMessage());
             }
             return ids;
         }
     }
 
-    //Send
-    //@TODO: FINISH THIS
-    //@deprecated
-//    public void copyFileFromResID(int src, File dst) throws IOException {
-//        InputStream in = new FileInputStream(src);
-//        OutputStream out = new FileOutputStream(dst);
-//
-//        // Transfer bytes from in to out
-//        byte[] buf = new byte[1024];
-//        int len;
-//        while ((len = in.read(buf)) > 0) {
-//            out.write(buf, 0, len);
-//        }
-//        in.close();
-//        out.close();
-//    }
-
-
-
+/**
+ *  Andy's function.  Gets the absolute path of a file on the phone given a Uri.
+ *  @param uri
+ *  @return
+ */
     private String getRealPathFromURI(Uri uri) {
         // Will return "image:x*"
         String wholeID = DocumentsContract.getDocumentId(uri);
