@@ -78,14 +78,7 @@ public class InstructionalGraphic implements Serializable {
             throw new IllegalArgumentException(NULL_NAME_MESSAGE);
         name = new_name;
     }
-
-/**
- *  Sets the name of the graphic.  You shouldn't use this unless you really, REALLY, need to
- *  @param value The new name
- *  @return The new name
- */
-    public String setName(String value) {  return this.name = value; }
-
+    
 /**
  *  Gets the timing interval for the graphic.  For single-image graphics, the interval is set to maximum value since there is no need for periodicity.
  */

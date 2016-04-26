@@ -75,6 +75,16 @@ public class InstructionalGraphicDbAccess {
         }
     }
 
+    public Boolean isGraphicInDatabase(String name) {
+        //  To be honest, this is a very sucky way of checking, but I'm lazy and it works.
+        try {
+            return getGraphicByName(name) != null;
+        }
+        catch(DbAccessError err) {
+            return false;
+        }
+    }
+
 /**
  *  Returns the total number of graphics in the database
  */

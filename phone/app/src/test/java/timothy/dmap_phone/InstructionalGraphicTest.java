@@ -1,29 +1,29 @@
 package timothy.dmap_phone;
 
-import org.junit.Test;
-
+import junit.framework.TestCase;
 import java.util.ArrayList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
+import static org.hamcrest.core.IsNot.not;
+
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.util.Random;
+
+import matchers.dmap_phone.InstructionalGraphicIsEqual;
+import matchers.dmap_phone.TotalArrayMatcher;
+import timothy.dmap_phone.InstructionalGraphic;
 import org.junit.Before;
 
 /**
  * Created by Kiri on 3/29/2016.
  */
-public class InstructionalGraphicTest {
+public class InstructionalGraphicTest extends TestCase {
     public static final String ig_name = "Test Graphic";
     public static final Integer ig_interval = 9;
     public static ArrayList<String> ig_image_ids;
     public static ArrayList<String> ig_image_refs;
     public static InstructionalGraphic ig;
-
-    @Before
-    public void initializeEverything() {
-        initializeArrays();
-        initializeInstructionalGraphic();
-        fillInstructionalGraphic();
-    }
 
     public void initializeArrays() {
         ig_image_ids = new ArrayList<String>();
@@ -38,45 +38,55 @@ public class InstructionalGraphicTest {
         }
     }
 
-    public void initializeInstructionalGraphic() {
-        ig = new InstructionalGraphic(ig_name);
-        ig.setInterval(ig_interval);
+    public InstructionalGraphic initializeInstructionalGraphic() {
+        InstructionalGraphic igg = new InstructionalGraphic(ig_name);
+        igg.setInterval(ig_interval);
+        initializeArrays();
+        return igg;
     }
 
-    public void fillInstructionalGraphic() {
+    public void fillInstructionalGraphic(InstructionalGraphic igg) {
         for(int i = 0; i < ig_image_ids.size(); ++i) {
-            ig.addImage(Integer.valueOf(ig_image_ids.get(i)), ig_image_refs.get(i));
+            igg.addImage(Integer.valueOf(ig_image_ids.get(i)), ig_image_refs.get(i));
         }
     }
 
-    @Test
-    public void instructionalGraphic_ComparingToItself_ReturnsTrue() {
-        assertTrue(ig.equals(ig));
+    public void testInstructionalGraphic_ComparingToItself_ReturnsTrue() {
+        ig = initializeInstructionalGraphic();
+        InstructionalGraphic og = initializeInstructionalGraphic();
+        fillInstructionalGraphic(ig);
+        fillInstructionalGraphic(og);
+        assertThat(ig, is(equalTo(og)));
     }
 
-    @Test
-    public void instructionalGraphic_ComparingToDifferent_ReturnsFalse() {
-        InstructionalGraphic other = new InstructionalGraphic(ig.getName());
-        assertFalse(ig.equals(other));
+    public void testInstructionalGraphic_ComparingToDifferent_ReturnsFalse() {
+        ig = initializeInstructionalGraphic();
+        InstructionalGraphic other = new InstructionalGraphic(ig_name);
+        other.setInterval(78);
+        assertThat(ig.equals(other), is(false));
     }
 
-    @Test
-    public void emptyInstructionalGraphic_Comparing_DoesNotThrowError() {
-        initializeInstructionalGraphic();
-        assertTrue(ig.equals(ig));
-        fillInstructionalGraphic();
+    public void testEmptyInstructionalGraphic_Comparing_DoesNotThrowError() {
+        ig = initializeInstructionalGraphic();
+        InstructionalGraphic og = initializeInstructionalGraphic();
+        assertThat(ig, is(equalTo(og)));
+        fillInstructionalGraphic(ig);
     }
 
-    @Test
-    public void copyConstructor_CreatesDeepCopy() {
+    public void testCopyConstructor_CreatesDeepCopy() {
+        ig = initializeInstructionalGraphic();
         InstructionalGraphic new_ig = new InstructionalGraphic(ig);
-        assertTrue(new_ig.equals(ig));
+        assertThat(ig, is(equalTo(new_ig)));
         new_ig.addImage(11, "56689");
-        assertFalse(new_ig.equals(ig));
+        assertThat(ig, is(not(equalTo(new_ig))));
 
         new_ig = new InstructionalGraphic(ig);
-        assertTrue(new_ig.equals(ig));
+        assertThat(ig, is(equalTo(new_ig)));
         new_ig.setName("New Name");
-        assertFalse(new_ig.equals(ig));
+        assertThat(ig, is(not(equalTo(new_ig))));
+    }
+
+    static InstructionalGraphicIsEqual equalTo(InstructionalGraphic ig) {
+        return new InstructionalGraphicIsEqual(ig);
     }
 }

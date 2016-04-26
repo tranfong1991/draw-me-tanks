@@ -43,7 +43,10 @@ public class TotalArrayMatcher<T> extends TypeSafeDiagnosingMatcher<ArrayList<T>
         for(int i = 0; i < array.size() - 1; ++i) {
             description.appendText(array.get(i).toString()).appendText(", ");
         }
-        description.appendText(array.get(array.size() - 1).toString()).appendText("]");
+        if(array.size() > 0) {
+            description.appendText(array.get(array.size() - 1).toString());
+        }
+        description.appendText("]");
     }
 
     ArrayList<Matcher<? extends T>> matchers;

@@ -89,12 +89,15 @@ public class InstructionalGraphicChangeRecord implements Serializable {
         return original_ig;
     }
 
-    public InstructionalGraphic finalizeChanges() {
+    public InstructionalGraphic finalizeChanges(Boolean is_new_graphic) {
         Log.i("message", "finalized");
         for(int i = 0; i < number_original_graphics_deleted; ++i) {
             original_ig.removeImage();
         }
         original_ig.setInterval(working_ig.getInterval());
+        if(is_new_graphic) {
+            original_ig.setName(working_ig.getName());
+        }
         return original_ig;
     }
 

@@ -94,6 +94,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                 InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
                 Intent intent = new Intent(context, ModifyInstructionalGraphicActivity.class);
                 intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+                intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(false));
 
                 context.startActivityForResult(intent, 10);
                 return;

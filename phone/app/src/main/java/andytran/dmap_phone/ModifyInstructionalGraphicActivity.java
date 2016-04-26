@@ -4,7 +4,9 @@ import com.squareup.picasso.Picasso;
 import com.synnapps.carouselview.CarouselView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.synnapps.carouselview.ViewListener;
 
@@ -28,14 +33,19 @@ import timothy.dmap_phone.InstructionalGraphic;
 
 public class ModifyInstructionalGraphicActivity extends ImageManagerActivity implements NumberPicker.OnValueChangeListener {
 
+    public static final String isNewIntentCode = "IsNewIntent";
+
     private InstructionalGraphic ig;
     private InstructionalGraphicChangeRecord cr;
     private Context context;
 
-    CarouselView carousel;
-    ViewListener view_listener;
-    Button preview_button;
-    Button ok_button;
+    private Boolean new_graphic;
+
+    private CarouselView carousel;
+    private ViewListener view_listener;
+    private Button preview_button;
+    private Button ok_button;
+    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +53,12 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
         setContentView(R.layout.activity_add_instructional_graphic);
         context = this;
 
-        setInstructionalGraphicAndChangeRecord();
+        Intent intent = getIntent();
+        if(cr == null) {
+            setIfNewGraphic(intent);
+            setChangeRecord(intent);
+            setInstructionalGraphic();
+        }
         setNumberPicker();
         setEditText();
         setCarouselContainer();
@@ -159,8 +174,14 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private void setEditText() {
-        EditText editText = (EditText)findViewById(R.id.modig_instructional_graphic_title);
-        editText.setText(ig.getName(), TextView.BufferType.EDITABLE);
+        editText = (EditText)findViewById(R.id.modig_instructional_graphic_title);
+        Log.d("new graphic?", String.valueOf(new_graphic));
+        if(!new_graphic) {
+            editText.setText(ig.getName(), TextView.BufferType.NORMAL);
+            editText.setEnabled(false);
+        } else {
+            editText.setEnabled(true);
+        }
     }
 
     private void setPreviewButton() {
@@ -186,8 +207,20 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
         ok_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.i("clicked", "ok");
+
+                getData();
+                if (editText.getText().toString().isEmpty()) {
+                    Toast.makeText(context, "Please name your new instruction", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (db.isGraphicInDatabase(editText.getText().toString()) && new_graphic) {
+                    Toast.makeText(context, "Sorry, you already have an instruction with this name", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 image_refs = cr.getUris(context);
-                cr.finalizeChanges();
+                cr.finalizeChanges(new_graphic);
                 submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
                     @Override
                     public void run() {
@@ -201,19 +234,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
         Log.i("value is", "" + newVal);
-        cr.setInterval(newVal*1000);
-    }
-
-    /**
-     * set instructional graphic to display and the current change record
-     * @return
-     */
-    private void setInstructionalGraphicAndChangeRecord() {
-        if(cr == null) {
-            Intent intent = getIntent();
-            setChangeRecord(intent);
-            setInstructionalGraphic();
-        }
+        cr.setInterval(newVal * 1000);
     }
 
     private void setInstructionalGraphic() {
@@ -227,6 +248,13 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     private void setChangeRecord(Intent intent) {
         String cr_string = InstructionalGraphicChangeRecord.class.getName();
         cr = (InstructionalGraphicChangeRecord) intent.getSerializableExtra(cr_string);
+    }
+
+    private void setIfNewGraphic(Intent intent) {
+        String string_bool = (String) intent.getSerializableExtra(isNewIntentCode);
+        Log.d("String bool", string_bool);
+        new_graphic = Boolean.parseBoolean(string_bool);
+        Log.d("first new graphic", String.valueOf(new_graphic));
     }
 
     private void removeFromGraphic() {
@@ -248,7 +276,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
     }
 
     private void getName() {
-        EditText edit_text   = (EditText)findViewById(R.id.modig_instructional_graphic_title);
+        EditText edit_text = (EditText)findViewById(R.id.modig_instructional_graphic_title);
         String name = edit_text.getText().toString();
         if(name.length() > 0) {
             cr.setName(name);
