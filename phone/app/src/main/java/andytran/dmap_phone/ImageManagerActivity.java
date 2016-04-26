@@ -182,6 +182,15 @@ public class ImageManagerActivity extends AppCompatActivity {
  *  @param ig The InstructionalGraphic to update
  */
     public void submitImages(InstructionalGraphic ig){
+        submitImages(ig, new VoidCallback() { @Override public void run() {} });
+    }
+
+/**
+ *  Does the same as the above, but calls a callback function once the thing finishes
+ *  @param ig The InstructionalGraphic to update
+ *  @param callback A Callback to call when the submission finishes
+ */
+    public void submitImages(InstructionalGraphic ig, VoidCallback callback) {
         ArrayList<NameValuePair> toTabletList = new ArrayList<>();
         for(Uri imageUri : image_refs) {
             String dest = copyFileToPhone(imageUri);
@@ -193,10 +202,9 @@ public class ImageManagerActivity extends AppCompatActivity {
         UploadGraphicAsyncTask toTabletTask = new UploadGraphicAsyncTask(
                 Utils.buildURL(ip, port, "graphic", params),
                 toTabletList,
-                ig);
+                ig,
+                callback);
         toTabletTask.execute();
-
-
     }
 
 /*  Protected Methods
@@ -274,11 +282,13 @@ public class ImageManagerActivity extends AppCompatActivity {
         private String url;
         private List<NameValuePair> nameValuePairs;
         private InstructionalGraphic graphic;
+        private VoidCallback cb;
 
-        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic){
+        public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic, VoidCallback cb){
             this.url = url;
             this.nameValuePairs = nameValuePairs;
             this.graphic = graphic;
+            this.cb = cb;
         }
 
         @Override
@@ -303,6 +313,7 @@ public class ImageManagerActivity extends AppCompatActivity {
                 ResponseHandler<String> handler = new BasicResponseHandler();
 
                 appendIdsAndRefsToGraphic(graphic, getIdsFromResponse(handler.handleResponse(r)), getRefsFromNameValuePairs());
+                cb.run();
             } catch (IOException e) {
                 e.printStackTrace();
             }
