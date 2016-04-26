@@ -3,6 +3,7 @@ package andytran.dmap_phone;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     private final Activity context;
     private SwipeLayout swipeLayout;
     ArrayList<InstructionalGraphic> igs;
+    private int selectedItem;
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
@@ -41,6 +43,10 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     @Override
     public int getCount(){
         return igs.size();
+    }
+
+    public void setSelectedItem(int position) {
+        selectedItem = position;
     }
 
     @Override
@@ -62,9 +68,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
                                 db.removeGraphicAt(position);
                                 igs.remove(position);
+                                MainActivity.timer.stop();
                                 notifyDataSetChanged();
                             }
-
                         })
                         .setNegativeButton("No", null)
                         .show();
@@ -122,7 +128,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
 
         textView.setText(igs.get(position).getName());
-        Picasso.with(context).load(igs.get(position).imageRefAt(0)).into(imageView1);
+        Picasso.with(context)
+                .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
+                .into(imageView1);
         return swipeLayout;
     }
 }
