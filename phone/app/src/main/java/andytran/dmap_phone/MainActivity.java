@@ -141,7 +141,12 @@ public class MainActivity extends ImageManagerActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendModifyIntent(new InstructionalGraphic("Test Name"));
+                if (timer != null) try {
+                    timer.stop();
+                    sendModifyIntent(new InstructionalGraphic("Test Name"));
+                } catch (Error err) {
+                    Utils.error(MainActivity.this, err.getMessage()).show();
+                }
             }
         });
     }

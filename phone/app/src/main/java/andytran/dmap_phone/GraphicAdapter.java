@@ -73,8 +73,10 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
                                 db.removeGraphicAt(position);
                                 igs.remove(position);
-                                if(MainActivity.timer != null) {
+                                if (MainActivity.timer != null) try {
                                     MainActivity.timer.stop();
+                                } catch (Error err) {
+                                    Utils.error(context, err.getMessage()).show();
                                 }
                                 notifyDataSetChanged();
                             }
@@ -88,8 +90,12 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendModifyIntent(igs.get(position));
-                Log.d("msg1", "hello");
+                if (MainActivity.timer != null) try {
+                    MainActivity.timer.stop();
+                    sendModifyIntent(igs.get(position));
+                } catch (Error err) {
+                    Utils.error(context, err.getMessage()).show();
+                }
             }
 
             private void sendModifyIntent(InstructionalGraphic ig) {

@@ -317,7 +317,8 @@ public class ImageManagerActivity extends AppCompatActivity {
                 int status = obj.getInt("status");
 
                 if(status != 201)
-                    throw new DmapConnectionError("Attempting to upload images to tablet failed.");
+                    return ids;
+                    //throw new DmapConnectionError("Attempting to upload images to tablet failed.");
 
                 JSONArray idsJson = obj.getJSONArray("ids");
                 for(int i = 0; i < idsJson.length(); ++i)
