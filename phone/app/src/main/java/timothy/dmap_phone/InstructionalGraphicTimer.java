@@ -11,7 +11,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import andytran.dmap_phone.DmapConnectionError;
+import andytran.dmap_phone.IntegerCallback;
 import andytran.dmap_phone.Utils;
+import andytran.dmap_phone.VoidCallback;
 
 /** InstructionalGraphicTimer Class
  *  @author Timothy Foster, Karrie Cheng
@@ -53,6 +55,9 @@ public class InstructionalGraphicTimer extends Timer {
         this.token = token;
         this.graphic = graphic;
         started = false;
+
+        setOnSendSuccess(new IntegerCallback() {  @Override public void run(Integer n) {} });
+        setOnStopSuccess(new VoidCallback() {  @Override public void run() {} });
     }
 
 /*  Public Methods
@@ -95,7 +100,9 @@ public class InstructionalGraphicTimer extends Timer {
                 Utils.buildURL(ip, port, "stop", params),
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {}
+                    public void onResponse(String response) {
+                        onStopSuccess.run();
+                    }
                 },
                 new Response.ErrorListener() {
                     @Override
@@ -111,6 +118,14 @@ public class InstructionalGraphicTimer extends Timer {
         return currentFrame;
     }
 
+    public void setOnSendSuccess(IntegerCallback cb) {
+        onSendSuccess = cb;
+    }
+
+    public void setOnStopSuccess(VoidCallback cb) {
+        onStopSuccess = cb;
+    }
+
 /*  Private Members
  *  ==============================================================================================*/
     private Context context;
@@ -118,8 +133,12 @@ public class InstructionalGraphicTimer extends Timer {
     private String port;
     private String token;
     private InstructionalGraphic graphic;
+    private Integer prevFrame;
     private Integer currentFrame;
     private Boolean started;
+
+    private IntegerCallback onSendSuccess;
+    private VoidCallback onStopSuccess;
 
 /*  Private Methods
  *  ==============================================================================================*/
@@ -129,16 +148,20 @@ public class InstructionalGraphicTimer extends Timer {
  *  @param id The id to send
  */
     private void sendIdToTablet(Integer id) {
+        final Integer frameSentOn = prevFrame;
         HashMap<String, String> params = new HashMap<>();
         params.put("token", token);
         params.put("id", id.toString());
+
         Utils.sendPackage(
                 context,
                 Request.Method.GET,
                 Utils.buildURL(ip, port, "play", params),
                 new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {}
+                    public void onResponse(String response) {
+                        onSendSuccess.run(frameSentOn);
+                    }
                 },
                 new Response.ErrorListener() {
                     @Override
@@ -158,6 +181,7 @@ public class InstructionalGraphicTimer extends Timer {
  *  Prepares the graphic for display.
  */
     private void initialize() {
+        prevFrame = 0;
         currentFrame = 0;
     }
 
@@ -165,8 +189,8 @@ public class InstructionalGraphicTimer extends Timer {
  *  Retrieves the next id to send to the tablet.  Auto-updates itself, so it will always return the next id with subsequent calls.
  */
     private Integer nextId() {
-        Integer frame = currentFrame;
+        prevFrame = currentFrame;
         currentFrame = (currentFrame + 1) % graphic.numOfFrames();
-        return graphic.idAt(frame);
+        return graphic.idAt(prevFrame);
     }
 }

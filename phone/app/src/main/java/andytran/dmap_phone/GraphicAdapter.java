@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         super(context, R.layout.graphic_item);
         this.context = context;
         this.igs = igs;
+        this.selectedItem = -1;
     }
 
     @Override
@@ -146,6 +148,9 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
                 .into(imageView1);
+
+        if(selectedItem == position)
+            swipeLayout.setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
         return swipeLayout;
     }
 }
