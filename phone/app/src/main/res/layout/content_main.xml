@@ -26,7 +26,7 @@
         android:id="@+id/listView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"/>
 
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/fab_ic_add"

@@ -83,7 +83,6 @@ public class DMAPServer extends NanoHTTPD {
 
         populateMappingFromDb();
         start();
-        Log.d(TAG, "Server Started! " + Utils.getIpAddress());
     }
 
     @Override

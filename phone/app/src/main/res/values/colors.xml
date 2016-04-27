@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <drawable name="blue_color">#1703f4</drawable>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="colorMainBlue">#6996C1</color>
-    <color name="colorStrongBlue">#428AFF</color>
-    <color name="colorMainRed">#C11C01</color>
-
+    <drawable name="blue_color">#6995C0</drawable>
+    <color name="colorWhite">#FDFFFF</color>
+    <color name="colorPrimary">#B8D1EA</color>
+    <color name="colorPrimaryDark">#6995C0</color>
+    <color name="colorAccent">#CC3333</color>
+    <color name="transparentPrimary">#80B8D1EA</color>
 </resources>

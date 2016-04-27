@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteTransactionListener;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -68,6 +69,16 @@ public class InstructionalGraphicDbAccess {
     //  To be honest, this is a very sucky way of checking, but I'm lazy and it works.
         try {
             return getGraphicByName(graphic.getName()) != null;
+        }
+        catch(DbAccessError err) {
+            return false;
+        }
+    }
+
+    public Boolean isGraphicInDatabase(String name) {
+        //  To be honest, this is a very sucky way of checking, but I'm lazy and it works.
+        try {
+            return getGraphicByName(name) != null;
         }
         catch(DbAccessError err) {
             return false;
@@ -151,6 +162,11 @@ public class InstructionalGraphicDbAccess {
         String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INDEX + " =?";
         String[] selectionArgs = { String.valueOf(getNumberOfGraphics() - 1) };
 
+        InstructionalGraphic graphic = getSingleGraphicWhere(selection, selectionArgs);
+        for(int i = 0; i < graphic.numOfFrames(); ++i)
+            if(isIdRegistered(graphic.idAt(i)))
+                unregisterId(graphic.idAt(i));
+
         db.delete(
             InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
             selection, selectionArgs
@@ -210,6 +226,9 @@ public class InstructionalGraphicDbAccess {
         String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_INDEX + " =?";
         String[] selectionArgs = { index.toString() };
 
+        InstructionalGraphic oldGraphic = getSingleGraphicWhere(selection, selectionArgs);
+        unregisterOldIds(oldGraphic, updatedGraphic);
+
         db.update(
             InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
             values,
@@ -231,6 +250,9 @@ public class InstructionalGraphicDbAccess {
         ContentValues values = contentValuesForGraphic(updatedGraphic);
         String selection = InstructionalGraphicDbContract.GraphicEntry.COLUMN_NAME_NAME + " =?";
         String[] selectionArgs = { name };
+
+        InstructionalGraphic oldGraphic = getSingleGraphicWhere(selection, selectionArgs);
+        unregisterOldIds(oldGraphic, updatedGraphic);
 
         db.update(
             InstructionalGraphicDbContract.GraphicEntry.TABLE_NAME,
@@ -406,7 +428,8 @@ public class InstructionalGraphicDbAccess {
 /**
  *  @private
  *  Generates a ContentValues object for the given graphic.  This encodes the name, interval,
- *  and id string.  Index cannot be done here.
+ *  and id string.  Index cannot be done here.  By the way, this also updates the Image Ref
+ *  table.
  *  @param graphic The graphic
  */
     private ContentValues contentValuesForGraphic(InstructionalGraphic graphic) {
@@ -481,6 +504,31 @@ public class InstructionalGraphicDbAccess {
             null,
             values
         );
+    }
+
+/**
+ *  Removes the id-ref pair from the database.  Called when a graphic is removed.
+ *  @param id Image id.
+ */
+    private void unregisterId(Integer id) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String selection = InstructionalGraphicDbContract.ImageMapEntry.COLUMN_NAME_IMAGE_ID + " =?";
+        String[] selectionArgs = {  id.toString() };
+
+        db.delete(
+            InstructionalGraphicDbContract.ImageMapEntry.TABLE_NAME,
+            selection, selectionArgs
+        );
+    }
+
+    private void unregisterOldIds(InstructionalGraphic oldGraphic, InstructionalGraphic updatedGraphic) {
+        ArrayList<Integer> newIds = new ArrayList<>();
+        for(int i = 0; i < updatedGraphic.numOfFrames(); ++i)
+            newIds.add(updatedGraphic.idAt(i));
+        for(int i = 0; i < oldGraphic.numOfFrames(); ++i)
+            if(newIds.indexOf(oldGraphic.idAt(i).intValue()) < 0 && isIdRegistered(oldGraphic.idAt(i)))
+                unregisterId(oldGraphic.idAt(i));
     }
 
 /*  Helper Methods

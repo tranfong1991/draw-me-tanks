@@ -1,8 +1,13 @@
 package andytran.dmap_phone;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -12,6 +17,8 @@ import com.android.volley.toolbox.Volley;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
+
+import core.db.InstructionalGraphicDbAccess;
 
 
 public class Utils {
@@ -65,7 +72,7 @@ public class Utils {
                     buffer.append("&");
             }
         }
-        Log.d("URL",buffer.toString());
+        Log.d("URL", buffer.toString());
         return buffer.toString();
     }
 
@@ -103,6 +110,41 @@ public class Utils {
         return Uri.fromFile(new File(context.getFilesDir().getAbsolutePath() + "/" + ref));
     }
 
+    public static AlertDialog error(Context context, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder .setTitle("An error has occured")
+                .setMessage(message)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        return builder.create();
+    }
 
+    public static void errorFromWorker(final Activity activity, final String message) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                error(activity, message).show();
+            }
+        });
+    }
+
+//  http://stackoverflow.com/questions/24811536/android-listview-get-item-view-by-position
+    public static View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return null;
+            //return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            final int childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
 }
 

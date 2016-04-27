@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
     * */
 
 public class InstructionalGraphicTimerTest {
-    public static final String ig_name = "Test Graphic";
+    /*public static final String ig_name = "Test Graphic";
     public static final Integer ig_interval_submax = 997;
     //997 is a prime number, so it is unlikely that intervals will overlap
     public static ArrayList<String> ig_image_ids;
@@ -164,5 +164,5 @@ public class InstructionalGraphicTimerTest {
         igt.start();
         Thread.sleep(ig_interval_submax * ig_image_ids.size());
         assertTrue(igt.getCurrentFrame() == 0);
-    }
+    }*/
 }

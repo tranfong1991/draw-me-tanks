@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.media.Image;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -43,6 +48,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         super(context, R.layout.graphic_item);
         this.context = context;
         this.igs = igs;
+        this.selectedItem = -1;
     }
 
     @Override
@@ -66,7 +72,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
             public void onClick(View v) {
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Closing Activity")
+                        .setTitle("Deleting Instruction")
                         .setMessage("Are you sure you want to delete the instruction?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
@@ -74,7 +80,11 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
                                 db.removeGraphicAt(position);
                                 igs.remove(position);
-                                MainActivity.timer.stop();
+                                if (MainActivity.timer != null) try {
+                                    MainActivity.timer.stop();
+                                } catch (Error err) {
+                                    Utils.error(context, err.getMessage()).show();
+                                }
                                 notifyDataSetChanged();
                             }
                         })
@@ -89,6 +99,22 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
             public void onClick(View v) {
                 //change intent to edit activity
                 Log.d("msg1", "hello");
+                if (MainActivity.timer != null) try {
+                    MainActivity.timer.stop();
+                    sendModifyIntent(igs.get(position));
+                } catch (Error err) {
+                    Utils.error(context, err.getMessage()).show();
+                }
+            }
+
+            private void sendModifyIntent(InstructionalGraphic ig) {
+                InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
+                Intent intent = new Intent(context, ModifyInstructionalGraphicActivity.class);
+                intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
+                intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(false));
+
+                context.startActivityForResult(intent, 10);
+                return;
             }
         });
 
@@ -137,6 +163,25 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
                 .into(holder.instructionImage);
+
+        if(selectedItem == position)
+            setColor(swipeLayout.findViewById(R.id.surface_layout), true);//swipeLayout.setBackgroundResource(R.drawable.selected_rectangle); //ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
         return swipeLayout;
+    }
+
+    void setColor(View view, Boolean selected) {
+        if(selected) {
+            view.setBackgroundResource(R.drawable.selected_rectangle);
+        } else {
+            view.setBackgroundResource(R.drawable.white_rectangle);
+        }
+        view.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        Integer dim = pixelToDp(10);
+        view.setPadding(dim, dim, dim, dim);
+    }
+
+    int pixelToDp(Integer pixel) {
+        return (int) (context.getResources().getDisplayMetrics().density*pixel + 0.5f);
     }
 }

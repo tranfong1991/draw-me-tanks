@@ -2,21 +2,27 @@
     android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/sample1">
     <!-- Bottom View Start-->
     <LinearLayout
-        android:background="#66ddff00"
+        android:background="@color/colorPrimary"
         android:id="@+id/bottom_wrapper"
         android:layout_width="160dp"
         android:weightSum="1"
         android:layout_height="match_parent">
         <ImageButton
             android:id="@+id/delete"
+            android:layout_weight="0.5"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/trash_can"/>
+            android:background="@color/colorAccent"
+            android:tint="@color/colorWhite"
+            android:src="@drawable/ic_delete_50dp"/>
         <ImageButton
             android:id="@+id/edit"
+            android:layout_weight="0.5"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/edit"/>
+            android:background="@color/colorPrimaryDark"
+            android:tint="@color/colorWhite"
+            android:src="@drawable/ic_create_24dp"/>
 
         <!--<ImageView-->
             <!--android:id="@+id/trash_can"-->
@@ -35,6 +41,7 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/white_rectangle"
         >
         <ImageView
             android:id="@+id/instruction_image"
@@ -56,12 +63,12 @@
             />
 
         <!--<ImageView-->
-            <!--android:id="@+id/imageView2"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:src="@drawable/dragicon"-->
-            <!--android:gravity="right"-->
-            <!--/>-->
+        <!--android:id="@+id/imageView2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@drawable/dragicon"-->
+        <!--android:gravity="right"-->
+        <!--/>-->
 
         <!--What you want to show in SurfaceView-->
     </LinearLayout>

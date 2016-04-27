@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorPrimary"
+    tools:context=".ModifyInstructionalGraphicActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:showDividers="middle"
+        android:layout_centerVertical="true"
+        android:weightSum="4">
+
+        <!-- Row 1 - Instructional Graphic Name -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:layout_alignParentTop="true">
+            <EditText
+                android:id="@+id/modig_instructional_graphic_title_editable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:singleLine="true"
+                android:fillViewport="true"
+                android:textSize="21sp"
+                android:lines="1"
+                android:hint="@string/modig_default_title"
+                android:visibility="invisible"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:layout_alignParentBottom="false"
+                android:layout_alignParentTop="true" />
+            <TextView
+                android:id="@+id/modig_instructional_graphic_title_static"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:fillViewport="true"
+                android:textSize="28sp"
+                android:lines="1"
+                android:visibility="invisible"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_alignParentBottom="false" />
+        </RelativeLayout>
+
+        <!-- Row 2 - Graphic Carousel -->
+
+        <com.synnapps.carouselview.CarouselView
+            android:id="@+id/carousel"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            app:fillColor="@color/colorWhite"
+            app:pageColor="@color/transparentPrimary"
+            app:animateOnBoundary="true"
+            app:radius="6dp"
+            app:autoPlay="false"
+            app:strokeColor="@color/colorPrimaryDark"
+            app:strokeWidth="1dp"
+            android:layout_weight="1" />
+        <!-- </HorizontalScrollView> -->
+
+        <!-- Row 3 - Cycle -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+            <NumberPicker
+                android:layout_width="wrap_content"
+                android:layout_height="96dp"
+                android:id="@+id/modig_cycle_value"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginBottom="30dp"
+                android:layout_alignParentTop="false"
+                android:layout_centerHorizontal="false" />
+            <TextView
+                android:id="@+id/modig_cycle_right_portion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:textSize="18sp"
+                android:hint="@string/modig_cycle"/>
+        </LinearLayout>
+
+        <!-- Row 4 - Buttons -->
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1">
+            <Button
+                android:id="@+id/modig_preview_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:hint="@string/modig_preview"
+                android:layout_marginRight="10.0dip"
+                android:backgroundTint="@color/colorWhite"/>
+            <Button
+                android:id="@+id/modig_ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_gravity="center_vertical"
+                android:hint="@string/modig_ok"
+                android:layout_marginLeft="10.0dip"
+                android:backgroundTint="@color/colorWhite"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
