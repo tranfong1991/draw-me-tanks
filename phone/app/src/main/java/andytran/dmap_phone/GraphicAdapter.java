@@ -13,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -156,7 +158,23 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                 .into(imageView1);
 
         if(selectedItem == position)
-            swipeLayout.setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
+            setColor(swipeLayout.findViewById(R.id.surface_layout), true);//swipeLayout.setBackgroundResource(R.drawable.selected_rectangle); //ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
         return swipeLayout;
+    }
+
+    void setColor(View view, Boolean selected) {
+        if(selected) {
+            view.setBackgroundResource(R.drawable.selected_rectangle);
+        } else {
+            view.setBackgroundResource(R.drawable.white_rectangle);
+        }
+        view.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        Integer dim = pixelToDp(10);
+        view.setPadding(dim, dim, dim, dim);
+    }
+
+    int pixelToDp(Integer pixel) {
+        return (int) (context.getResources().getDisplayMetrics().density*pixel + 0.5f);
     }
 }
