@@ -41,6 +41,7 @@
                 android:singleLine="true"
                 android:fillViewport="true"
                 android:textSize="21sp"
+                android:maxLength="45"
                 android:lines="1"
                 android:hint="@string/modig_default_title"
                 android:visibility="invisible"
