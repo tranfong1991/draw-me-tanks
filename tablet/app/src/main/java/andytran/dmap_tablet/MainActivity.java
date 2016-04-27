@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setTitle(Utils.getIpAddress());
+
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
 

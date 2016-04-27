@@ -1,21 +1,16 @@
 package andytran.dmap_phone;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -25,27 +20,20 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import core.db.InstructionalGraphicDbAccess;
-import core.db.InstructionalGraphicDbHelper;
 import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class MainActivity extends ImageManagerActivity {
+public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglogFragment.ChangeIPListener{
     static private final int MODIFY_IG_REQUEST_CODE = 10;
     static public InstructionalGraphicTimer timer;
-
-    private String prefName;
-    private String prefToken;
-    private String prefIp;
-    private String prefPort;
-    private String prefFirstUse;
-    private String token;
-    private String hostIp;
-    private int hostPort;
 
     private ListView list;
     private GraphicAdapter adapter;
     private ArrayList<InstructionalGraphic> igs;
+
+    private int clicks;
+    private int listPosition;
 
 /*  Creation
  *  ==============================================================================================*/
@@ -54,18 +42,9 @@ public class MainActivity extends ImageManagerActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        prefName = getResources().getString(R.string.pref_name);
-//        prefToken = getResources().getString(R.string.pref_token);
-//        prefIp = getResources().getString(R.string.pref_ip);
-//        prefPort = getResources().getString(R.string.pref_port);
-//        prefFirstUse = getResources().getString(R.string.pref_first_use);
-//
-        SharedPreferences pref = getSharedPreferences(prefName, 0);
-//        token = pref.getString(prefToken, null);
-//        hostIp = pref.getString(prefIp, null);
-//        hostPort = pref.getInt(prefPort, 0);
-
         list = (ListView)findViewById(R.id.listView);
+
+        SharedPreferences pref = getSharedPreferences(prefName, 0);
         boolean isFirstTime = pref.getBoolean(prefFirstUse, true);
         if(isFirstTime) {
             loadDefaultGraphics();
@@ -76,52 +55,59 @@ public class MainActivity extends ImageManagerActivity {
         }
 
         buildListView();
-        list.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int curPosition = list.getCheckedItemPosition();
-
-                Log.d("ListView", String.valueOf(curPosition));
-                if(curPosition == AdapterView.INVALID_POSITION){
-                    Log.d("Listview", "if 1");
-                    list.setItemChecked(position, true);
-                    view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                } else if(curPosition == position) {
-                    Log.d("Listview", "if 2");
-                    list.setItemChecked(position, false);
-                    view.setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                } else {
-                    Log.d("Listview", "if 3");
-                    list.setItemChecked(curPosition, false);
-                    list.setItemChecked(position, true);
-                    list.getChildAt(curPosition).setBackgroundColor(getResources().getColor(R.color.colorWhite));
-                    view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                int topIndex = list.getFirstVisiblePosition();
+                int clickedPosition = 0;
+                for (int i = 0; i < list.getChildCount(); i++) {
+                    if (position - topIndex == i) {
+                        clickedPosition = position - topIndex;
+                        adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
+                        adapter.setSelectedItem(position);
+                    } else {
+                        adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), false);
+                    }
                 }
 
-//                InstructionalGraphic ig = igs.get(position);
-//                if (timer != null) try {
-//                    //if there's already a timer, stop it first
-//                    timer.stop();
-//                } catch (Error err) {
-//                    Utils.error(MainActivity.this, err.getMessage()).show();
-//                }
-//
-//                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
-//                final int forPosition = position;
-//                timer.setOnSendSuccess(new IntegerCallback() {
-//                    @Override
-//                    public void run(Integer n) {
-//                        setImageRefFor(forPosition, n); // preview current frame in ListView
-//                    }
-//                });
-//                timer.setOnStopSuccess(new VoidCallback() {
-//                    @Override
-//                    public void run() {
-//                        setImageRefFor(forPosition, 0);
-//                    }
-//                });
-//                timer.start();
+                InstructionalGraphic ig = igs.get(position);
+                if (timer != null) try { //if there's already a timer, stop it first
+                    timer.stop();
+                } catch (Error err) {
+                    Utils.error(MainActivity.this, err.getMessage()).show();
+                }
+
+                //  TIMER
+                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
+                final int forPosition = position;
+                timer.setOnSendSuccess(new IntegerCallback() {
+                    @Override
+                    public void run(Integer n) {
+                        setImageRefFor(forPosition, n); // preview current frame in ListView
+                    }
+                });
+                timer.setOnStopSuccess(new VoidCallback() {
+                    @Override
+                    public void run() {
+                        setImageRefFor(forPosition, 0);
+                    }
+                });
+                timer.start();
+                //  END TIMER
+
+                if (position != listPosition) //if user clicks different IG, then reset click counter
+                    clicks = 0;
+                clicks++;
+                if (clicks > 0 && clicks % 2 == 0) {
+                    //list.getChildAt(clickedPosition).findViewById(R.id.surface_layout).setBackgroundResource(R.drawable.white_rectangle);
+                    adapter.setColor(list.getChildAt(clickedPosition).findViewById(R.id.surface_layout), false);
+                    if (timer != null) try {
+                        timer.stop();
+                    } catch (Error err) {
+                        Utils.error(MainActivity.this, err.getMessage()).show();
+                    }
+                }
+                listPosition = position;
             }
         });
 
@@ -131,10 +117,10 @@ public class MainActivity extends ImageManagerActivity {
             public void onClick(View view) {
                 if (timer != null) try {
                     timer.stop();
-                    sendModifyIntent(new InstructionalGraphic("Test Name"));
                 } catch (Error err) {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
+                sendModifyIntent(new InstructionalGraphic("Test Name"));
             }
         });
     }
@@ -177,7 +163,16 @@ public class MainActivity extends ImageManagerActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_change_ip:
+                DialogFragment dialog = new ChangeIPDiaglogFragment();
+                dialog.show(getFragmentManager(), "Change IP");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 /*  Private Methods
@@ -185,7 +180,7 @@ public class MainActivity extends ImageManagerActivity {
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
-        adapter = new GraphicAdapter(this, igs);
+        adapter = new GraphicAdapter(this, igs, ip, port, token);
         list.setAdapter(adapter); //build the listview with the adapted
     }
 
@@ -233,9 +228,16 @@ public class MainActivity extends ImageManagerActivity {
                 public void run() {
                     Picasso.with(MainActivity.this)
                             .load(Utils.refToUri(MainActivity.this, igs.get(position).imageRefAt(frame)))
+                            .resize(50,50)
+                            .onlyScaleDown()
                             .into(imageView);
                 }
             });
         }
+    }
+
+    @Override
+    public void onChangeIP(String newIP) {
+        this.ip = newIP;
     }
 }

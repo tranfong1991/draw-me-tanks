@@ -14,7 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -40,11 +42,20 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
 
     private Context context;
     ArrayList<InstructionalGraphic> igs;
+    private int selectedItem;
+    View surfaceLayout;
+    private String ip;
+    private String port;
+    private String token;
 
-    public GraphicAdapter(Context context, ArrayList<InstructionalGraphic> igs) {
+    public GraphicAdapter(Context context, ArrayList<InstructionalGraphic> igs, String ip, String port, String token) {
         super(context, -1, igs);
         this.context = context;
         this.igs = igs;
+        this.selectedItem = -1;
+        this.ip = ip;
+        this.port = port;
+        this.token = token;
     }
 
     @Override
@@ -64,6 +75,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         if(rowView == null){
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
+            surfaceLayout = rowView.findViewById(R.id.surface_layout);
 
             ViewHolder holder = new ViewHolder();
             holder.deleteBtn = (ImageButton) rowView.findViewById(R.id.delete);
@@ -162,8 +174,33 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         holder.graphicText.setText(igs.get(position).getName());
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
+                .resize(50,50)
+                .onlyScaleDown()
                 .into(holder.graphicImage);
 
+        if(selectedItem == position)
+            setColor(surfaceLayout, true);
+
         return rowView;
+    }
+
+    public void setSelectedItem(int position) {
+        selectedItem = position;
+    }
+
+    void setColor(View view, Boolean selected) {
+        if(selected) {
+            view.setBackgroundResource(R.drawable.selected_rectangle);
+        } else {
+            view.setBackgroundResource(R.drawable.white_rectangle);
+        }
+        view.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+        Integer dim = pixelToDp(10);
+        view.setPadding(dim, dim, dim, dim);
+    }
+
+    int pixelToDp(Integer pixel) {
+        return (int) (context.getResources().getDisplayMetrics().density*pixel + 0.5f);
     }
 }
