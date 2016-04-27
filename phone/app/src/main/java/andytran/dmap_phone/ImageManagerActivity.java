@@ -1,13 +1,17 @@
 package andytran.dmap_phone;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telecom.Call;
 import android.util.Log;
@@ -57,35 +61,40 @@ import timothy.dmap_phone.InstructionalGraphic;
  *  This class is meant to be extended by other activites.
  */
 public class ImageManagerActivity extends AppCompatActivity {
-/**
- *  ID used for the event in which an image is selected from a gallery
- */
+    /**
+     *  ID used for the event in which an image is selected from a gallery
+     */
     protected static final int PICK_IMAGE = 0;
 
-/**
- *  Some kind of list.  not sure what this is for -- Timothy
- */
+    /**
+     *  Some kind of list.  not sure what this is for -- Timothy
+     */
     protected ArrayList<String> images;
 
-/**
- *  Contains a current list of image uris that have not yet been sent to the tablet or copied
- *  to the phone's personal directory.  Images that are selected from the gallery are stored
- *  here until submitImages() is called.
- */
+    /**
+     *  Contains a current list of image uris that have not yet been sent to the tablet or copied
+     *  to the phone's personal directory.  Images that are selected from the gallery are stored
+     *  here until submitImages() is called.
+     */
     protected ArrayList<Uri> image_refs;
 
-/**
- *  A reference to the database.
- */
+    /**
+     *  A reference to the database.
+     */
     protected InstructionalGraphicDbAccess db;
 
-    public String ip = "10.201.132.211";
-    public String port = "8080";
-    public String token = "abc";
+    public String ip;
+    public String port;
+    public String token;
 
-/**
- *  @inheritDoc
- */
+    /**
+     *  ID used for checking if read permissions were asked for
+     */
+    protected static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 101;
+
+    /**
+     *  @inheritDoc
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,19 +103,19 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "10.202.132.114";
+        ip = "10.201.132.50";
         port = "8080";
         token = "abc";
     }
 
 /*  Public Methods
  *  ==============================================================================================*/
-/**
- *  Used to create default instructional graphics.  Performs a copy from a resource rather than
- *  a Uri.
- *  @param resourceId
- *  @return
- */
+    /**
+     *  Used to create default instructional graphics.  Performs a copy from a resource rather than
+     *  a Uri.
+     *  @param resourceId
+     *  @return
+     */
     public String copyFromDrawable(int resourceId){
         String dst = Utils.generateRandomString(5);
         InputStream in = getResources().openRawResource(resourceId);
@@ -128,22 +137,22 @@ public class ImageManagerActivity extends AppCompatActivity {
         return dst;
     }
 
-/**
- *  Opens the image gallery for the user to select an image.  Upon completion, onActivityResult
- *  will fire.
- */
+    /**
+     *  Opens the image gallery for the user to select an image.  Upon completion, onActivityResult
+     *  will fire.
+     */
     public void openImageGallery() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        this.startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        else
+            startGalleryIntent();
     }
 
-/**
- *  Copies the image at uri to the phone and returns a string representing the new destination
- *  @param uri For the image
- *  @return null if a failure occurred; otherwise, the file path to the copied image
- */
+    /**
+     *  Copies the image at uri to the phone and returns a string representing the new destination
+     *  @param uri For the image
+     *  @return null if a failure occurred; otherwise, the file path to the copied image
+     */
     public String copyFileToPhone(Uri uri){
         String dest_path_name = "graphic_" + Utils.generateRandomString(10);
         try {
@@ -157,21 +166,21 @@ public class ImageManagerActivity extends AppCompatActivity {
         return dest_path_name;
     }
 
-/**
- *  Takes the current list of images in image_refs and both copies them to the phone and sends
- *  them to the tablet.  Once both actions are complete, the images are submitted to the passed
- *  InstructionalGraphic (in the order of image_refs) and the database is updated.
- *  @param ig The InstructionalGraphic to update
- */
+    /**
+     *  Takes the current list of images in image_refs and both copies them to the phone and sends
+     *  them to the tablet.  Once both actions are complete, the images are submitted to the passed
+     *  InstructionalGraphic (in the order of image_refs) and the database is updated.
+     *  @param ig The InstructionalGraphic to update
+     */
     public void submitImages(InstructionalGraphic ig){
         submitImages(ig, new VoidCallback() { @Override public void run() {} });
     }
 
-/**
- *  Does the same as the above, but calls a callback function once the thing finishes
- *  @param ig The InstructionalGraphic to update
- *  @param callback A Callback to call when the submission finishes
- */
+    /**
+     *  Does the same as the above, but calls a callback function once the thing finishes
+     *  @param ig The InstructionalGraphic to update
+     *  @param callback A Callback to call when the submission finishes
+     */
     public void submitImages(InstructionalGraphic ig, VoidCallback callback) {
         ArrayList<NameValuePair> toTabletList = new ArrayList<>();
         for(Uri imageUri : image_refs) {
@@ -191,13 +200,13 @@ public class ImageManagerActivity extends AppCompatActivity {
 
 /*  Protected Methods
  *  ==============================================================================================*/
-/**
- *  Called automatically when the image gallery is finished.  If the user selected an image,
- *  then the URI of the image will be added to the current list of pending images.
- *  @param requestCode
- *  @param resultCode
- *  @param data
- */
+    /**
+     *  Called automatically when the image gallery is finished.  If the user selected an image,
+     *  then the URI of the image will be added to the current list of pending images.
+     *  @param requestCode
+     *  @param resultCode
+     *  @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,13 +219,13 @@ public class ImageManagerActivity extends AppCompatActivity {
 /*  Private Methods
  *  ==============================================================================================*/
 
-/**
- *  @private
- *  Copies the file at src to the dst location.
- *  @param src URI with an actual file
- *  @param dst String path where we want the new file
- *  @throws IOException
- */
+    /**
+     *  @private
+     *  Copies the file at src to the dst location.
+     *  @param src URI with an actual file
+     *  @param dst String path where we want the new file
+     *  @throws IOException
+     */
     private void copyFile(Uri src, String dst) throws IOException {
         InputStream in = getContentResolver().openInputStream(src);
         OutputStream out = this.openFileOutput(dst, Context.MODE_PRIVATE);
@@ -231,17 +240,17 @@ public class ImageManagerActivity extends AppCompatActivity {
         out.close();
     }
 
-/**
- *  Updates the graphic with the given ids and image references.  Updates the database as well.
- *  @param graphic
- *  @param ids Array of integer ids
- *  @param refs Array of String image paths
- */
+    /**
+     *  Updates the graphic with the given ids and image references.  Updates the database as well.
+     *  @param graphic
+     *  @param ids Array of integer ids
+     *  @param refs Array of String image paths
+     */
     private void appendIdsAndRefsToGraphic(InstructionalGraphic graphic, ArrayList<Integer> ids, ArrayList<String> refs) {
         if(ids.size() != refs.size())
             throw new Error("ERROR in ImageManagerActivity appendIdsAndRefsToGraphic: ids and refs array sizes mismatch");
 
-    //  Karrie, I put your stuff here - Timothy
+        //  Karrie, I put your stuff here - Timothy
         Boolean isIGNew = !db.isGraphicInDatabase(graphic);
 
         for (int i = 0; i < ids.size(); i++)
@@ -253,10 +262,10 @@ public class ImageManagerActivity extends AppCompatActivity {
             db.updateGraphicByName(graphic.getName(), graphic);
     }
 
-/**
- *  UploadGraphicAsyncTask Private Class
- *  This class is used to upload a new image to the phone.
- */
+    /**
+     *  UploadGraphicAsyncTask Private Class
+     *  This class is used to upload a new image to the phone.
+     */
     private class UploadGraphicAsyncTask extends AsyncTask<Void, Void, Void> {
         private String url;
         private List<NameValuePair> nameValuePairs;
@@ -318,7 +327,7 @@ public class ImageManagerActivity extends AppCompatActivity {
 
                 if(status != 201)
                     return ids;
-                    //throw new DmapConnectionError("Attempting to upload images to tablet failed.");
+                //throw new DmapConnectionError("Attempting to upload images to tablet failed.");
 
                 JSONArray idsJson = obj.getJSONArray("ids");
                 for(int i = 0; i < idsJson.length(); ++i)
@@ -335,11 +344,11 @@ public class ImageManagerActivity extends AppCompatActivity {
         }
     }
 
-/**
- *  Andy's function.  Gets the absolute path of a file on the phone given a Uri.
- *  @param uri
- *  @return
- */
+    /**
+     *  Andy's function.  Gets the absolute path of a file on the phone given a Uri.
+     *  @param uri
+     *  @return
+     */
     private String getRealPathFromURI(Uri uri) {
         // Will return "image:x*"
         String wholeID = DocumentsContract.getDocumentId(uri);
@@ -364,6 +373,27 @@ public class ImageManagerActivity extends AppCompatActivity {
 
         cursor.close();
         return filePath;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startGalleryIntent();
+                }
+                else {
+                    Log.d("Permissions", "Permissions were denied.");
+                }
+            default:
+        }
+    }
+
+    private void startGalleryIntent() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        this.startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
 
 }
