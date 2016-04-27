@@ -21,11 +21,12 @@ public class ChangeIPDiaglogFragment extends DialogFragment {
     }
 
     private ChangeIPListener listener;
+    private Activity activity;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        this.activity = activity;
         try {
             listener = (ChangeIPListener) activity;
         } catch (ClassCastException e) {
@@ -34,7 +35,7 @@ public class ChangeIPDiaglogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String prefName = getResources().getString(R.string.pref_name);
+        final String prefName = getResources().getString(R.string.pref_name);
         final String prefIp = getResources().getString(R.string.pref_ip);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -43,7 +44,7 @@ public class ChangeIPDiaglogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_change_ip, null);
         final EditText ipTxt = (EditText)view.findViewById(R.id.txt_ip);
 
-        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences pref = activity.getSharedPreferences(prefName, 0);
         ipTxt.setText(pref.getString(prefIp, ""));
 
         // Inflate and set the layout for the dialog

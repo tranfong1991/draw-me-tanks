@@ -63,15 +63,13 @@ public class DMAPServer extends NanoHTTPD {
         prefIsFirstTime = context.getResources().getString(R.string.pref_is_first_time);
         packageName = context.getResources().getString(R.string.package_name);
 
-//        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
-//        this.token = pref.getString(prefToken, null);
+        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
+        this.token = pref.getString(prefToken, null);
 
-        this.token = "abc";
         this.context = context;
         this.dbHelper = new GraphicDbHelper(context);
         this.mapping = new HashMap<>();
 
-        SharedPreferences pref = context.getSharedPreferences(prefName, 0);
         boolean isFirstTime = pref.getBoolean(prefIsFirstTime, true);
         if(isFirstTime) {
             loadDefaultGraphics();
@@ -183,10 +181,6 @@ public class DMAPServer extends NanoHTTPD {
         editor.apply();
 
         this.token = null;
-
-        Intent intent = new Intent(packageName);
-        intent.putExtra(EXTRA_ACTION, Action.GO_TO_LOAD);
-        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         return newFixedLengthResponse("{\"status\" : " + HTTP_OK + "}");
     }

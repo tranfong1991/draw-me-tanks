@@ -14,8 +14,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -166,10 +172,34 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglo
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_change_ip:
+            case R.id.action_change_ip: {
                 DialogFragment dialog = new ChangeIPDiaglogFragment();
                 dialog.show(getFragmentManager(), "Change IP");
                 return true;
+            }
+            case R.id.action_request_token: {
+                String url = Utils.buildURL(ip, port, "generate", null);
+                Utils.sendPackage(this, Request.Method.GET, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            String t = json.getString("token");
+
+                            token = t;
+
+                            SharedPreferences pref = getSharedPreferences(prefName, 0);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString(prefToken,t);
+                            editor.apply();
+
+                            Toast.makeText(MainActivity.this, "Successfully retreived token.", Toast.LENGTH_SHORT).show();
+                        }catch(JSONException e){
+                            Toast.makeText(MainActivity.this, "Cannot request token.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, null);
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }
