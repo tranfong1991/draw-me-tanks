@@ -1,13 +1,16 @@
 package andytran.dmap_phone;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,7 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
@@ -90,11 +95,11 @@ public class MainActivity extends ImageManagerActivity {
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if (position - topIndex == i) {
                         clickedPosition = position - topIndex;
-                        list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
+                        adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
                         adapter.setSelectedItem(position);
                     } else {
                         //list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), Color.TRANSPARENT));
-                        list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+                        adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), false);
                     }
                 }
                 InstructionalGraphic ig = igs.get(position);
@@ -126,7 +131,8 @@ public class MainActivity extends ImageManagerActivity {
                     clicks = 0;
                 clicks++;
                 if (clicks > 0 && clicks % 2 == 0) {
-                    list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
+                    //list.getChildAt(clickedPosition).findViewById(R.id.surface_layout).setBackgroundResource(R.drawable.white_rectangle);
+                    adapter.setColor(list.getChildAt(clickedPosition).findViewById(R.id.surface_layout), false);
                     if (timer != null) try {
                         timer.stop();
                     } catch (Error err) {
@@ -143,10 +149,10 @@ public class MainActivity extends ImageManagerActivity {
             public void onClick(View view) {
                 if (timer != null) try {
                     timer.stop();
-                    sendModifyIntent(new InstructionalGraphic("Test Name"));
                 } catch (Error err) {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
+                sendModifyIntent(new InstructionalGraphic("Test Name"));
             }
         });
     }
