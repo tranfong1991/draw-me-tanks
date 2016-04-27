@@ -107,7 +107,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         images = new ArrayList<>();
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
-
+        
         prefName = getResources().getString(R.string.pref_name);
         prefToken = getResources().getString(R.string.pref_token);
         prefIp = getResources().getString(R.string.pref_ip);
