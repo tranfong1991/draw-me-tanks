@@ -51,18 +51,18 @@
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.android.support-recyclerview-v7-23.1.1_54ce99caae16e9fe706a99664413eb96840c3ac0.jar" />
     </item>
     <item
-        jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.koushikdutta.async\androidasync\2.1.7\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="eace26bfd08119044e19e9fc0f9ae1bdffac83ed">
-        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.koushikdutta.async-androidasync-2.1.7_a2cbfe5bcc82c3d2436e365decade957ef3b1b4d.jar" />
-    </item>
-    <item
         jar="C:\Users\Kiri\AppData\Local\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1_e0e58348e23e3f023363dbcd7b206238308ccbbe.jar" />
+    </item>
+    <item
+        jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.koushikdutta.async\androidasync\2.1.7\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="eace26bfd08119044e19e9fc0f9ae1bdffac83ed">
+        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.koushikdutta.async-androidasync-2.1.7_a2cbfe5bcc82c3d2436e365decade957ef3b1b4d.jar" />
     </item>
     <item
         jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
