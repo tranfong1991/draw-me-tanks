@@ -3,7 +3,6 @@ package andytran.dmap_phone;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
@@ -19,20 +18,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
+
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.ArraySwipeAdapter;
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
+
 import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphic;
 
-class ViewHolder{
-    TextView instructionName;
-    ImageView instructionImage;
-    ImageButton editButton;
-    ImageButton deleteButton;
-
-}
 class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     private final Activity context;
     private SwipeLayout swipeLayout;
@@ -62,12 +57,11 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = new ViewHolder();
         LayoutInflater inflater = context.getLayoutInflater();
         swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
         //set show mode.
-        holder.deleteButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
-        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton deleteButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(context)
@@ -93,12 +87,10 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
             }
         });
 
-        holder.editButton = (ImageButton)swipeLayout.findViewById(R.id.edit);
-        holder.editButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton editButton = (ImageButton)swipeLayout.findViewById(R.id.edit);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //change intent to edit activity
-                Log.d("msg1", "hello");
                 if (MainActivity.timer != null) try {
                     MainActivity.timer.stop();
                     sendModifyIntent(igs.get(position));
@@ -156,13 +148,13 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         });
 
 
-        holder.instructionName = (TextView) swipeLayout.findViewById(R.id.instruction_name);
-        holder.instructionImage = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
+        TextView textView = (TextView) swipeLayout.findViewById(R.id.instruction_name);
+        ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
 
-        holder.instructionName.setText(igs.get(position).getName());
+        textView.setText(igs.get(position).getName());
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
-                .into(holder.instructionImage);
+                .into(imageView1);
 
         if(selectedItem == position)
             setColor(swipeLayout.findViewById(R.id.surface_layout), true);//swipeLayout.setBackgroundResource(R.drawable.selected_rectangle); //ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
