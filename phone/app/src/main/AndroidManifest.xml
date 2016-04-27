@@ -35,11 +35,6 @@
             </intent-filter>
         </activity>
 
-        <!--<activity-->
-            <!--android:name=".ClientSocketTestActivity"-->
-            <!--android:label="Test Socket">-->
-        <!--</activity>-->
-
             <!-- Move the intent filter to Choose Emily activity after finishing -->
 
 

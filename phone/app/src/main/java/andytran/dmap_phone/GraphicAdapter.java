@@ -2,6 +2,7 @@ package andytran.dmap_phone;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import android.content.Intent;
@@ -18,31 +19,37 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.ArraySwipeAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphic;
 
 class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
-    private final Activity context;
-    private SwipeLayout swipeLayout;
+    static class ViewHolder{
+        ImageButton deleteBtn;
+        ImageButton editBtn;
+        ImageView graphicImage;
+        TextView graphicText;
+    }
+
+    private Context context;
     ArrayList<InstructionalGraphic> igs;
-    private int selectedItem;
+
+    public GraphicAdapter(Context context, ArrayList<InstructionalGraphic> igs) {
+        super(context, -1, igs);
+        this.context = context;
+        this.igs = igs;
+    }
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.sample1;
-    }
-
-    public GraphicAdapter(Activity context, ArrayList<InstructionalGraphic> igs) {
-        super(context, R.layout.graphic_item);
-        this.context = context;
-        this.igs = igs;
-        this.selectedItem = -1;
     }
 
     @Override
@@ -50,113 +57,113 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         return igs.size();
     }
 
-    public void setSelectedItem(int position) {
-        selectedItem = position;
-    }
-
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        swipeLayout =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
-        //set show mode.
-        ImageButton deleteButton = (ImageButton) swipeLayout.findViewById(R.id.delete);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(context)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Deleting Instruction")
-                        .setMessage("Are you sure you want to delete the instruction?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
-                                db.removeGraphicAt(position);
-                                igs.remove(position);
-                                if (MainActivity.timer != null) try {
-                                    MainActivity.timer.stop();
-                                } catch (Error err) {
-                                    Utils.error(context, err.getMessage()).show();
+        SwipeLayout rowView = (SwipeLayout)convertView;
+
+        if(rowView == null){
+            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
+
+            ViewHolder holder = new ViewHolder();
+            holder.deleteBtn = (ImageButton) rowView.findViewById(R.id.delete);
+            holder.editBtn = (ImageButton) rowView.findViewById(R.id.edit);
+            holder.graphicImage = (ImageView) rowView.findViewById(R.id.instruction_image);
+            holder.graphicText = (TextView) rowView.findViewById(R.id.instruction_name);
+
+            holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(context)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Deleting Instruction")
+                            .setMessage("Are you sure you want to delete the instruction?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    InstructionalGraphic graphic = igs.get(position);
+                                    HashMap<String, String> params = new HashMap<>();
+                                    String url = null;
+                                    for(int i = 0; i<graphic.numOfFrames(); i++){
+                                        params.put("id", String.valueOf(graphic.idAt(i)));
+//                                    url = Utils.buildURL();
+                                        Utils.sendPackage(context, Request.Method.DELETE, url, null, null);
+                                    }
+
+                                    InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
+                                    db.removeGraphicAt(position);
+                                    igs.remove(position);
+
+                                    if (MainActivity.timer != null) try {
+                                        MainActivity.timer.stop();
+                                    } catch (Error err) {
+                                        Utils.error(context, err.getMessage()).show();
+                                    }
+                                    notifyDataSetChanged();
                                 }
-                                notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-            }
-        });
-
-        ImageButton editButton = (ImageButton)swipeLayout.findViewById(R.id.edit);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MainActivity.timer != null) try {
-                    MainActivity.timer.stop();
-                    sendModifyIntent(igs.get(position));
-                } catch (Error err) {
-                    Utils.error(context, err.getMessage()).show();
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
                 }
-            }
+            });
 
-            private void sendModifyIntent(InstructionalGraphic ig) {
-                InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
-                Intent intent = new Intent(context, ModifyInstructionalGraphicActivity.class);
-                intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
-                intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(false));
+            holder.editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (MainActivity.timer != null) try {
+                        MainActivity.timer.stop();
 
-                context.startActivityForResult(intent, 10);
-                return;
-            }
-        });
+                        MainActivity activity = (MainActivity)context;
+                        activity.sendModifyIntent(igs.get(position));
+                    } catch (Error err) {
+                        Utils.error(context, err.getMessage()).show();
+                    }
+                }
+            });
+            rowView.setShowMode(SwipeLayout.ShowMode.LayDown);
+            rowView.addDrag(SwipeLayout.DragEdge.Right, rowView.findViewById(R.id.bottom_wrapper));
+            rowView.addSwipeListener(new SwipeLayout.SwipeListener() {
+                @Override
+                public void onClose(SwipeLayout layout) {
+                    //when the SurfaceView totally cover the BottomView.
+                }
 
-        swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
+                @Override
+                public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+                    //you are swiping.
+                }
 
-        //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+                @Override
+                public void onStartOpen(SwipeLayout layout) {
 
-        swipeLayout.addDrag(SwipeLayout.DragEdge.Right, swipeLayout.findViewById(R.id.bottom_wrapper));
-        swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-            @Override
-            public void onClose(SwipeLayout layout) {
-                //when the SurfaceView totally cover the BottomView.
-            }
+                }
 
-            @Override
-            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
-                //you are swiping.
-            }
+                @Override
+                public void onOpen(SwipeLayout layout) {
+                    //when the BottomView totally show.
+                }
 
-            @Override
-            public void onStartOpen(SwipeLayout layout) {
+                @Override
+                public void onStartClose(SwipeLayout layout) {
 
-            }
+                }
 
-            @Override
-            public void onOpen(SwipeLayout layout) {
-                //when the BottomView totally show.
-            }
+                @Override
+                public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+                    //when user's hand released.
+                }
+            });
 
-            @Override
-            public void onStartClose(SwipeLayout layout) {
+            rowView.setTag(holder);
+        }
 
-            }
+        ViewHolder holder = (ViewHolder)rowView.getTag();
 
-            @Override
-            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-                //when user's hand released.
-            }
-        });
-
-
-        TextView textView = (TextView) swipeLayout.findViewById(R.id.instruction_name);
-        ImageView imageView1 = (ImageView) swipeLayout.findViewById(R.id.instruction_image);
-
-        textView.setText(igs.get(position).getName());
+        holder.graphicText.setText(igs.get(position).getName());
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
-                .into(imageView1);
+                .into(holder.graphicImage);
 
-        if(selectedItem == position)
-            swipeLayout.setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
-        return swipeLayout;
+        return rowView;
     }
 }

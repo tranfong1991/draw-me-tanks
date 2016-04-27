@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,24 +31,21 @@ import timothy.dmap_phone.InstructionalGraphicTimer;
 import timothy.dmap_phone.InstructionalGraphic;
 
 public class MainActivity extends ImageManagerActivity {
+    static private final int MODIFY_IG_REQUEST_CODE = 10;
+    static public InstructionalGraphicTimer timer;
+
     private String prefName;
     private String prefToken;
     private String prefIp;
     private String prefPort;
     private String prefFirstUse;
-    //private String token;
+    private String token;
     private String hostIp;
     private int hostPort;
 
-    static final int MODIFY_IG_REQUEST_CODE = 10;
-
-    public static InstructionalGraphicTimer timer;
     private ListView list;
     private GraphicAdapter adapter;
     private ArrayList<InstructionalGraphic> igs;
-
-    int clicks = 0;
-    int listPosition = 0;
 
 /*  Creation
  *  ==============================================================================================*/
@@ -55,9 +53,6 @@ public class MainActivity extends ImageManagerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        list = (ListView)findViewById(R.id.listView);
-        list.setCacheColorHint(Color.TRANSPARENT);
 
         prefName = getResources().getString(R.string.pref_name);
 //        prefToken = getResources().getString(R.string.pref_token);
@@ -70,6 +65,7 @@ public class MainActivity extends ImageManagerActivity {
 //        hostIp = pref.getString(prefIp, null);
 //        hostPort = pref.getInt(prefPort, 0);
 
+        list = (ListView)findViewById(R.id.listView);
         boolean isFirstTime = pref.getBoolean(prefFirstUse, true);
         if(isFirstTime) {
             loadDefaultGraphics();
@@ -80,60 +76,52 @@ public class MainActivity extends ImageManagerActivity {
         }
 
         buildListView();
-
+        list.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                View c = list.getChildAt(0);
-                int topIndex = list.getFirstVisiblePosition();
-                int clickedPosition = 0;
-                for (int i = 0; i < list.getChildCount(); i++) {
-                    if (position - topIndex == i) {
-                        clickedPosition = position - topIndex;
-                        list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), R.color.colorPrimary));
-                        adapter.setSelectedItem(position);
-                    } else {
-                        //list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), Color.TRANSPARENT));
-                        list.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
-                    }
-                }
-                InstructionalGraphic ig = igs.get(position);
-                if (timer != null) try { //if there's already a timer, stop it first
-                    timer.stop();
-                } catch (Error err) {
-                    Utils.error(MainActivity.this, err.getMessage()).show();
+                int curPosition = list.getCheckedItemPosition();
+
+                Log.d("ListView", String.valueOf(curPosition));
+                if(curPosition == AdapterView.INVALID_POSITION){
+                    Log.d("Listview", "if 1");
+                    list.setItemChecked(position, true);
+                    view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                } else if(curPosition == position) {
+                    Log.d("Listview", "if 2");
+                    list.setItemChecked(position, false);
+                    view.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                } else {
+                    Log.d("Listview", "if 3");
+                    list.setItemChecked(curPosition, false);
+                    list.setItemChecked(position, true);
+                    list.getChildAt(curPosition).setBackgroundColor(getResources().getColor(R.color.colorWhite));
+                    view.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 }
 
-            //  TIMER
-                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
-                final int forPosition = position;
-                timer.setOnSendSuccess(new IntegerCallback() {
-                    @Override
-                    public void run(Integer n) {
-                        setImageRefFor(forPosition, n); // preview current frame in ListView
-                    }
-                });
-                timer.setOnStopSuccess(new VoidCallback() {
-                    @Override
-                    public void run() {
-                        setImageRefFor(forPosition, 0);
-                    }
-                });
-                timer.start();
-            //  END TIMER
-
-                if (position != listPosition) //if user clicks different IG, then reset click counter
-                    clicks = 0;
-                clicks++;
-                if (clicks > 0 && clicks % 2 == 0) {
-                    list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
-                    if (timer != null) try {
-                        timer.stop();
-                    } catch (Error err) {
-                        Utils.error(MainActivity.this, err.getMessage()).show();
-                    }
-                }
-                listPosition = position;
+//                InstructionalGraphic ig = igs.get(position);
+//                if (timer != null) try {
+//                    //if there's already a timer, stop it first
+//                    timer.stop();
+//                } catch (Error err) {
+//                    Utils.error(MainActivity.this, err.getMessage()).show();
+//                }
+//
+//                timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
+//                final int forPosition = position;
+//                timer.setOnSendSuccess(new IntegerCallback() {
+//                    @Override
+//                    public void run(Integer n) {
+//                        setImageRefFor(forPosition, n); // preview current frame in ListView
+//                    }
+//                });
+//                timer.setOnStopSuccess(new VoidCallback() {
+//                    @Override
+//                    public void run() {
+//                        setImageRefFor(forPosition, 0);
+//                    }
+//                });
+//                timer.start();
             }
         });
 
@@ -151,15 +139,13 @@ public class MainActivity extends ImageManagerActivity {
         });
     }
 
-    private void sendModifyIntent(InstructionalGraphic ig) {
+    public void sendModifyIntent(InstructionalGraphic ig) {
         InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
         Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
         intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(Boolean.TRUE));
-        Log.d("String value of true", String.valueOf(Boolean.TRUE));
         intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
 
         startActivityForResult(intent, MODIFY_IG_REQUEST_CODE);
-        return;
     }
 
     @Override
@@ -167,6 +153,7 @@ public class MainActivity extends ImageManagerActivity {
         igs = new InstructionalGraphicDbAccess(this).getOrderedGraphicList();
         adapter.igs = igs;
         adapter.notifyDataSetChanged();
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -176,7 +163,6 @@ public class MainActivity extends ImageManagerActivity {
                     startActivity(getIntent());
                 } else {
                     recreate();
-                    Log.i("recreating?", "trying");
                 }
             }
         }, 1);
@@ -198,12 +184,6 @@ public class MainActivity extends ImageManagerActivity {
  *  ==============================================================================================*/
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
-        InstructionalGraphic ig = new InstructionalGraphic("img1");
-        ig.addImage(1,Integer.toString(R.drawable.images));
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
         list.setAdapter(adapter); //build the listview with the adapted
