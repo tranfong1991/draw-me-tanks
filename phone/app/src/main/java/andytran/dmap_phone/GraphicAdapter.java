@@ -124,7 +124,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                         MainActivity.timer.stop();
 
                         MainActivity activity = (MainActivity)context;
-                        activity.sendModifyIntent(igs.get(position));
+                        activity.sendModifyIntent(igs.get(position), false);
                     } catch (Error err) {
                         Utils.error(context, err.getMessage()).show();
                     }

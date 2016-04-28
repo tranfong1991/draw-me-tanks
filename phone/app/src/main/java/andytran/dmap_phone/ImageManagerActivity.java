@@ -296,12 +296,16 @@ public class ImageManagerActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(ImageManagerActivity.this);
-            progressDialog.setMessage("Uploading...");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
+            ImageManagerActivity.this.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                    progressDialog = new ProgressDialog(ImageManagerActivity.this);
+                    progressDialog.setMessage("Uploading...");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                }
+            });
         }
 
         @Override

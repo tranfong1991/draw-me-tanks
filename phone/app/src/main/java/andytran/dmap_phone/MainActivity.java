@@ -127,15 +127,15 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglo
                 } catch (Error err) {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
-                sendModifyIntent(new InstructionalGraphic("Test Name"));
+                sendModifyIntent(new InstructionalGraphic("Test Name"), true);
             }
         });
     }
 
-    public void sendModifyIntent(InstructionalGraphic ig) {
+    public void sendModifyIntent(InstructionalGraphic ig, boolean isNew) {
         InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
         Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
-        intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(Boolean.TRUE));
+        intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(isNew));
         intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
 
         startActivityForResult(intent, MODIFY_IG_REQUEST_CODE);

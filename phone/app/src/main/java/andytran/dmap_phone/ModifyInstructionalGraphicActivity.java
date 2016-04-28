@@ -164,6 +164,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
 
     private void setNumberPicker() {
         final NumberPicker np = (NumberPicker) findViewById(R.id.modig_cycle_value);
+        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np.setMaxValue(99);
         np.setMinValue(1);
         np.setWrapSelectorWheel(false);
