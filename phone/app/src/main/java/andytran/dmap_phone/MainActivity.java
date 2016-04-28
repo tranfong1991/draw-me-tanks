@@ -7,11 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -212,6 +214,16 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglo
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs, ip, port, token);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int height = metrics.heightPixels;
+        View layout = this.getLayoutInflater().inflate(R.layout.graphic_item_footer, list, false);
+        ViewGroup.LayoutParams lp = layout.getLayoutParams();
+        lp.height = height/5;
+        layout.setLayoutParams(lp);
+        list.addFooterView(layout);
+
         list.setAdapter(adapter); //build the listview with the adapted
     }
 
