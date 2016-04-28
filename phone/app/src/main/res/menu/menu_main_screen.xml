@@ -1,8 +1,13 @@
  <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="andytran.dmap_phone.MainScreen">
-    <item android:id="@+id/action_disconnect"
-        android:title="Disconnect"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+     <item android:id="@+id/action_change_ip"
+         android:title="Change IP"
+         android:orderInCategory="100"
+         app:showAsAction="never" />
+
+     <item android:id="@+id/action_request_token"
+         android:title="Request Token"
+         android:orderInCategory="100"
+         app:showAsAction="never" />
 </menu>

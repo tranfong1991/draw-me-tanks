@@ -3,6 +3,7 @@ package andytran.dmap_phone;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -86,6 +87,10 @@ public class ImageManagerActivity extends AppCompatActivity {
     public String ip;
     public String port;
     public String token;
+    public String prefName;
+    public String prefToken;
+    public String prefIp;
+    public String prefFirstUse;
 
     /**
      *  ID used for checking if read permissions were asked for
@@ -103,9 +108,15 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "10.201.132.50";
+        prefName = getResources().getString(R.string.pref_name);
+        prefToken = getResources().getString(R.string.pref_token);
+        prefIp = getResources().getString(R.string.pref_ip);
+        prefFirstUse = getResources().getString(R.string.pref_first_use);
+
+        SharedPreferences pref = getSharedPreferences(prefName, 0);
+        token = pref.getString(prefToken, null);
+        ip = pref.getString(prefIp, null);
         port = "8080";
-        token = "abc";
     }
 
 /*  Public Methods

@@ -11,9 +11,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -25,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setTitle(Utils.getIpAddress());
 
         Intent intent = new Intent(this, DMAPIntentService.class);
         startService(intent);
@@ -48,13 +59,25 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_delete_token) {
             SharedPreferences pref = getSharedPreferences(getResources().getString(R.string.pref_name), 0);
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putString(getResources().getString(R.string.pref_token), null);
-            editor.apply();
+            String token = pref.getString(getResources().getString(R.string.pref_token),  null);
 
-            Intent intent = new Intent(this, NSDBroadcastActivity.class);
-            startActivity(intent);
-            finish();
+            RequestQueue queue = Volley.newRequestQueue(this);
+            StringRequest stringRequest = new StringRequest(Request.Method.DELETE, "http://localhost:8080/deactivate?token=" + token, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject json = new JSONObject(response);
+                        int status = json.getInt("status");
+
+                        if(status == 200)
+                            Toast.makeText(MainActivity.this, "Successfully deleted token.", Toast.LENGTH_SHORT).show();
+                        else Toast.makeText(MainActivity.this, "Failed to delete token.", Toast.LENGTH_SHORT).show();
+                    }catch(JSONException e){
+                        Toast.makeText(MainActivity.this, "Failed to delete token.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, null);
+            queue.add(stringRequest);
 
             return true;
         }
@@ -86,12 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case STOP_GRAPHIC:{
                     graphicView.setImageDrawable(null);
-                    break;
-                }
-                case GO_TO_LOAD:{
-                    Intent i = new Intent(MainActivity.this, NSDBroadcastActivity.class);
-                    startActivity(i);
-                    finish();
                     break;
                 }
             }

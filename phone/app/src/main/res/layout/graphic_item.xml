@@ -24,14 +24,6 @@
             android:tint="@color/colorWhite"
             android:src="@drawable/ic_create_24dp"/>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/trash_can"-->
-            <!--android:layout_width="75dp"-->
-            <!--android:layout_height="75dp"-->
-            <!--android:src="@drawable/trash_can"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true" />-->
-        <!--What you want to show-->
     </LinearLayout>
     <!-- Bottom View End-->
 
@@ -41,14 +33,12 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/white_rectangle"
-        >
+        android:background="@drawable/white_rectangle">
         <ImageView
             android:id="@+id/instruction_image"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:src="@drawable/images"
-            android:layout_below="@+id/trash_can"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
@@ -56,19 +46,10 @@
             android:layout_width="235dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" Medium Text"
+            android:text="Graphic Name"
             android:id="@+id/instruction_name"
             android:layout_gravity="center"
-            android:gravity="center"
-            />
-
-        <!--<ImageView-->
-        <!--android:id="@+id/imageView2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:src="@drawable/dragicon"-->
-        <!--android:gravity="right"-->
-        <!--/>-->
+            android:gravity="center" />
 
         <!--What you want to show in SurfaceView-->
     </LinearLayout>

@@ -155,6 +155,8 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         textView.setText(igs.get(position).getName());
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
+                .resize(100,100)
+                .onlyScaleDown()
                 .into(imageView1);
 
         if(selectedItem == position)

@@ -1,6 +1,7 @@
 package andytran.dmap_phone;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -23,8 +24,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -34,15 +41,7 @@ import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class MainActivity extends ImageManagerActivity {
-    private String prefName;
-    private String prefToken;
-    private String prefIp;
-    private String prefPort;
-    private String prefFirstUse;
-    //private String token;
-    private String hostIp;
-    private int hostPort;
+public class MainActivity extends ImageManagerActivity implements ChangeIPDialogFragment.ChangeIPListener{
 
     static final int MODIFY_IG_REQUEST_CODE = 10;
 
@@ -64,17 +63,7 @@ public class MainActivity extends ImageManagerActivity {
         list = (ListView)findViewById(R.id.listView);
         list.setCacheColorHint(Color.TRANSPARENT);
 
-        prefName = getResources().getString(R.string.pref_name);
-//        prefToken = getResources().getString(R.string.pref_token);
-//        prefIp = getResources().getString(R.string.pref_ip);
-//        prefPort = getResources().getString(R.string.pref_port);
-//        prefFirstUse = getResources().getString(R.string.pref_first_use);
-//
         SharedPreferences pref = getSharedPreferences(prefName, 0);
-//        token = pref.getString(prefToken, null);
-//        hostIp = pref.getString(prefIp, null);
-//        hostPort = pref.getInt(prefPort, 0);
-
         boolean isFirstTime = pref.getBoolean(prefFirstUse, true);
         if(isFirstTime) {
             loadDefaultGraphics();
@@ -89,7 +78,6 @@ public class MainActivity extends ImageManagerActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                View c = list.getChildAt(0);
                 int topIndex = list.getFirstVisiblePosition();
                 int clickedPosition = 0;
                 for (int i = 0; i < list.getChildCount(); i++) {
@@ -98,7 +86,6 @@ public class MainActivity extends ImageManagerActivity {
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
                         adapter.setSelectedItem(position);
                     } else {
-                        //list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), Color.TRANSPARENT));
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), false);
                     }
                 }
@@ -131,7 +118,6 @@ public class MainActivity extends ImageManagerActivity {
                     clicks = 0;
                 clicks++;
                 if (clicks > 0 && clicks % 2 == 0) {
-                    //list.getChildAt(clickedPosition).findViewById(R.id.surface_layout).setBackgroundResource(R.drawable.white_rectangle);
                     adapter.setColor(list.getChildAt(clickedPosition).findViewById(R.id.surface_layout), false);
                     if (timer != null) try {
                         timer.stop();
@@ -197,19 +183,46 @@ public class MainActivity extends ImageManagerActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_change_ip: {
+                DialogFragment dialog = new ChangeIPDialogFragment();
+                dialog.show(getFragmentManager(), "Change IP");
+                return true;
+            }
+            case R.id.action_request_token: {
+                String url = Utils.buildURL(ip, port, "generate", null);
+                Utils.sendPackage(this, Request.Method.GET, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            String t = json.getString("token");
+
+                            token = t;
+
+                            SharedPreferences pref = getSharedPreferences(prefName, 0);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString(prefToken,t);
+                            editor.apply();
+
+                            Toast.makeText(MainActivity.this, "Successfully retreived token.", Toast.LENGTH_SHORT).show();
+                        }catch(JSONException e){
+                            Toast.makeText(MainActivity.this, "Cannot request token.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, null);
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 /*  Private Methods
  *  ==============================================================================================*/
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
-        InstructionalGraphic ig = new InstructionalGraphic("img1");
-        ig.addImage(1,Integer.toString(R.drawable.images));
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs);
         list.setAdapter(adapter); //build the listview with the adapted
@@ -259,9 +272,16 @@ public class MainActivity extends ImageManagerActivity {
                 public void run() {
                     Picasso.with(MainActivity.this)
                             .load(Utils.refToUri(MainActivity.this, igs.get(position).imageRefAt(frame)))
+                            .resize(100,100)
+                            .onlyScaleDown()
                             .into(imageView);
                 }
             });
         }
+    }
+
+    @Override
+    public void onIPChanged(String newIp) {
+        this.ip = newIp;
     }
 }

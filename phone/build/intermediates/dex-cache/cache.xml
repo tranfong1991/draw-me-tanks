@@ -236,7 +236,7 @@
         jar="C:\Users\Andy Tran\Documents\Draw Me a Picture\phone\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="8e6fa2d795fd3eff85f4ff4e3bdd58810efbd72a">
+        sha1="f88d36113df815a021b4457f49faf3ca5420a2f6">
         <dex dex="C:\Users\Andy Tran\Documents\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_c16d244a17c96204ca9c4542c1cd681525aea6b3\classes.dex" />
     </item>
     <item
@@ -271,7 +271,7 @@
         jar="C:\Users\Andy Tran\Documents\Draw Me a Picture\phone\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="d5914d5a73d14ffa3a225a47351a5d0916471240">
+        sha1="8b081fe9de814d7e19a1c69939f71d68f67d6265">
         <dex dex="C:\Users\Andy Tran\Documents\Draw Me a Picture\phone\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_7130f08309b29ef8aa9a1206b5fd7508770dcfbd\classes.dex" />
     </item>
     <item
