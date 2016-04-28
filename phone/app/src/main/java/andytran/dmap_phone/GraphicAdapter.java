@@ -65,6 +65,10 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         selectedItem = position;
     }
 
+    public void setIp(int ip){
+        this.ip = ip;
+    }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
