@@ -20,11 +20,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.ArraySwipeAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphic;
@@ -35,16 +37,23 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     ArrayList<InstructionalGraphic> igs;
     private int selectedItem;
 
+    private String ip;
+    private String port;
+    private String token;
+
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.sample1;
     }
 
-    public GraphicAdapter(Activity context, ArrayList<InstructionalGraphic> igs) {
+    public GraphicAdapter(Activity context, ArrayList<InstructionalGraphic> igs, String ip, String port, String token) {
         super(context, R.layout.graphic_item);
         this.context = context;
         this.igs = igs;
         this.selectedItem = -1;
+        this.ip = ip;
+        this.port = port;
+        this.token = token;
     }
 
     @Override
@@ -72,6 +81,17 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                InstructionalGraphic graphic = igs.get(position);
+                                HashMap<String, String> params = new HashMap<>();
+                                params.put("token", token);
+
+                                String url;
+                                for(int i = 0; i<graphic.numOfFrames(); i++){
+                                    params.put("id", String.valueOf(graphic.idAt(i)));
+                                    url = Utils.buildURL(ip, port, "graphic", params);
+                                    Utils.sendPackage(context, Request.Method.DELETE, url, null, null);
+                                }
+
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
                                 db.removeGraphicAt(position);
                                 igs.remove(position);

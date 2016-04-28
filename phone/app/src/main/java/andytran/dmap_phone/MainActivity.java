@@ -227,7 +227,7 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDialog
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
-        adapter = new GraphicAdapter(this, igs);
+        adapter = new GraphicAdapter(this, igs, ip, port, token);
         list.setAdapter(adapter); //build the listview with the adapted
     }
 
