@@ -28,7 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ChooseEmilyActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class ChooseEMILYActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public static final String EXTRA_PORT = "EXTRA_PORT";
     public static final String EXTRA_IP = "EXTRA_IP";
 
@@ -96,7 +96,7 @@ public class ChooseEmilyActivity extends AppCompatActivity implements AdapterVie
         serviceName.setText(host.getName());
 
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(ChooseEmilyActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
         StringBuffer buffer = new StringBuffer();
         buffer.append("http:/")
                 .append(host.getIp())
@@ -132,7 +132,7 @@ public class ChooseEmilyActivity extends AppCompatActivity implements AdapterVie
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     removeOverlay();
-                    Toast.makeText(ChooseEmilyActivity.this, "Cannot connect to " + host.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseEMILYActivity.this, "Cannot connect to " + host.getName(), Toast.LENGTH_SHORT).show();
                 }
             });
         // Add the request to the RequestQueue.
