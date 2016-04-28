@@ -1,11 +1,13 @@
 package andytran.dmap_phone;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -282,12 +284,24 @@ public class ImageManagerActivity extends AppCompatActivity {
         private List<NameValuePair> nameValuePairs;
         private InstructionalGraphic graphic;
         private VoidCallback cb;
+        private ProgressDialog progressDialog;
 
         public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic, VoidCallback cb){
             this.url = url;
             this.nameValuePairs = nameValuePairs;
             this.graphic = graphic;
             this.cb = cb;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(ImageManagerActivity.this);
+            progressDialog.setMessage("Uploading...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
 
         @Override
@@ -321,6 +335,14 @@ public class ImageManagerActivity extends AppCompatActivity {
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+
+            if(progressDialog != null)
+                progressDialog.dismiss();
         }
 
         private ArrayList<String> getRefsFromNameValuePairs() {

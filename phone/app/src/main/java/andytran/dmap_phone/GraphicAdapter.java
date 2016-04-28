@@ -37,7 +37,6 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     ArrayList<InstructionalGraphic> igs;
 
     private Context context;
-    private View surfaceLayout;
     private int selectedItem;
 
     private String ip;
@@ -178,8 +177,6 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                 .into(holder.graphicImage);
 
         if(selectedItem == position) {
-            Log.d("position", String.valueOf(position));
-            Log.d("selectedItem", String.valueOf(selectedItem));
             setColor(holder.surfaceLayout, true);
         } else {
             setColor(holder.surfaceLayout, false);

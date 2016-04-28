@@ -70,8 +70,6 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglo
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if (position - topIndex == i) {
                         clickedPosition = position - topIndex;
-                        //Log.d("position", String.valueOf(position));
-                        //Log.d("topIndex", String.valueOf(topIndex));
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
                         adapter.setSelectedItem(position);
                     } else {
