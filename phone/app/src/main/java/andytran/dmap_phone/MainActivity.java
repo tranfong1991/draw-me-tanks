@@ -102,14 +102,9 @@ public class MainActivity extends ImageManagerActivity {
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), false);
                     }
                 }
+                
                 InstructionalGraphic ig = igs.get(position);
-                if (timer != null) try { //if there's already a timer, stop it first
-                    timer.stop();
-                } catch (Error err) {
-                    Utils.error(MainActivity.this, err.getMessage()).show();
-                }
-
-            //  TIMER
+                InstructionalGraphicTimer oldTimer = timer;
                 timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
                 final int forPosition = position;
                 timer.setOnSendSuccess(new IntegerCallback() {
@@ -122,10 +117,9 @@ public class MainActivity extends ImageManagerActivity {
                     @Override
                     public void run() {
                         setImageRefFor(forPosition, 0);
+                        runCurrentTimer();
                     }
                 });
-                timer.start();
-            //  END TIMER
 
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
@@ -133,12 +127,12 @@ public class MainActivity extends ImageManagerActivity {
                 if (clicks > 0 && clicks % 2 == 0) {
                     //list.getChildAt(clickedPosition).findViewById(R.id.surface_layout).setBackgroundResource(R.drawable.white_rectangle);
                     adapter.setColor(list.getChildAt(clickedPosition).findViewById(R.id.surface_layout), false);
-                    if (timer != null) try {
-                        timer.stop();
-                    } catch (Error err) {
-                        Utils.error(MainActivity.this, err.getMessage()).show();
-                    }
+                    timer = null;
                 }
+                if(oldTimer != null)
+                    oldTimer.stop();
+                else
+                    runCurrentTimer();
                 listPosition = position;
             }
         });
@@ -263,5 +257,10 @@ public class MainActivity extends ImageManagerActivity {
                 }
             });
         }
+    }
+    
+    private void runCurrentTimer() {
+        if(timer != null)
+            timer.start();
     }
 }
