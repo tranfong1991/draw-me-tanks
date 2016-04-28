@@ -78,6 +78,11 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (MainActivity.timer != null) try {
+                    MainActivity.timer.stop();
+                } catch (Error err) {
+                    Utils.error(context, err.getMessage()).show();
+                }
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Deleting " + igs.get(position).getName())
