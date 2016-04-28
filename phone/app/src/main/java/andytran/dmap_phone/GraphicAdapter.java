@@ -18,13 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
-
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.ArraySwipeAdapter;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import core.db.InstructionalGraphicDbAccess;
 import timothy.dmap_phone.InstructionalGraphic;
 
