@@ -2,32 +2,18 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
-        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\picasso-2.5.2_05a1ca190be3c29104a9990ebda26b577209ce93.jar" />
-    </item>
-    <item
-        jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.koushikdutta.async\androidasync\2.1.7\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="eace26bfd08119044e19e9fc0f9ae1bdffac83ed">
-        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.koushikdutta.async-androidasync-2.1.7_a2cbfe5bcc82c3d2436e365decade957ef3b1b4d.jar" />
-    </item>
-    <item
-        jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\org.nanohttpd\nanohttpd-webserver\2.2.0\ff191bf419fb14d67a09ae05681d8b0e3846bea8\nanohttpd-webserver-2.2.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="ff191bf419fb14d67a09ae05681d8b0e3846bea8">
-        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\nanohttpd-webserver-2.2.0_c9ee63202ee8e35324500b2d566fbccfebc91b99.jar" />
-    </item>
-    <item
         jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\org.nanohttpd\nanohttpd\2.2.0\73a02117620b6cc7683a1ed6ae24c2f36e2a715\nanohttpd-2.2.0.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="073a02117620b6cc7683a1ed6ae24c2f36e2a715">
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\nanohttpd-2.2.0_d4c379690c87cecf75653c129a9a21fbb6a4def1.jar" />
+    </item>
+    <item
+        jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\picasso-2.5.2_05a1ca190be3c29104a9990ebda26b577209ce93.jar" />
     </item>
     <item
         jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
@@ -72,11 +58,25 @@
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1_e0e58348e23e3f023363dbcd7b206238308ccbbe.jar" />
     </item>
     <item
+        jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.koushikdutta.async\androidasync\2.1.7\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="eace26bfd08119044e19e9fc0f9ae1bdffac83ed">
+        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.koushikdutta.async-androidasync-2.1.7_a2cbfe5bcc82c3d2436e365decade957ef3b1b4d.jar" />
+    </item>
+    <item
         jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1_b314f8e22c50bd599cf8b4a07cba16df4d5c689b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\org.nanohttpd\nanohttpd-webserver\2.2.0\ff191bf419fb14d67a09ae05681d8b0e3846bea8\nanohttpd-webserver-2.2.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ff191bf419fb14d67a09ae05681d8b0e3846bea8">
+        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\nanohttpd-webserver-2.2.0_c9ee63202ee8e35324500b2d566fbccfebc91b99.jar" />
     </item>
     <item
         jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"

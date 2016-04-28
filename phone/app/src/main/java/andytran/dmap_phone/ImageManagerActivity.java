@@ -103,7 +103,7 @@ public class ImageManagerActivity extends AppCompatActivity {
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
 
-        ip = "10.201.132.50";
+        ip = "10.202.133.132";
         port = "8080";
         token = "abc";
     }
