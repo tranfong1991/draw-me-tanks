@@ -40,10 +40,11 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         TextView graphicText;
     }
 
-    private Context context;
     ArrayList<InstructionalGraphic> igs;
+
+    private Context context;
+    private View surfaceLayout;
     private int selectedItem;
-    View surfaceLayout;
     private String ip;
     private String port;
     private String token;
@@ -95,10 +96,12 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 public void onClick(DialogInterface dialog, int which) {
                                     InstructionalGraphic graphic = igs.get(position);
                                     HashMap<String, String> params = new HashMap<>();
-                                    String url = null;
+                                    params.put("token", token);
+
+                                    String url;
                                     for(int i = 0; i<graphic.numOfFrames(); i++){
                                         params.put("id", String.valueOf(graphic.idAt(i)));
-//                                    url = Utils.buildURL();
+                                        url = Utils.buildURL(ip, port, "graphic", params);
                                         Utils.sendPackage(context, Request.Method.DELETE, url, null, null);
                                     }
 

@@ -27,7 +27,6 @@ import fi.iki.elonen.NanoHTTPD;
  */
 public class DMAPServer extends NanoHTTPD {
     public enum Action{
-        GO_TO_LOAD,
         GO_TO_MAIN,
         PLAY_GRAPHIC,
         STOP_GRAPHIC
@@ -38,7 +37,6 @@ public class DMAPServer extends NanoHTTPD {
     private static final String TAG = "DMAPServer";
 
     public static final String EXTRA_GRAPHIC_NAME = "EXTRA_GRAPHIC_NAME";
-    public static final String EXTRA_IS_DRAWABLE = "EXTRA_IS_DRAWABLE";
     public static final String EXTRA_ACTION = "EXTRA_ACTION";
     public static final int PORT = 8080;
     public static final int HTTP_OK = 200;

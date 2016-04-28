@@ -23,19 +23,25 @@ public class ConnectActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect);
 
-        final EditText ipTxt = (EditText)findViewById(R.id.txt_connect_ip);
-        final Button connectBtn = (Button)findViewById(R.id.btn_connect);
-
         final String prefName = getResources().getString(R.string.pref_name);
         final String prefToken = getResources().getString(R.string.pref_token);
         final String prefIp = getResources().getString(R.string.pref_ip);
+
+        final SharedPreferences pref = getSharedPreferences(prefName, 0);
+        if(pref.getString(prefToken, null) != null){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        final EditText ipTxt = (EditText)findViewById(R.id.txt_connect_ip);
+        final Button connectBtn = (Button)findViewById(R.id.btn_connect);
 
         connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String ip = ipTxt.getText().toString();
                 if(ip.length() > 0){
-                    SharedPreferences pref = getSharedPreferences(prefName, 0);
                     final SharedPreferences.Editor editor = pref.edit();
                     editor.putString(prefIp, ip);
                     editor.apply();
