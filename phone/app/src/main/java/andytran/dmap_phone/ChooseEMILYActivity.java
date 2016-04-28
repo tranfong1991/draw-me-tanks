@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.nsd.NsdServiceInfo;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -33,7 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ChooseEMILYActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class ChooseEmilyActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public static final String EXTRA_PORT = "EXTRA_PORT";
     public static final String EXTRA_IP = "EXTRA_IP";
 
@@ -101,7 +96,7 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         serviceName.setText(host.getName());
 
         // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(ChooseEMILYActivity.this);
+        RequestQueue queue = Volley.newRequestQueue(ChooseEmilyActivity.this);
         StringBuffer buffer = new StringBuffer();
         buffer.append("http:/")
                 .append(host.getIp())
@@ -137,7 +132,7 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     removeOverlay();
-                    Toast.makeText(ChooseEMILYActivity.this, "Cannot connect to " + host.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChooseEmilyActivity.this, "Cannot connect to " + host.getName(), Toast.LENGTH_SHORT).show();
                 }
             });
         // Add the request to the RequestQueue.
