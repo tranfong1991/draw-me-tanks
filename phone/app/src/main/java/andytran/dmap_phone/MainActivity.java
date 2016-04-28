@@ -1,58 +1,46 @@
 package andytran.dmap_phone;
 
-import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import core.db.InstructionalGraphicDbAccess;
-import core.db.InstructionalGraphicDbHelper;
 import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class MainActivity extends ImageManagerActivity {
-    private String prefName;
-    private String prefToken;
-    private String prefIp;
-    private String prefPort;
-    private String prefFirstUse;
-    //private String token;
-    private String hostIp;
-    private int hostPort;
+public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglogFragment.ChangeIPListener{
+    static private final int MODIFY_IG_REQUEST_CODE = 10;
+    static public InstructionalGraphicTimer timer;
 
-    static final int MODIFY_IG_REQUEST_CODE = 10;
-
-    public static InstructionalGraphicTimer timer;
     private ListView list;
     private GraphicAdapter adapter;
     private ArrayList<InstructionalGraphic> igs;
 
-    int clicks = 0;
-    int listPosition = 0;
+    private int clicks;
+    private int listPosition;
 
 /*  Creation
  *  ==============================================================================================*/
@@ -62,19 +50,8 @@ public class MainActivity extends ImageManagerActivity {
         setContentView(R.layout.activity_main);
 
         list = (ListView)findViewById(R.id.listView);
-        list.setCacheColorHint(Color.TRANSPARENT);
 
-        prefName = getResources().getString(R.string.pref_name);
-//        prefToken = getResources().getString(R.string.pref_token);
-//        prefIp = getResources().getString(R.string.pref_ip);
-//        prefPort = getResources().getString(R.string.pref_port);
-//        prefFirstUse = getResources().getString(R.string.pref_first_use);
-//
         SharedPreferences pref = getSharedPreferences(prefName, 0);
-//        token = pref.getString(prefToken, null);
-//        hostIp = pref.getString(prefIp, null);
-//        hostPort = pref.getInt(prefPort, 0);
-
         boolean isFirstTime = pref.getBoolean(prefFirstUse, true);
         if(isFirstTime) {
             loadDefaultGraphics();
@@ -85,20 +62,14 @@ public class MainActivity extends ImageManagerActivity {
         }
 
         buildListView();
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                View c = list.getChildAt(0);
-                int topIndex = list.getFirstVisiblePosition();
                 int clickedPosition = 0;
                 for (int i = 0; i < list.getChildCount(); i++) {
-                    if (position - topIndex == i) {
-                        clickedPosition = position - topIndex;
+                    if (position == i) {
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
-                        adapter.setSelectedItem(position);
-                    } else {
-                        //list.getChildAt(i).setBackgroundColor(ContextCompat.getColor(parent.getContext(), Color.TRANSPARENT));
+                    } else{
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), false);
                     }
                 }
@@ -117,6 +88,7 @@ public class MainActivity extends ImageManagerActivity {
 //                    list.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
 //                    timer.stop();
 //                }
+
                 InstructionalGraphic ig = igs.get(position);
                 if (timer != null) try { //if there's already a timer, stop it first
                     timer.stop();
@@ -124,7 +96,7 @@ public class MainActivity extends ImageManagerActivity {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
 
-            //  TIMER
+                //  TIMER
                 timer = new InstructionalGraphicTimer(MainActivity.this, ip, port, token, ig);
                 final int forPosition = position;
                 timer.setOnSendSuccess(new IntegerCallback() {
@@ -140,7 +112,7 @@ public class MainActivity extends ImageManagerActivity {
                     }
                 });
                 timer.start();
-            //  END TIMER
+                //  END TIMER
 
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
@@ -172,15 +144,13 @@ public class MainActivity extends ImageManagerActivity {
         });
     }
 
-    private void sendModifyIntent(InstructionalGraphic ig) {
+    public void sendModifyIntent(InstructionalGraphic ig) {
         InstructionalGraphicChangeRecord record = new InstructionalGraphicChangeRecord(ig);
         Intent intent = new Intent(this, ModifyInstructionalGraphicActivity.class);
         intent.putExtra(ModifyInstructionalGraphicActivity.isNewIntentCode, String.valueOf(Boolean.TRUE));
-        Log.d("String value of true", String.valueOf(Boolean.TRUE));
         intent.putExtra(InstructionalGraphicChangeRecord.class.getName(), record);
 
         startActivityForResult(intent, MODIFY_IG_REQUEST_CODE);
-        return;
     }
 
     @Override
@@ -188,6 +158,7 @@ public class MainActivity extends ImageManagerActivity {
         igs = new InstructionalGraphicDbAccess(this).getOrderedGraphicList();
         adapter.igs = igs;
         adapter.notifyDataSetChanged();
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -197,7 +168,6 @@ public class MainActivity extends ImageManagerActivity {
                     startActivity(getIntent());
                 } else {
                     recreate();
-                    Log.i("recreating?", "trying");
                 }
             }
         }, 1);
@@ -212,21 +182,48 @@ public class MainActivity extends ImageManagerActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_change_ip: {
+                DialogFragment dialog = new ChangeIPDiaglogFragment();
+                dialog.show(getFragmentManager(), "Change IP");
+                return true;
+            }
+            case R.id.action_request_token: {
+                String url = Utils.buildURL(ip, port, "generate", null);
+                Utils.sendPackage(this, Request.Method.GET, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            String t = json.getString("token");
+
+                            token = t;
+
+                            SharedPreferences pref = getSharedPreferences(prefName, 0);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString(prefToken,t);
+                            editor.apply();
+
+                            Toast.makeText(MainActivity.this, "Successfully retreived token.", Toast.LENGTH_SHORT).show();
+                        }catch(JSONException e){
+                            Toast.makeText(MainActivity.this, "Cannot request token.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, null);
+            }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 /*  Private Methods
  *  ==============================================================================================*/
     private void buildListView() {
         InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
-        InstructionalGraphic ig = new InstructionalGraphic("img1");
-        ig.addImage(1,Integer.toString(R.drawable.images));
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
-//        db.addGraphicToEnd(ig);
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
-        adapter = new GraphicAdapter(this, igs);
+        adapter = new GraphicAdapter(this, igs, ip, port, token);
         list.setAdapter(adapter); //build the listview with the adapted
     }
 
@@ -274,9 +271,16 @@ public class MainActivity extends ImageManagerActivity {
                 public void run() {
                     Picasso.with(MainActivity.this)
                             .load(Utils.refToUri(MainActivity.this, igs.get(position).imageRefAt(frame)))
+                            .resize(50,50)
+                            .onlyScaleDown()
                             .into(imageView);
                 }
             });
         }
+    }
+
+    @Override
+    public void onChangeIP(String newIP) {
+        this.ip = newIP;
     }
 }

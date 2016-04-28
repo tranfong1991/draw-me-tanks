@@ -234,16 +234,9 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
                     Toast.makeText(context, "Sorry, you already have an instruction with this name", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //image_refs = cr.getUris(context);
                 ArrayList<Uri> uris = cr.getUris(context);
                 cr.finalizeChanges(new_graphic);
                 feed(uris, 0);
-                /*submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
-                    @Override
-                    public void run() {
-                        myOkFinish();
-                    }
-                });*/
             }
         });
     }

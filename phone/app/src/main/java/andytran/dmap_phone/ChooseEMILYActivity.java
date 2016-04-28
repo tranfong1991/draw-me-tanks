@@ -58,7 +58,6 @@ public class ChooseEMILYActivity extends AppCompatActivity implements AdapterVie
         prefName = getResources().getString(R.string.pref_name);
         prefToken = getResources().getString(R.string.pref_token);
         prefIp = getResources().getString(R.string.pref_ip);
-        prefPort = getResources().getString(R.string.pref_port);
 
         //check if access token is already there
         SharedPreferences pref = getSharedPreferences(prefName, 0);

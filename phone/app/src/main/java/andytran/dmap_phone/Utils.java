@@ -72,7 +72,6 @@ public class Utils {
                     buffer.append("&");
             }
         }
-        Log.d("URL", buffer.toString());
         return buffer.toString();
     }
 
@@ -140,7 +139,6 @@ public class Utils {
 
         if (pos < firstListItemPosition || pos > lastListItemPosition ) {
             return null;
-            //return listView.getAdapter().getView(pos, null, listView);
         } else {
             final int childIndex = pos - firstListItemPosition;
             return listView.getChildAt(childIndex);

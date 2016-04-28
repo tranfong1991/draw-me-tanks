@@ -1,10 +1,13 @@
 package andytran.dmap_phone;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -86,6 +89,10 @@ public class ImageManagerActivity extends AppCompatActivity {
     public String ip;
     public String port;
     public String token;
+    public String prefName;
+    public String prefToken;
+    public String prefIp;
+    public String prefFirstUse;
 
     /**
      *  ID used for checking if read permissions were asked for
@@ -102,10 +109,16 @@ public class ImageManagerActivity extends AppCompatActivity {
         images = new ArrayList<>();
         image_refs = new ArrayList<>();
         db = new InstructionalGraphicDbAccess(this);
+        
+        prefName = getResources().getString(R.string.pref_name);
+        prefToken = getResources().getString(R.string.pref_token);
+        prefIp = getResources().getString(R.string.pref_ip);
+        prefFirstUse = getResources().getString(R.string.pref_first_use);
 
-        ip = "10.202.133.132";
+        SharedPreferences pref = getSharedPreferences(prefName, 0);
+        token = pref.getString(prefToken, null);
+        ip = pref.getString(prefIp, null);
         port = "8080";
-        token = "abc";
     }
 
 /*  Public Methods
@@ -271,12 +284,24 @@ public class ImageManagerActivity extends AppCompatActivity {
         private List<NameValuePair> nameValuePairs;
         private InstructionalGraphic graphic;
         private VoidCallback cb;
+        private ProgressDialog progressDialog;
 
         public UploadGraphicAsyncTask(String url, List<NameValuePair> nameValuePairs, InstructionalGraphic graphic, VoidCallback cb){
             this.url = url;
             this.nameValuePairs = nameValuePairs;
             this.graphic = graphic;
             this.cb = cb;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(ImageManagerActivity.this);
+            progressDialog.setMessage("Uploading...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
         }
 
         @Override
@@ -310,6 +335,14 @@ public class ImageManagerActivity extends AppCompatActivity {
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+
+            if(progressDialog != null)
+                progressDialog.dismiss();
         }
 
         private ArrayList<String> getRefsFromNameValuePairs() {
@@ -395,5 +428,4 @@ public class ImageManagerActivity extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         this.startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
-
 }
