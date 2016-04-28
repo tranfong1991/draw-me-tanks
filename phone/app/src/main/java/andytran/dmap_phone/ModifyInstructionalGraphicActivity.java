@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.synnapps.carouselview.ViewListener;
 
+import java.util.ArrayList;
+
 import timothy.dmap_phone.InstructionalGraphic;
 
 public class ModifyInstructionalGraphicActivity extends ImageManagerActivity implements NumberPicker.OnValueChangeListener {
@@ -162,6 +164,7 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
 
     private void setNumberPicker() {
         final NumberPicker np = (NumberPicker) findViewById(R.id.modig_cycle_value);
+        np.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         np.setMaxValue(99);
         np.setMinValue(1);
         np.setWrapSelectorWheel(false);
@@ -232,15 +235,31 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
                     Toast.makeText(context, "Sorry, you already have an instruction with this name", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                image_refs = cr.getUris(context);
+                //image_refs = cr.getUris(context);
+                ArrayList<Uri> uris = cr.getUris(context);
                 cr.finalizeChanges(new_graphic);
-                submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
+                feed(uris, 0);
+                /*submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
                     @Override
                     public void run() {
                         myOkFinish();
                     }
-                });
+                });*/
+            }
+        });
+    }
+
+    private void feed(final ArrayList<Uri> uris, final Integer index) {
+        if(index >= uris.size()) {
+            myOkFinish();
+            return;
+        }
+        image_refs.clear();
+        image_refs.add(uris.get(index));
+        submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
+            @Override
+            public void run() {
+                feed(uris, index + 1);
             }
         });
     }
