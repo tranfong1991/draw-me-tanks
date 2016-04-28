@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,6 +70,8 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDiaglo
                 for (int i = 0; i < list.getChildCount(); i++) {
                     if (position - topIndex == i) {
                         clickedPosition = position - topIndex;
+                        //Log.d("position", String.valueOf(position));
+                        //Log.d("topIndex", String.valueOf(topIndex));
                         adapter.setColor(list.getChildAt(i).findViewById(R.id.surface_layout), true);
                         adapter.setSelectedItem(position);
                     } else {
