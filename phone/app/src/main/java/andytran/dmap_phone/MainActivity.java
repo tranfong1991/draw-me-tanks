@@ -104,7 +104,7 @@ public class MainActivity extends ImageManagerActivity {
                 }
                 InstructionalGraphic ig = igs.get(position);
                 if (timer != null) try { //if there's already a timer, stop it first
-                    timer.stop();
+                    timer.halt();
                 } catch (Error err) {
                     Utils.error(MainActivity.this, err.getMessage()).show();
                 }
@@ -127,13 +127,16 @@ public class MainActivity extends ImageManagerActivity {
                 timer.start();
             //  END TIMER
 
+                Log.d("position",String.valueOf(position));
+                Log.d("list position", String.valueOf(listPosition) + '\n');
+
                 if (position != listPosition) //if user clicks different IG, then reset click counter
                     clicks = 0;
                 clicks++;
                 if (clicks > 0 && clicks % 2 == 0) {
                     //list.getChildAt(clickedPosition).findViewById(R.id.surface_layout).setBackgroundResource(R.drawable.white_rectangle);
                     adapter.setColor(list.getChildAt(clickedPosition).findViewById(R.id.surface_layout), false);
-                    if (timer != null) try {
+                    if (timer != null && listPosition == position) try {
                         timer.stop();
                     } catch (Error err) {
                         Utils.error(MainActivity.this, err.getMessage()).show();

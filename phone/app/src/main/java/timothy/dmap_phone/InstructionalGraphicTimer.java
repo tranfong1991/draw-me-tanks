@@ -82,6 +82,14 @@ public class InstructionalGraphicTimer extends Timer {
         }
     }
 
+    public void halt() {
+        if (started) {
+            this.cancel();
+            started = false;
+            onStopSuccess.run();
+        }
+    }
+
 /**
  *  Stops the graphic from sending requests to the timer, and sends a stop request so the
  *  tablet stops displaying its current image
