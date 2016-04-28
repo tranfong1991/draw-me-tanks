@@ -286,5 +286,6 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDialog
     @Override
     public void onIPChanged(String newIp) {
         this.ip = newIp;
+        adapter.setIp(newIp);
     }
 }
