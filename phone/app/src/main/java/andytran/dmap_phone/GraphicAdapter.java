@@ -1,23 +1,16 @@
 package andytran.dmap_phone;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import android.content.Intent;
-import android.os.Build;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -46,10 +39,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     private Context context;
     private View surfaceLayout;
     private int selectedItem;
-<<<<<<< HEAD
-    //View surfaceLayout;
-=======
->>>>>>> b07f213c4df4c040e4b9eb8f5232f013e5ebae54
+
     private String ip;
     private String port;
     private String token;
