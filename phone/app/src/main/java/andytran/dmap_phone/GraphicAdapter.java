@@ -65,7 +65,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         selectedItem = position;
     }
 
-    public void setIp(int ip){
+    public void setIp(String ip){
         this.ip = ip;
     }
 
