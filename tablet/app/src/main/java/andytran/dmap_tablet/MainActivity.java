@@ -111,12 +111,6 @@ public class MainActivity extends AppCompatActivity {
                     graphicView.setImageDrawable(null);
                     break;
                 }
-                case GO_TO_LOAD:{
-                    Intent i = new Intent(MainActivity.this, NSDBroadcastActivity.class);
-                    startActivity(i);
-                    finish();
-                    break;
-                }
             }
         }
     }
