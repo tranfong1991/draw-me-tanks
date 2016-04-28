@@ -116,6 +116,8 @@ public class ImageManagerActivity extends AppCompatActivity {
         SharedPreferences pref = getSharedPreferences(prefName, 0);
         token = pref.getString(prefToken, null);
         ip = pref.getString(prefIp, null);
+
+        port = "8080";
     }
 
 /*  Public Methods
