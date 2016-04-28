@@ -66,7 +66,7 @@ public class ConnectActivity extends Activity {
                                 startActivity(intent);
                                 finish();
                             }catch(JSONException e){
-                                Toast.makeText(ConnectActivity.this, "Cannot parse JSON", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ConnectActivity.this, "Cannot obtain token from tablet. Please delete the tablet's token and try again.", Toast.LENGTH_LONG).show();
                             }
                         }
                     }, null);
