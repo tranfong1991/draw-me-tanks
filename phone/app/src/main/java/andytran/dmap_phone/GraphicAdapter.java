@@ -46,10 +46,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
     private Context context;
     private View surfaceLayout;
     private int selectedItem;
-<<<<<<< HEAD
-    //View surfaceLayout;
-=======
->>>>>>> b07f213c4df4c040e4b9eb8f5232f013e5ebae54
+
     private String ip;
     private String port;
     private String token;
