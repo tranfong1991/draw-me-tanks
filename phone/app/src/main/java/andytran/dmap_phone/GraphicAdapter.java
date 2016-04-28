@@ -38,12 +38,13 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         ImageButton editBtn;
         ImageView graphicImage;
         TextView graphicText;
+        View surfaceLayout;
     }
 
     private Context context;
     ArrayList<InstructionalGraphic> igs;
     private int selectedItem;
-    View surfaceLayout;
+    //View surfaceLayout;
     private String ip;
     private String port;
     private String token;
@@ -75,13 +76,14 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         if(rowView == null){
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView =  (SwipeLayout) inflater.inflate(R.layout.graphic_item, null, true);
-            surfaceLayout = rowView.findViewById(R.id.surface_layout);
+            //surfaceLayout = rowView.findViewById(R.id.surface_layout);
 
             ViewHolder holder = new ViewHolder();
             holder.deleteBtn = (ImageButton) rowView.findViewById(R.id.delete);
             holder.editBtn = (ImageButton) rowView.findViewById(R.id.edit);
             holder.graphicImage = (ImageView) rowView.findViewById(R.id.instruction_image);
             holder.graphicText = (TextView) rowView.findViewById(R.id.instruction_name);
+            holder.surfaceLayout = rowView.findViewById(R.id.surface_layout);
 
             holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -178,8 +180,13 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                 .onlyScaleDown()
                 .into(holder.graphicImage);
 
-        if(selectedItem == position)
-            setColor(surfaceLayout, true);
+        if(selectedItem == position) {
+            Log.d("position", String.valueOf(position));
+            Log.d("selectedItem", String.valueOf(selectedItem));
+            setColor(holder.surfaceLayout, true);
+        } else {
+            setColor(holder.surfaceLayout, false);
+        }
 
         return rowView;
     }

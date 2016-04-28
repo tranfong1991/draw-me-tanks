@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> fix-andy
     <item
         jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\org.nanohttpd\nanohttpd\2.2.0\73a02117620b6cc7683a1ed6ae24c2f36e2a715\nanohttpd-2.2.0.jar"
         jumboMode="false"
@@ -44,6 +47,13 @@
         revision="23.0.1"
         sha1="379471b2bd17d9737c050345c08e8c7d16589784">
         <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\com.android.support-design-23.1.1_ab07ffac87ecae4bbaa49447a068e6425bafd3a9.jar" />
+    </item>
+    <item
+        jar="C:\Users\Kiri\.gradle\caches\modules-2\files-2.1\com.mcxiaoke.volley\library\1.0.19\a8f23f65fc1e522ee4a1a697ee569901a46741fa\library-1.0.19.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="a8f23f65fc1e522ee4a1a697ee569901a46741fa">
+        <dex dex="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\pre-dexed\debug\library-1.0.19_7dfccc55125eb3158e18a5109bda4d390b51f34c.jar" />
     </item>
     <item
         jar="C:\Users\Kiri\Documents\Draw Me a Picture\draw-me-tanks\tablet\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
@@ -89,4 +99,7 @@
     </item>
 
 </items>
+<<<<<<< HEAD
 >>>>>>> develop
+=======
+>>>>>>> fix-andy
