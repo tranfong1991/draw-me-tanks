@@ -2,7 +2,7 @@
 <resources>
     <drawable name="blue_color">#6995C0</drawable>
     <color name="colorWhite">#FDFFFF</color>
-    <color name="colorPrimary">#B8D1EA</color>
+    <color name="colorPrimary">#6995C0</color>
     <color name="colorPrimaryDark">#6995C0</color>
     <color name="colorAccent">#CC3333</color>
     <color name="transparentPrimary">#80B8D1EA</color>
