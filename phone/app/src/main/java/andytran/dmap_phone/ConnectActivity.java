@@ -33,13 +33,19 @@ public class ConnectActivity extends Activity {
             finish();
         }
 
-        final EditText ipTxt = (EditText)findViewById(R.id.txt_connect_ip);
+        final EditText ipTxt1 = (EditText)findViewById(R.id.txt_connect_ip_1);
+        final EditText ipTxt2 = (EditText)findViewById(R.id.txt_connect_ip_2);
+        final EditText ipTxt3 = (EditText)findViewById(R.id.txt_connect_ip_3);
+        final EditText ipTxt4 = (EditText)findViewById(R.id.txt_connect_ip_4);
         final Button connectBtn = (Button)findViewById(R.id.btn_connect);
 
         connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ip = ipTxt.getText().toString();
+                String ip = ipTxt1.getText().toString() + "." +
+                        ipTxt2.getText().toString() + "." +
+                        ipTxt3.getText().toString() + "." +
+                        ipTxt4.getText().toString();
                 if(ip.length() > 0){
                     final SharedPreferences.Editor editor = pref.edit();
                     editor.putString(prefIp, ip);
