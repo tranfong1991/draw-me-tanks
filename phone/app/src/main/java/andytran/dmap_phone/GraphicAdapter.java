@@ -122,12 +122,12 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                 public void onClick(View v) {
                     if (MainActivity.timer != null) try {
                         MainActivity.timer.stop();
-
-                        MainActivity activity = (MainActivity)context;
-                        activity.sendModifyIntent(igs.get(position), false);
                     } catch (Error err) {
                         Utils.error(context, err.getMessage()).show();
                     }
+
+                    MainActivity activity = (MainActivity)context;
+                    activity.sendModifyIntent(igs.get(position), false);
                 }
             });
             rowView.setShowMode(SwipeLayout.ShowMode.LayDown);
