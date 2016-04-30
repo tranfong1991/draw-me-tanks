@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -42,10 +43,19 @@ public class ChangeIPDialogFragment extends DialogFragment {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_change_ip, null);
-        final EditText ipTxt = (EditText)view.findViewById(R.id.txt_ip);
+        final EditText ipTxt1 = (EditText)view.findViewById(R.id.txt_ip_1);
+        final EditText ipTxt2 = (EditText)view.findViewById(R.id.txt_ip_2);
+        final EditText ipTxt3 = (EditText)view.findViewById(R.id.txt_ip_3);
+        final EditText ipTxt4 = (EditText)view.findViewById(R.id.txt_ip_4);
 
         final SharedPreferences pref = activity.getSharedPreferences(prefName, 0);
-        ipTxt.setText(pref.getString(prefIp, ""));
+        Log.d("prefId", pref.getString(prefIp, ""));
+        String[] totalIp = pref.getString(prefIp, "").split("\\.");
+
+        ipTxt1.setText(totalIp[0]);
+        ipTxt2.setText(totalIp[1]);
+        ipTxt3.setText(totalIp[2]);
+        ipTxt4.setText(totalIp[3]);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
@@ -55,9 +65,12 @@ public class ChangeIPDialogFragment extends DialogFragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        String ip = ipTxt.getText().toString();
+                        String ip = ipTxt1.getText().toString() + '.' +
+                                ipTxt2.getText().toString() + '.' +
+                                ipTxt3.getText().toString() + '.' +
+                                ipTxt4.getText().toString();
 
-                        if (ip.length() > 0) {
+                        if (ip.length() > 3) {
                             SharedPreferences.Editor editor = pref.edit();
                             editor.putString(prefIp, ip);
                             editor.apply();

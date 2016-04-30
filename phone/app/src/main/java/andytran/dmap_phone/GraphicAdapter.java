@@ -180,6 +180,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
         Picasso.with(context)
                 .load(Utils.refToUri(context, igs.get(position).imageRefAt(0)))
                 .resize(100,100)
+                .centerInside()
                 .onlyScaleDown()
                 .into(imageView1);
 
