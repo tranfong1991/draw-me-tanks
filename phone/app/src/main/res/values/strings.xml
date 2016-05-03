@@ -1,3 +1,40 @@
 <resources>
-    <string name="app_name">draw-me-a-picture</string>
+    <string name="app_name">Draw Me a Picture</string>
+    <string name="title_activity_choose">Choose EMILY</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_activity_client_socket_test">DO NOT USE THIS STRING</string>
+    <string name="title_activity_load_screen">DO NOT USE THIS STRING</string>
+
+    <string name="ip_field">Enter IP Address here</string>
+    <string name="port_field">Enter Port field here</string>
+    <string name="test_ip">127.0.0.1</string>
+    <string name="test_port">8080</string>
+
+    <string name="pref_connection_alert">Connecting to </string>
+    <string name="tablet_name">EMILY</string>
+    <string name="title_activity_main">Main Activity</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_add_instructional_graphic">AddInstructionalGraphicActivity</string>
+
+    <!-- Strings for modifying instructional graphics -->
+    <string name="modig_default_title">Instruction Title</string>
+    <string name="modig_cycle">second cycles.</string>
+    <string name="modig_preview">Preview</string>
+    <string name="modig_ok">OK</string>
+    <string name="modig_main_activity_label">Modig_Main_Activity</string>
+
+    <string name="pref_name">DMAP_PREF</string>
+    <string name="pref_token">DMAP_TOKEN</string>
+    <string name="pref_ip">DMAP_IP</string>
+    <string name="pref_port">DMAP_PORT</string>
+    <string name="pref_first_use">DMAP_FIRST_USE</string>
+    <string name="package_name">andytran.dmap_phone</string>
+    <string name="title_activity_preview_modification">PreviewModificationActivity</string>
+    <string name="title_activity_add_to_app_db">AddToAppDBActivity</string>
+
+    <string name="default_path"> </string>
+    <string name="ata_button">Add To App Database!</string>
 </resources>

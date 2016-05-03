@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">draw-me-a-picture</string>
+    <string name="app_name">Draw Me a Picture</string>
+    <string name="title_activity_main">Main Activity</string>
+    <string name="title_activity_nsd">NSD Broadcast Activity</string>
+    <string name="action_settings">Actions</string>
+
+    <string name="loading_notice">Waiting for connection</string>
+    <string name="salutations">Hi, my name is</string>
+    <string name="package_name">andytran.dmap_tablet</string>
+    <string name="pref_name">DMAP_PREF</string>
+    <string name="pref_token">DMAP_TOKEN</string>
+    <string name="pref_is_first_time">DMAP_IS_FIRST_TIME</string>
 </resources>

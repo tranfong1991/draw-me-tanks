@@ -1,13 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="andytran.draw_me_a_picture">
+    package="andytran.dmap_phone">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".ModifyInstructionalGraphicActivity"
+            android:label="@string/title_activity_add_instructional_graphic"></activity>
+        <activity
+            android:name=".PreviewModificationActivity"
+            android:label="@string/title_activity_preview_modification"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+        </activity>
 
+        <!-- Move the intent filter to Choose Emily activity after finishing -->
+
+        <activity
+            android:name=".TestUploadActivity"
+            android:exported="true"></activity>
+
+        <activity android:name=".ConnectActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

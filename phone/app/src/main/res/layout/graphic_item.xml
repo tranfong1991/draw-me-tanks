@@ -1,0 +1,57 @@
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="80dp" android:id="@+id/sample1">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:background="@color/colorPrimary"
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="160dp"
+        android:weightSum="1"
+        android:layout_height="match_parent">
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_weight="0.5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"
+            android:tint="@color/colorWhite"
+            android:src="@drawable/ic_delete_50dp"/>
+        <ImageButton
+            android:id="@+id/edit"
+            android:layout_weight="0.5"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:tint="@color/colorWhite"
+            android:src="@drawable/ic_create_24dp"/>
+
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <LinearLayout
+        android:id="@+id/surface_layout"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_rectangle">
+        <ImageView
+            android:id="@+id/instruction_image"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:src="@drawable/images"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="235dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Graphic Name"
+            android:id="@+id/instruction_name"
+            android:layout_gravity="center"
+            android:gravity="center" />
+
+        <!--What you want to show in SurfaceView-->
+    </LinearLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>
