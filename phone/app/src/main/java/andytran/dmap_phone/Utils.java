@@ -23,7 +23,7 @@ import core.db.InstructionalGraphicDbAccess;
 
 public class Utils {
     private static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
+    private static RequestQueue queue;
 
 /**
  *  Sends a request to the tablet.
@@ -34,9 +34,18 @@ public class Utils {
  *  @param errorListener Callback for what happens upon failure
  */
     public static void sendPackage(Context context, int method, String URL, Response.Listener<String> listener, Response.ErrorListener errorListener){
-        RequestQueue queue = Volley.newRequestQueue(context);
+        if(queue == null) {
+            queue = Volley.newRequestQueue(context.getApplicationContext());
+        }
         StringRequest stringRequest = new StringRequest(method, URL, listener, errorListener);
+        stringRequest.setTag(context.getClass().getName());
         queue.add(stringRequest); //sends the package
+    }
+
+    public static void flushQueue(Context context) {
+        if(queue != null) {
+            queue.cancelAll(context.getClass().getName());
+        }
     }
 
 /**
