@@ -238,23 +238,23 @@ public class ModifyInstructionalGraphicActivity extends ImageManagerActivity imp
                 //image_refs = cr.getUris(context);
                 ArrayList<Uri> uris = cr.getUris(context);
                 cr.finalizeChanges(new_graphic);
+
                 feed(uris, 0);
-                /*submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
-                    @Override
-                    public void run() {
-                        myOkFinish();
-                    }
-                });*/
             }
         });
     }
 
     private void feed(final ArrayList<Uri> uris, final Integer index) {
+        image_refs.clear();
         if(index >= uris.size()) {
-            myOkFinish();
+            submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
+                @Override
+                public void run() {
+                    myOkFinish();
+                }
+            });
             return;
         }
-        image_refs.clear();
         image_refs.add(uris.get(index));
         submitImages(cr.getOriginalInstructionalGraphic(), new VoidCallback() {
             @Override

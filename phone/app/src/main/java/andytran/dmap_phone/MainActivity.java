@@ -196,7 +196,7 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDialog
             }
             case R.id.action_request_token: {
                 String url = Utils.buildURL(ip, port, "generate", null);
-                Utils.sendPackage(this, Request.Method.GET, url, new Response.Listener<String>() {
+                Utils.sendPackage(MainActivity.this, Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
@@ -225,7 +225,7 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDialog
 /*  Private Methods
  *  ==============================================================================================*/
     private void buildListView() {
-        InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(this); //initialize database
+        InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(MainActivity.this.getApplicationContext()); //initialize database
         igs = db.getOrderedGraphicList(); // get all InstructionalGraphics in database
         adapter = new GraphicAdapter(this, igs, ip, port, token);
         list.setAdapter(adapter); //build the listview with the adapted
@@ -287,5 +287,11 @@ public class MainActivity extends ImageManagerActivity implements ChangeIPDialog
     public void onIPChanged(String newIp) {
         this.ip = newIp;
         adapter.setIp(newIp);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Utils.flushQueue(this);
     }
 }
