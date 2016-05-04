@@ -98,7 +98,7 @@ class GraphicAdapter extends ArraySwipeAdapter<InstructionalGraphic> {
                                 for(int i = 0; i<graphic.numOfFrames(); i++){
                                     params.put("id", String.valueOf(graphic.idAt(i)));
                                     url = Utils.buildURL(ip, port, "graphic", params);
-                                    Utils.sendPackage(context.getApplicationContext(), Request.Method.DELETE, url, null, null);
+                                    Utils.sendPackage(context, Request.Method.DELETE, url, null, null);
                                 }
 
                                 InstructionalGraphicDbAccess db = new InstructionalGraphicDbAccess(context);
