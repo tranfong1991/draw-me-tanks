@@ -41,7 +41,7 @@ import timothy.dmap_phone.InstructionalGraphicTimer;
 
 import timothy.dmap_phone.InstructionalGraphic;
 
-public class MainActivity extends ImageManagerActivity implements ChangeIPDialogFragment.ChangeIPListener{
+public class PainActivity extends ImageManagerActivity implements ChangeIPDialogFragment.ChangeIPListener{
 
     static final int MODIFY_IG_REQUEST_CODE = 10;
 
